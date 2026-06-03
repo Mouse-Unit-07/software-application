@@ -1,4 +1,4 @@
-# Repeat Hello World Repo
+# Application
 
-- Simple repo that utilizes the Hello World library via CMake's fetchcontent
-- Serves as an example of a project that has a dependency on another project
+- The final/topmost micromouse software layer
+- Includes a startup library encapsulating all micromouse initialization, and a shell library

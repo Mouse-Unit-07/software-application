@@ -1,7 +1,7 @@
 /*-------------------------------- FILE INFO ---------------------------------*/
-/* Filename           : repeat_hello_world.c                                  */
+/* Filename           : startup.c                                             */
 /*                                                                            */
-/* Implementation w/ a function to print Hello World twice                    */
+/* Implementation for micromouse startup library                              */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -9,8 +9,7 @@
 /*                               Include Files                                */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
-#include "print_hello_world.h"
-#include "repeat_hello_world.h"
+#include "startup.h"
 
 /*----------------------------------------------------------------------------*/
 /*                         Private Function Prototypes                        */
@@ -25,11 +24,6 @@
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Definitions                        */
 /*----------------------------------------------------------------------------*/
-void print_hello_world_twice(void)
-{
-    print_hello_world();
-    print_hello_world();
-}
 
 /*----------------------------------------------------------------------------*/
 /*                        Private Function Definitions                        */
