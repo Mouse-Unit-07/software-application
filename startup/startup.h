@@ -1,11 +1,11 @@
 /*-------------------------------- FILE INFO ---------------------------------*/
-/* Filename           : repeat_hello_world.h                                  */
+/* Filename           : startup.h                                             */
 /*                                                                            */
-/* Interface w/ a function to repeat Hello World                              */
+/* Interface for micromouse startup library                                   */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
-#ifndef REPEAT_HELLO_WORLD_H_
-#define REPEAT_HELLO_WORLD_H_
+#ifndef STARTUP_H_
+#define STARTUP_H_
 
 /*----------------------------------------------------------------------------*/
 /*                             Public Definitions                             */
@@ -15,6 +15,6 @@
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Prototypes                         */
 /*----------------------------------------------------------------------------*/
-void print_hello_world_twice(void);
 
-#endif /* REPEAT_HELLO_WORLD_H_ */
+
+#endif /* STARTUP_H_ */
