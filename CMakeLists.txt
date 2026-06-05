@@ -16,6 +16,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(maze_solver)
 
+add_subdirectory(configuration)
 add_subdirectory(shell/commands)
 add_subdirectory(shell/core)
 add_subdirectory(startup)
@@ -23,6 +24,7 @@ add_subdirectory(startup)
 # \/=== Add all test directories
 if(TARGET_WINDOWS AND SUPPORTS_WINDOWS)
     if(ENABLE_APPLICATION_TESTS)
+        add_subdirectory(configuration/tests)
         add_subdirectory(shell/commands/tests)
         add_subdirectory(shell/core/tests)
         add_subdirectory(startup/tests)
@@ -32,6 +34,7 @@ endif()
 add_library(application_lib INTERFACE)
 
 target_link_libraries(application_lib INTERFACE
+    configuration_lib
     commands_lib
     core_lib
     startup_lib
