@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "startup.h"
-#include "shell.h"
+#include "core.h"
 
 /*----------------------------------------------------------------------------*/
 /*                         Private Function Prototypes                        */

@@ -1,7 +1,7 @@
 /*================================ FILE INFO =================================*/
-/* Filename           : test_shell.cpp                                        */
+/* Filename           : test_core.cpp                                         */
 /*                                                                            */
-/* Test implementation for shell.c                                            */
+/* Test implementation for core.c                                             */
 /*                                                                            */
 /*============================================================================*/
 
@@ -13,7 +13,8 @@ extern "C"
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "shell.h"
+#include "commands.h"
+#include "core.h"
 
 }
 
@@ -73,11 +74,6 @@ void clear_cli_buffer(void)
     mock().actualCall("clear_cli_buffer");
 }
 
-void print_hardware_state(void)
-{
-    mock().actualCall("print_hardware_state");
-}
-
 }
 
 /*============================================================================*/
@@ -122,34 +118,6 @@ TEST(ShellTests, DeinitShellResetsState)
     STRCMP_EQUAL("", get_shell_buffer());
     LONGS_EQUAL(0u, get_shell_buffer_size());
     CHECK_FALSE(get_ready_for_parsing());
-}
-
-TEST(ShellTests, ValidateHelpReturnsSuccess)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "help");
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_help(&cmd));
-}
-
-TEST(ShellTests, ValidateHelpReturnsTooManyParameters)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "help");
-    cmd.parameter_count = 1;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_help(&cmd));
-}
-
-TEST(ShellTests, ValidateHelpReturnsNotMatched)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "motor");
-
-    LONGS_EQUAL(COMMAND_VALIDATION_NOT_MATCHED, validate_help(&cmd));
 }
 
 TEST(ShellTests, LoadCliBufferCopiesSingleCharacter)
@@ -327,68 +295,4 @@ TEST(ShellTests, PollShellResetsStateAfterCommand)
     STRCMP_EQUAL("", get_shell_buffer());
     LONGS_EQUAL(0u, get_shell_buffer_size());
     CHECK_FALSE(get_ready_for_parsing());
-}
-
-TEST(ShellTests, ValidateClearReturnsSuccess)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "clear");
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_clear(&cmd));
-}
-
-TEST(ShellTests, ValidateClearReturnsTooManyParameters)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "clear");
-    cmd.parameter_count = 1;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_clear(&cmd));
-}
-
-TEST(ShellTests, ValidateClearReturnsNotMatched)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "invalid");
-
-    LONGS_EQUAL(COMMAND_VALIDATION_NOT_MATCHED, validate_clear(&cmd));
-}
-
-TEST(ShellTests, ValidateHardwareFaultsReturnsSuccess)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "faults");
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_hardware_faults(&cmd));
-}
-
-TEST(ShellTests, ValidateHardwareFaultsReturnsTooManyParameters)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "faults");
-    cmd.parameter_count = 1;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_hardware_faults(&cmd));
-}
-
-TEST(ShellTests, ValidateHardwareFaultsReturnsNotMatched)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "invalid");
-
-    LONGS_EQUAL(COMMAND_VALIDATION_NOT_MATCHED, validate_hardware_faults(&cmd));
-}
-
-TEST(ShellTests, ExecuteHardwareFaultsCallsFunctions)
-{
-    struct command cmd{{0}};
-    mock().expectOneCall("print_hardware_state");
-
-    execute_hardware_faults(&cmd);
 }

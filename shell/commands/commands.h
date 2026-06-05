@@ -1,16 +1,15 @@
 /*-------------------------------- FILE INFO ---------------------------------*/
-/* Filename           : shell.h                                               */
+/* Filename           : commands.h                                            */
 /*                                                                            */
-/* Interface for micromouse shell library                                     */
+/* Interface for micromouse commands library                                  */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
-#ifndef SHELL_H_
-#define SHELL_H_
+#ifndef COMMANDS_H_
+#define COMMANDS_H_
 
 /*----------------------------------------------------------------------------*/
 /*                             Public Definitions                             */
 /*----------------------------------------------------------------------------*/
-/* definitions exposed for testing */
 enum
 {
     MAX_COMMAND_SIZE = 32,
@@ -33,27 +32,26 @@ enum validation_result
     COMMAND_VALIDATION_NOT_MATCHED
 };
 
+struct command_table_entry {
+    char const *name;
+    char const *help;
+    enum validation_result (*validate)(struct command const *cmd);
+    void (*execute)(struct command const *cmd);
+};
+
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Prototypes                         */
 /*----------------------------------------------------------------------------*/
-void init_shell(void);
-void deinit_shell(void);
-void poll_shell(void);
-
-/* helpers exposed for testing */
-void load_cli_buffer_contents(void);
-struct command parse_cli_buffer_contents(void);
-void process_command(struct command const *cmd);
+uint32_t get_command_table_size(void);
+struct command_table_entry get_command_table_entry_at_index(uint32_t index);
 
 enum validation_result validate_help(struct command const *cmd);
 void execute_help(struct command const *cmd);
+
 enum validation_result validate_clear(struct command const *cmd);
 void execute_clear(struct command const *cmd);
+
 enum validation_result validate_hardware_faults(struct command const *cmd);
 void execute_hardware_faults(struct command const *cmd);
 
-char *get_shell_buffer(void);
-uint32_t get_shell_buffer_size(void);
-bool get_ready_for_parsing(void);
-
-#endif /* SHELL_H_ */
+#endif /* COMMANDS_H_ */

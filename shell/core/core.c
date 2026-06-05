@@ -1,7 +1,7 @@
 /*-------------------------------- FILE INFO ---------------------------------*/
-/* Filename           : shell.c                                               */
+/* Filename           : core.c                                                */
 /*                                                                            */
-/* Implementation for micromouse shell library                                */
+/* Implementation for micromouse core library                                 */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -12,24 +12,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "fault_detector.h"
 #include "user_interface.h"
-#include "shell.h"
-
-/*----------------------------------------------------------------------------*/
-/*                           Struct, Enum, Typedefs                           */
-/*----------------------------------------------------------------------------*/
-enum
-{
-    MAX_BUFFER_SIZE = 128
-};
-
-struct command_table_entry {
-    char const *name;
-    char const *help;
-    enum validation_result (*validate)(struct command const *cmd);
-    void (*execute)(struct command const *cmd);
-};
+#include "commands.h"
+#include "core.h"
 
 /*----------------------------------------------------------------------------*/
 /*                         Private Function Prototypes                        */
@@ -39,31 +24,14 @@ static void reset_shell_state(void);
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
 /*----------------------------------------------------------------------------*/
+enum
+{
+    MAX_BUFFER_SIZE = 128
+};
+
 static char shell_buffer[MAX_BUFFER_SIZE] = {0};
 static uint32_t shell_buffer_size = 0u;
 static bool ready_for_parsing = false;
-
-static const struct command_table_entry command_table[] =
-{
-    {
-        .name = "help",
-        .help = "Display available commands",
-        .validate = validate_help,
-        .execute = execute_help
-    },
-    {
-        .name = "clear",
-        .help = "Clear the console",
-        .validate = validate_clear,
-        .execute = execute_clear
-    },
-    {
-        .name = "faults",
-        .help = "Display all hardware faults",
-        .validate = validate_hardware_faults,
-        .execute = execute_hardware_faults
-    },
-};
 
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Definitions                        */
@@ -162,12 +130,13 @@ struct command parse_cli_buffer_contents(void)
 
 void process_command(struct command const *cmd)
 {
-    for (uint32_t i = 0u; i < (sizeof(command_table) / sizeof(command_table[0])); i++) {
-        enum validation_result result = command_table[i].validate(cmd);
+    for (uint32_t i = 0u; i < get_command_table_size(); i++) {
+        struct command_table_entry entry = get_command_table_entry_at_index(i);
+        enum validation_result result = entry.validate(cmd);
 
         switch (result) {
             case COMMAND_VALIDATION_SUCCESS:
-                command_table[i].execute(cmd);
+                entry.execute(cmd);
                 return;
 
             case COMMAND_VALIDATION_BAD_PARAMETER:
@@ -192,74 +161,6 @@ void process_command(struct command const *cmd)
     }
 
     printf("Unrecognized command\r\n");
-}
-
-enum validation_result validate_help(struct command const *cmd)
-{
-    if (strcmp(cmd->command, "help") != 0) {
-        return COMMAND_VALIDATION_NOT_MATCHED;
-    }
-
-    if (cmd->parameter_count != 0) {
-        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
-    }
-
-    return COMMAND_VALIDATION_SUCCESS;
-}
-
-void execute_help(struct command const *cmd)
-{
-    (void)cmd; /* unused due to no parameters */
-
-    printf("\r\n");
-    printf("Available Commands\r\n");
-    printf("------------------\r\n");
-
-    for (uint32_t i = 0u; i < (sizeof(command_table) / sizeof(command_table[0])); i++) {
-        printf("%-16s %s\r\n", command_table[i].name, command_table[i].help);
-    }
-
-    printf("\r\n");
-}
-
-enum validation_result validate_clear(struct command const *cmd)
-{
-    if (strcmp(cmd->command, "clear") != 0) {
-        return COMMAND_VALIDATION_NOT_MATCHED;
-    }
-
-    if (cmd->parameter_count != 0) {
-        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
-    }
-
-    return COMMAND_VALIDATION_SUCCESS;
-}
-
-void execute_clear(struct command const *cmd)
-{
-    (void)cmd; /* unused due to no parameters */
-
-    printf("\e[1;1H\e[2J"); 
-}
-
-enum validation_result validate_hardware_faults(struct command const *cmd)
-{
-    if (strcmp(cmd->command, "faults") != 0) {
-        return COMMAND_VALIDATION_NOT_MATCHED;
-    }
-
-    if (cmd->parameter_count != 0) {
-        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
-    }
-
-    return COMMAND_VALIDATION_SUCCESS;
-}
-
-void execute_hardware_faults(struct command const *cmd)
-{
-    (void)cmd; /* unused due to no parameters */
-
-    print_hardware_state();
 }
 
 char *get_shell_buffer(void)
