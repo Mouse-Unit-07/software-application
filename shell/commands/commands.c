@@ -20,7 +20,8 @@
 /*----------------------------------------------------------------------------*/
 /*                         Private Function Prototypes                        */
 /*----------------------------------------------------------------------------*/
-/* none */
+static enum validation_result validate_parameterless_command(struct command const *cmd,
+                                                             const char *name);
 
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
@@ -72,17 +73,11 @@ struct command_table_entry get_command_table_entry_at_index(uint32_t index)
     return command_table[index];
 }
 
+/*----------------------------------------------------------------------------*/
+/* help */
 enum validation_result validate_help(struct command const *cmd)
 {
-    if (strcmp(cmd->command, "help") != 0) {
-        return COMMAND_VALIDATION_NOT_MATCHED;
-    }
-
-    if (cmd->parameter_count != 0) {
-        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
-    }
-
-    return COMMAND_VALIDATION_SUCCESS;
+    return validate_parameterless_command(cmd, "help");
 }
 
 void execute_help(struct command const *cmd)
@@ -100,17 +95,11 @@ void execute_help(struct command const *cmd)
     printf("\r\n");
 }
 
+/*----------------------------------------------------------------------------*/
+/* clear */
 enum validation_result validate_clear(struct command const *cmd)
 {
-    if (strcmp(cmd->command, "clear") != 0) {
-        return COMMAND_VALIDATION_NOT_MATCHED;
-    }
-
-    if (cmd->parameter_count != 0) {
-        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
-    }
-
-    return COMMAND_VALIDATION_SUCCESS;
+    return validate_parameterless_command(cmd, "clear");
 }
 
 void execute_clear(struct command const *cmd)
@@ -120,17 +109,11 @@ void execute_clear(struct command const *cmd)
     printf("\e[1;1H\e[2J"); 
 }
 
+/*----------------------------------------------------------------------------*/
+/* faults */
 enum validation_result validate_hardware_faults(struct command const *cmd)
 {
-    if (strcmp(cmd->command, "faults") != 0) {
-        return COMMAND_VALIDATION_NOT_MATCHED;
-    }
-
-    if (cmd->parameter_count != 0) {
-        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
-    }
-
-    return COMMAND_VALIDATION_SUCCESS;
+    return validate_parameterless_command(cmd, "faults");
 }
 
 void execute_hardware_faults(struct command const *cmd)
@@ -140,17 +123,11 @@ void execute_hardware_faults(struct command const *cmd)
     print_hardware_state();
 }
 
+/*----------------------------------------------------------------------------*/
+/* time */
 enum validation_result validate_get_time(struct command const *cmd)
 {
-    if (strcmp(cmd->command, "time") != 0) {
-        return COMMAND_VALIDATION_NOT_MATCHED;
-    }
-
-    if (cmd->parameter_count != 0) {
-        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
-    }
-
-    return COMMAND_VALIDATION_SUCCESS;
+    return validate_parameterless_command(cmd, "time");
 }
 
 void execute_get_time(struct command const *cmd)
@@ -165,4 +142,16 @@ void execute_get_time(struct command const *cmd)
 /*----------------------------------------------------------------------------*/
 /*                        Private Function Definitions                        */
 /*----------------------------------------------------------------------------*/
-/* none */
+static enum validation_result validate_parameterless_command(struct command const *cmd,
+                                                             const char *name)
+{
+    if (strcmp(cmd->command, name) != 0) {
+        return COMMAND_VALIDATION_NOT_MATCHED;
+    }
+
+    if (cmd->parameter_count != 0) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
