@@ -54,4 +54,7 @@ void execute_clear(struct command const *cmd);
 enum validation_result validate_hardware_faults(struct command const *cmd);
 void execute_hardware_faults(struct command const *cmd);
 
+enum validation_result validate_get_time(struct command const *cmd);
+void execute_get_time(struct command const *cmd);
+
 #endif /* COMMANDS_H_ */

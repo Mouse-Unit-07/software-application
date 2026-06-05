@@ -36,6 +36,12 @@ void print_hardware_state(void)
     mock().actualCall("print_hardware_state");
 }
 
+uint32_t get_current_global_time_sec(void)
+{
+    return mock().actualCall("get_current_global_time_sec")
+        .returnUnsignedIntValue();
+}
+
 }
 
 /*============================================================================*/
@@ -60,7 +66,7 @@ TEST_GROUP(CommandsTests)
 /*============================================================================*/
 TEST(CommandsTests, GetCommandTableSizeReturnsExpectedValue)
 {
-    LONGS_EQUAL(3u, get_command_table_size());
+    LONGS_EQUAL(4u, get_command_table_size());
 }
 
 TEST(CommandsTests, GetCommandTableEntryAtIndexReturnsHelpCommand)
@@ -174,4 +180,41 @@ TEST(CommandsTests, ExecuteHardwareFaultsCallsFunctions)
     mock().expectOneCall("print_hardware_state");
 
     execute_hardware_faults(&cmd);
+}
+
+TEST(CommandsTests, ValidateTimeReturnsSuccess)
+{
+    struct command cmd{{0}};
+
+    strcpy(cmd.command, "time");
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_time(&cmd));
+}
+
+TEST(CommandsTests, ValidateTimeReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+
+    strcpy(cmd.command, "time");
+    cmd.parameter_count = 1;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_time(&cmd));
+}
+
+TEST(CommandsTests, ValidateTimeReturnsNotMatched)
+{
+    struct command cmd{{0}};
+
+    strcpy(cmd.command, "invalid");
+
+    LONGS_EQUAL(COMMAND_VALIDATION_NOT_MATCHED, validate_get_time(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTimeCallsFunctions)
+{
+    struct command cmd{{0}};
+    mock().expectOneCall("get_current_global_time_sec")
+        .andReturnValue(0u);
+
+    execute_get_time(&cmd);
 }

@@ -8,11 +8,13 @@
 /*----------------------------------------------------------------------------*/
 /*                               Include Files                                */
 /*----------------------------------------------------------------------------*/
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include "fault_detector.h"
+#include "global_time.h"
 #include "commands.h"
 
 /*----------------------------------------------------------------------------*/
@@ -43,6 +45,12 @@ static const struct command_table_entry command_table[] =
         .validate = validate_hardware_faults,
         .execute = execute_hardware_faults
     },
+    {
+        .name = "time",
+        .help = "Display current time (time since initialization)",
+        .validate = validate_hardware_faults,
+        .execute = execute_hardware_faults
+    }
 };
 
 /*----------------------------------------------------------------------------*/
@@ -55,7 +63,7 @@ uint32_t get_command_table_size(void)
 
 struct command_table_entry get_command_table_entry_at_index(uint32_t index)
 {
-    struct command_table_entry entry = {{0}};
+    struct command_table_entry entry = {0};
 
     if (index >= get_command_table_size()) {
         return entry;
@@ -130,6 +138,28 @@ void execute_hardware_faults(struct command const *cmd)
     (void)cmd; /* unused due to no parameters */
 
     print_hardware_state();
+}
+
+enum validation_result validate_get_time(struct command const *cmd)
+{
+    if (strcmp(cmd->command, "time") != 0) {
+        return COMMAND_VALIDATION_NOT_MATCHED;
+    }
+
+    if (cmd->parameter_count != 0) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_get_time(struct command const *cmd)
+{
+    (void)cmd; /* unused due to no parameters */
+
+    uint32_t time_sec = get_current_global_time_sec();
+    printf("time passed since init: %" PRIu32 " min, %" PRIu32 " sec\r\n", 
+           time_sec / 60, time_sec % 60);
 }
 
 /*----------------------------------------------------------------------------*/
