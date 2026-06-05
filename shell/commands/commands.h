@@ -17,9 +17,9 @@ enum
 };
 
 struct command {
-    char command[MAX_COMMAND_SIZE];
-    uint32_t parameter_count;
-    char const *parameters[MAX_PARAMETER_COUNT];
+    uint32_t token_count;
+    char const *tokens[MAX_PARAMETER_COUNT + 1];
+
     uint32_t bad_parameter_index;
 };
 
@@ -43,11 +43,17 @@ struct command_node {
     uint32_t child_count;
 };
 
+struct command_match
+{
+    struct command_node const *node;
+    uint32_t depth;
+};
+
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Prototypes                         */
 /*----------------------------------------------------------------------------*/
 struct command_node const *get_command_tree_root(void);
-struct command_node const *find_command_node(struct command const *cmd);
+struct command_match find_command_node(struct command const *cmd);
 uint32_t get_command_tree_root_count(void);
 
 enum validation_result validate_help(struct command const *cmd);
@@ -61,5 +67,10 @@ void execute_hardware_faults(struct command const *cmd);
 
 enum validation_result validate_get_time(struct command const *cmd);
 void execute_get_time(struct command const *cmd);
+
+enum validation_result validate_test(struct command const *cmd);
+
+enum validation_result validate_test_processor(struct command const *cmd);
+void execute_test_processor(struct command const *cmd);
 
 #endif /* COMMANDS_H_ */

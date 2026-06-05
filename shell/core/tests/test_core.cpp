@@ -203,76 +203,76 @@ TEST(ShellTests, EnterClearsCliBuffer)
 
 TEST(ShellTests, ParseEmptyBufferReturnsEmptyCommand)
 {
-    struct command cmd = parse_cli_buffer_contents();
+    struct command cmd{parse_cli_buffer_contents()};
 
-    STRCMP_EQUAL("", cmd.command);
-    LONGS_EQUAL(0u, cmd.parameter_count);
+    STRCMP_EQUAL(nullptr, cmd.tokens[0]);
+    LONGS_EQUAL(0u, cmd.token_count);
 }
 
 TEST(ShellTests, ParseCommandOnly)
 {
     strcpy(get_shell_buffer(), "help");
 
-    struct command cmd = parse_cli_buffer_contents();
+    struct command cmd{parse_cli_buffer_contents()};
 
-    STRCMP_EQUAL("help", cmd.command);
-    LONGS_EQUAL(0u, cmd.parameter_count);
+    STRCMP_EQUAL("help", cmd.tokens[0]);
+    LONGS_EQUAL(1u, cmd.token_count);
 }
 
 TEST(ShellTests, ParseCommandWithOneParameter)
 {
     strcpy(get_shell_buffer(), "motor 100");
 
-    struct command cmd = parse_cli_buffer_contents();
+    struct command cmd{parse_cli_buffer_contents()};
 
-    STRCMP_EQUAL("motor", cmd.command);
-    LONGS_EQUAL(1u, cmd.parameter_count);
-    STRCMP_EQUAL("100", cmd.parameters[0]);
+    STRCMP_EQUAL("motor", cmd.tokens[0]);
+    LONGS_EQUAL(2u, cmd.token_count);
+    STRCMP_EQUAL("100", cmd.tokens[1]);
 }
 
 TEST(ShellTests, ParseCommandWithMultipleParameters)
 {
     strcpy(get_shell_buffer(), "motor 100 200 300");
 
-    struct command cmd = parse_cli_buffer_contents();
+    struct command cmd{parse_cli_buffer_contents()};
 
-    STRCMP_EQUAL("motor", cmd.command);
-    LONGS_EQUAL(3u, cmd.parameter_count);
-    STRCMP_EQUAL("100", cmd.parameters[0]);
-    STRCMP_EQUAL("200", cmd.parameters[1]);
-    STRCMP_EQUAL("300", cmd.parameters[2]);
+    STRCMP_EQUAL("motor", cmd.tokens[0]);
+    LONGS_EQUAL(4u, cmd.token_count);
+    STRCMP_EQUAL("100", cmd.tokens[1]);
+    STRCMP_EQUAL("200", cmd.tokens[2]);
+    STRCMP_EQUAL("300", cmd.tokens[3]);
 }
 
 TEST(ShellTests, ParseMultipleSpaces)
 {
     strcpy(get_shell_buffer(), "motor    100     200");
 
-    struct command cmd = parse_cli_buffer_contents();
+    struct command cmd{parse_cli_buffer_contents()};
 
-    STRCMP_EQUAL("motor", cmd.command);
-    LONGS_EQUAL(2u, cmd.parameter_count);
-    STRCMP_EQUAL("100", cmd.parameters[0]);
-    STRCMP_EQUAL("200", cmd.parameters[1]);
+    STRCMP_EQUAL("motor", cmd.tokens[0]);
+    LONGS_EQUAL(3u, cmd.token_count);
+    STRCMP_EQUAL("100", cmd.tokens[1]);
+    STRCMP_EQUAL("200", cmd.tokens[2]);
 }
 
 TEST(ShellTests, ParseTabs)
 {
     strcpy(get_shell_buffer(), "motor\t100\t200");
 
-    struct command cmd = parse_cli_buffer_contents();
+    struct command cmd{parse_cli_buffer_contents()};
 
-    LONGS_EQUAL(2u, cmd.parameter_count);
-    STRCMP_EQUAL("100", cmd.parameters[0]);
-    STRCMP_EQUAL("200", cmd.parameters[1]);
+    LONGS_EQUAL(3u, cmd.token_count);
+    STRCMP_EQUAL("100", cmd.tokens[1]);
+    STRCMP_EQUAL("200", cmd.tokens[2]);
 }
 
 TEST(ShellTests, ParseStopsAtMaxParameterCount)
 {
     strcpy(get_shell_buffer(), "cmd 1 2 3 4 5 6 7 8 9");
 
-    struct command cmd = parse_cli_buffer_contents();
+    struct command cmd{parse_cli_buffer_contents()};
 
-    LONGS_EQUAL(MAX_PARAMETER_COUNT, cmd.parameter_count);
+    LONGS_EQUAL(MAX_PARAMETER_COUNT + 1u, cmd.token_count);
 }
 
 TEST(ShellTests, PollShellIgnoresEmptyLine)

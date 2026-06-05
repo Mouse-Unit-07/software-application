@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include "device_self_tests.h"
 #include "fault_detector.h"
 #include "global_time.h"
 #include "commands.h"
@@ -20,11 +21,29 @@
 /*----------------------------------------------------------------------------*/
 /*                         Private Function Prototypes                        */
 /*----------------------------------------------------------------------------*/
-static enum validation_result validate_parameterless_command(struct command const *cmd);
+static enum validation_result validate_parameterless_command(struct command const *cmd,
+                                                             uint32_t token_count);
 
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
 /*----------------------------------------------------------------------------*/
+enum
+{
+    ROOT_COMMAND_TOKEN_COUNT = 1,
+    TEST_COMMAND_TOKEN_COUNT = 2,
+    TEST_SUBCOMMAND_TOKEN_COUNT = 3
+};
+
+static const struct command_node test_commands[] =
+{
+    {
+        .name = "processor",
+        .help = "Run processor self-test",
+        .validate = validate_test_processor,
+        .execute = execute_test_processor
+    }
+};
+
 static const struct command_node root_commands[] =
 {
     {
@@ -50,7 +69,15 @@ static const struct command_node root_commands[] =
         .help = "Display current time",
         .validate = validate_get_time,
         .execute = execute_get_time
-    }
+    },
+    {
+        .name = "test",
+        .help = "Run device self-tests",
+        .validate = validate_test,
+        .execute = NULL,
+        .children = test_commands,
+        .child_count = sizeof(test_commands) / sizeof(test_commands[0])
+    },
 };
 
 /*----------------------------------------------------------------------------*/
@@ -61,29 +88,45 @@ struct command_node const *get_command_tree_root(void)
     return root_commands;
 }
 
-struct command_node const *find_command_node(struct command const *cmd)
-{
-    struct command_node const *root = get_command_tree_root();
-
-    for (uint32_t i = 0u; i < get_command_tree_root_count(); i++) {
-        if (strcmp(root[i].name, cmd->command) == 0) {
-            return &root[i];
-        }
-    }
-
-    return NULL;
-}
-
 uint32_t get_command_tree_root_count(void)
 {
     return sizeof(root_commands) / sizeof(root_commands[0]);
+}   
+
+struct command_match find_command_node(struct command const *cmd)
+{
+    struct command_match match = {0};
+    struct command_node const *current = get_command_tree_root();
+    uint32_t count = get_command_tree_root_count();
+
+    for (uint32_t token = 0u; token < cmd->token_count; token++) {
+        struct command_node const *found = NULL;
+
+        for (uint32_t i = 0u; i < count; i++) {
+            if (strcmp(current[i].name, cmd->tokens[token]) == 0) {
+                found = &current[i];
+                current = found->children;
+                count = found->child_count;
+                break;
+            }
+        }
+
+        if (found == NULL) {
+            return match;
+        }
+
+        match.node = found;
+        match.depth = token + 1u;
+    }
+
+    return match;
 }
 
 /*----------------------------------------------------------------------------*/
 /* help */
 enum validation_result validate_help(struct command const *cmd)
 {
-    return validate_parameterless_command(cmd);
+    return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
 }
 
 void execute_help(struct command const *cmd)
@@ -101,7 +144,7 @@ void execute_help(struct command const *cmd)
 /* clear */
 enum validation_result validate_clear(struct command const *cmd)
 {
-    return validate_parameterless_command(cmd);
+    return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
 }
 
 void execute_clear(struct command const *cmd)
@@ -115,7 +158,7 @@ void execute_clear(struct command const *cmd)
 /* faults */
 enum validation_result validate_hardware_faults(struct command const *cmd)
 {
-    return validate_parameterless_command(cmd);
+    return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
 }
 
 void execute_hardware_faults(struct command const *cmd)
@@ -129,7 +172,7 @@ void execute_hardware_faults(struct command const *cmd)
 /* time */
 enum validation_result validate_get_time(struct command const *cmd)
 {
-    return validate_parameterless_command(cmd);
+    return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
 }
 
 void execute_get_time(struct command const *cmd)
@@ -142,11 +185,43 @@ void execute_get_time(struct command const *cmd)
 }
 
 /*----------------------------------------------------------------------------*/
+/* test */
+enum validation_result validate_test(struct command const *cmd)
+{
+    if (cmd->token_count == ROOT_COMMAND_TOKEN_COUNT) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+/*----------------------------------------------------------------------------*/
+/* test processor */
+enum validation_result validate_test_processor(struct command const *cmd)
+{
+    if (cmd->token_count != TEST_COMMAND_TOKEN_COUNT) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_test_processor(struct command const *cmd)
+{
+    (void)cmd; /* unused due to no parameters */
+
+    printf("running processor test...\r\n");
+    processor_test();
+    printf("ending processor test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
 /*                        Private Function Definitions                        */
 /*----------------------------------------------------------------------------*/
-static enum validation_result validate_parameterless_command(struct command const *cmd)
+static enum validation_result validate_parameterless_command(struct command const *cmd,
+                                                             uint32_t token_count)
 {
-    if (cmd->parameter_count != 0) {
+    if (cmd->token_count > token_count) {
         return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
     }
 

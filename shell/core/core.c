@@ -20,6 +20,7 @@
 /*                         Private Function Prototypes                        */
 /*----------------------------------------------------------------------------*/
 static void reset_shell_state(void);
+static void print_command_tokens(struct command const *cmd, uint32_t depth);
 
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
@@ -51,7 +52,7 @@ void poll_shell(void)
     load_cli_buffer_contents();
     if (ready_for_parsing) {
         struct command cmd = parse_cli_buffer_contents();
-        if (cmd.command[0] != '\0') {
+        if (cmd.token_count > 0u) {
             process_command(&cmd);
         }
         reset_shell_state();
@@ -66,6 +67,17 @@ static void reset_shell_state(void)
     memset(shell_buffer, 0, sizeof(shell_buffer));
     shell_buffer_size = 0U;
     ready_for_parsing = false;
+}
+
+static void print_command_tokens(struct command const *cmd, uint32_t depth)
+{
+    for (uint32_t i = 0u; i < depth; i++) {
+        if (i > 0u) {
+            printf(" ");
+        }
+
+        printf("%s", cmd->tokens[i]);
+    }
 }
 
 void load_cli_buffer_contents(void)
@@ -105,24 +117,16 @@ void load_cli_buffer_contents(void)
 
 struct command parse_cli_buffer_contents(void)
 {
-    struct command cmd = {{0}};
+    struct command cmd = {0};
+
     char *save_ptr = NULL;
     char *token = strtok_r(shell_buffer, " \t", &save_ptr);
 
-    if (token == NULL) {
-        return cmd;
-    }
+    while ((token != NULL) && (cmd.token_count < (MAX_PARAMETER_COUNT + 1u))) {
+        cmd.tokens[cmd.token_count] = token;
+        cmd.token_count++;
 
-    strncpy(cmd.command, token, MAX_COMMAND_SIZE - 1U);
-    cmd.command[MAX_COMMAND_SIZE - 1u] = '\0';
-
-    while (cmd.parameter_count < MAX_PARAMETER_COUNT) {
         token = strtok_r(NULL, " \t", &save_ptr);
-        if (token == NULL) {
-            break;
-        }
-        cmd.parameters[cmd.parameter_count] = token;
-        cmd.parameter_count++;
     }
 
     return cmd;
@@ -130,30 +134,38 @@ struct command parse_cli_buffer_contents(void)
 
 void process_command(struct command const *cmd)
 {
-    struct command_node const *node = find_command_node(cmd);
+    struct command_match match = find_command_node(cmd);
 
-    if (node == NULL) {
+    if (match.node == NULL) {
         printf("Unrecognized command\r\n");
         return;
     }
 
-    enum validation_result result = node->validate(cmd);
+    if ((match.node->validate == NULL)
+        || (match.node->execute == NULL && match.node->child_count > 0u)) {
+        printf("Missing parameters\r\n");
+        return;
+    }
+
+    enum validation_result result = match.node->validate(cmd);
 
     switch (result) {
         case COMMAND_VALIDATION_SUCCESS:
-            node->execute(cmd);
+            match.node->execute(cmd);
             return;
 
         case COMMAND_VALIDATION_BAD_PARAMETER:
-            printf("Invalid parameter: %s\r\n", cmd->parameters[cmd->bad_parameter_index]);
+            printf("Invalid parameter: %s\r\n", cmd->tokens[cmd->bad_parameter_index]);
             return;
 
         case COMMAND_VALIDATION_TOO_MANY_PARAMETERS:
-            printf("%s: Too many parameters\r\n", cmd->command);
+            print_command_tokens(cmd, match.depth);
+            printf(": Too many parameters\r\n");
             return;
 
         case COMMAND_VALIDATION_TOO_FEW_PARAMETERS:
-            printf("%s: Missing parameters\r\n", cmd->command);
+            print_command_tokens(cmd, match.depth);
+            printf(": Missing parameters\r\n");
             return;
 
         default:

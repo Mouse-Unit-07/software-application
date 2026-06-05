@@ -66,7 +66,7 @@ TEST_GROUP(CommandsTests)
 /*============================================================================*/
 TEST(CommandsTests, GetCommandTreeRootCountReturnsExpectedValue)
 {
-    LONGS_EQUAL(4u, get_command_tree_root_count());
+    LONGS_EQUAL(5u, get_command_tree_root_count());
 }
 
 TEST(CommandsTests, GetCommandTreeRootContainsHelpNode)
@@ -84,17 +84,21 @@ TEST(CommandsTests, GetCommandTreeRootContainsHelpNode)
 TEST(CommandsTests, FindCommandNodeReturnsNullForUnknownCommand)
 {
     struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "invalid";
 
-    strcpy(cmd.command, "invalid");
+    struct command_match match{find_command_node(&cmd)}; 
 
-    POINTERS_EQUAL(nullptr, find_command_node(&cmd));
+    POINTERS_EQUAL(nullptr, match.node);
 }
 
 TEST(CommandsTests, FindCommandNodeReturnsNullForEmptyCommand)
 {
     struct command cmd{{0}};
 
-    POINTERS_EQUAL(nullptr, find_command_node(&cmd));
+    struct command_match match{find_command_node(&cmd)}; 
+
+    POINTERS_EQUAL(nullptr, match.node);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -102,10 +106,10 @@ TEST(CommandsTests, FindCommandNodeReturnsNullForEmptyCommand)
 TEST(CommandsTests, FindHelpCommandReturnsNode)
 {
     struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "help";
 
-    strcpy(cmd.command, "help");
-
-    struct command_node const *node = find_command_node(&cmd);
+    struct command_node const *node{find_command_node(&cmd).node};
 
     CHECK(node != nullptr);
 
@@ -113,6 +117,17 @@ TEST(CommandsTests, FindHelpCommandReturnsNode)
 
     POINTERS_EQUAL((void *)validate_help, (void *)node->validate);
     POINTERS_EQUAL((void *)execute_help, (void *)node->execute);
+}
+
+TEST(CommandsTests, HelpCommandMatchDepthIsOne)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "help";
+
+    struct command_match match{find_command_node(&cmd)};
+
+    LONGS_EQUAL(1u, match.depth);
 }
 
 TEST(CommandsTests, ValidateHelpReturnsSuccess)
@@ -125,7 +140,7 @@ TEST(CommandsTests, ValidateHelpReturnsSuccess)
 TEST(CommandsTests, ValidateHelpReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.parameter_count = 1;
+    cmd.token_count = 2;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_help(&cmd));
 }
@@ -135,10 +150,10 @@ TEST(CommandsTests, ValidateHelpReturnsTooManyParameters)
 TEST(CommandsTests, FindClearCommandReturnsNode)
 {
     struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "clear";
 
-    strcpy(cmd.command, "clear");
-
-    struct command_node const *node = find_command_node(&cmd);
+    struct command_node const *node{find_command_node(&cmd).node};
 
     CHECK(node != nullptr);
 
@@ -158,7 +173,7 @@ TEST(CommandsTests, ValidateClearReturnsSuccess)
 TEST(CommandsTests, ValidateClearReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.parameter_count = 1;
+    cmd.token_count = 2;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_clear(&cmd));
 }
@@ -168,10 +183,10 @@ TEST(CommandsTests, ValidateClearReturnsTooManyParameters)
 TEST(CommandsTests, FindFaultsCommandReturnsNode)
 {
     struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "faults";
 
-    strcpy(cmd.command, "faults");
-
-    struct command_node const *node = find_command_node(&cmd);
+    struct command_node const *node{find_command_node(&cmd).node};
 
     CHECK(node != nullptr);
 
@@ -191,7 +206,7 @@ TEST(CommandsTests, ValidateHardwareFaultsReturnsSuccess)
 TEST(CommandsTests, ValidateHardwareFaultsReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.parameter_count = 1;
+    cmd.token_count = 2;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_hardware_faults(&cmd));
 }
@@ -210,10 +225,10 @@ TEST(CommandsTests, ExecuteHardwareFaultsCallsFunctions)
 TEST(CommandsTests, FindTimeCommandReturnsNode)
 {
     struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "time";
 
-    strcpy(cmd.command, "time");
-
-    struct command_node const *node = find_command_node(&cmd);
+    struct command_node const *node{find_command_node(&cmd).node};
 
     CHECK(node != nullptr);
 
@@ -233,7 +248,7 @@ TEST(CommandsTests, ValidateTimeReturnsSuccess)
 TEST(CommandsTests, ValidateTimeReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.parameter_count = 1;
+    cmd.token_count = 2;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_time(&cmd));
 }
@@ -245,4 +260,82 @@ TEST(CommandsTests, ExecuteTimeCallsFunctions)
         .andReturnValue(0u);
 
     execute_get_time(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test */
+TEST(CommandsTests, RootContainsTestNode)
+{
+    struct command_node const *root = get_command_tree_root();
+
+    CHECK_TRUE(strcmp(root[4].name, "test") == 0);
+}
+
+TEST(CommandsTests, FindCommandNodeReturnsTestNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "test";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("test", node->name);
+}
+
+TEST(CommandsTests, ValidateTestProcessorReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test(&cmd));
+}
+
+/*----------------------------------------------------------------------------*/
+/* test processor */
+TEST(CommandsTests, FindCommandNodeReturnsProcessorNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "processor";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("processor", node->name);
+}
+
+TEST(CommandsTests, TestProcessorCommandMatchDepthIsTwo)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "processor";
+
+    struct command_match match{find_command_node(&cmd)};
+
+    LONGS_EQUAL(2u, match.depth);
+}
+
+TEST(CommandsTests, ValidateTestProcessorReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "processor";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_processor(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestProcessorReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "processor";
+    cmd.tokens[2] = "extra";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_test_processor(&cmd));
 }
