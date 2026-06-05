@@ -43,6 +43,30 @@ static const struct command_node test_commands[] =
         .help = "Run processor self-test",
         .validate = validate_test_processor,
         .execute = execute_test_processor
+    },
+    {
+        .name = "battery",
+        .help = "Run battery comparator self-test",
+        .validate = validate_test_battery,
+        .execute = execute_test_battery
+    },
+    {
+        .name = "enabler",
+        .help = "Run power enabler self-test",
+        .validate = validate_test_enabler,
+        .execute = execute_test_enabler
+    },
+    {
+        .name = "led",
+        .help = "Run LED self-test",
+        .validate = validate_test_led,
+        .execute = execute_test_led
+    },
+    {
+        .name = "pushbutton",
+        .help = "Run pushbutton self-test",
+        .validate = validate_test_pushbutton,
+        .execute = execute_test_pushbutton
     }
 };
 
@@ -197,11 +221,7 @@ enum validation_result validate_test(struct command const *cmd)
 /* test processor */
 enum validation_result validate_test_processor(struct command const *cmd)
 {
-    if (cmd->token_count != TEST_COMMAND_TOKEN_COUNT) {
-        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
-    }
-
-    return COMMAND_VALIDATION_SUCCESS;
+    return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
 }
 
 void execute_test_processor(struct command const *cmd)
@@ -211,6 +231,70 @@ void execute_test_processor(struct command const *cmd)
     printf("running processor test...\r\n");
     processor_test();
     printf("ending processor test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test battery */
+enum validation_result validate_test_battery(struct command const *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_battery(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("running battery test...\r\n");
+    battery_comparator_test();
+    printf("ending battery test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test enabler */
+enum validation_result validate_test_enabler(struct command const *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_enabler(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("running enabler test...\r\n");
+    power_enabler_test();
+    printf("ending enabler test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test led */
+enum validation_result validate_test_led(struct command const *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_led(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("running led test...\r\n");
+    led_test();
+    printf("ending led test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test led */
+enum validation_result validate_test_pushbutton(struct command const *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_pushbutton(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("running pushbutton test...\r\n");
+    pushbutton_test();
+    printf("ending pushbutton test...\r\n");
 }
 
 /*----------------------------------------------------------------------------*/

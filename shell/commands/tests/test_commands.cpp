@@ -42,6 +42,31 @@ uint32_t get_current_global_time_sec(void)
         .returnUnsignedIntValue();
 }
 
+void processor_test(void)
+{
+    mock().actualCall("processor_test");
+}
+
+void battery_comparator_test(void)
+{
+    mock().actualCall("battery_comparator_test");
+}
+
+void power_enabler_test(void)
+{
+    mock().actualCall("power_enabler_test");
+}
+
+void led_test(void)
+{
+    mock().actualCall("led_test");
+}
+
+void pushbutton_test(void)
+{
+    mock().actualCall("pushbutton_test");
+}
+
 }
 
 /*============================================================================*/
@@ -67,6 +92,17 @@ TEST_GROUP(CommandsTests)
 TEST(CommandsTests, GetCommandTreeRootCountReturnsExpectedValue)
 {
     LONGS_EQUAL(5u, get_command_tree_root_count());
+}
+
+TEST(CommandsTests, TestCommandContainsFiveSubcommands)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "test";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    LONGS_EQUAL(5u, node->child_count);
 }
 
 TEST(CommandsTests, GetCommandTreeRootContainsHelpNode)
@@ -338,4 +374,148 @@ TEST(CommandsTests, ValidateTestProcessorReturnsTooManyParameters)
     cmd.tokens[2] = "extra";
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_test_processor(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestProcessorCallsFunctions)
+{
+    struct command cmd{{0}};
+    mock().expectOneCall("processor_test");
+
+    execute_test_processor(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test battery */
+TEST(CommandsTests, FindCommandNodeReturnsBatteryNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "battery";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("battery", node->name);
+}
+
+TEST(CommandsTests, ValidateTestBatteryReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "battery";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_battery(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestBatteryCallsFunctions)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("battery_comparator_test");
+
+    execute_test_battery(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test enabler */
+TEST(CommandsTests, FindCommandNodeReturnsEnablerNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "enabler";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("enabler", node->name);
+}
+
+TEST(CommandsTests, ValidateTestEnablerReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "enabler";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_enabler(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestEnablerCallsFunctions)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("power_enabler_test");
+
+    execute_test_enabler(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test led */
+TEST(CommandsTests, FindCommandNodeReturnsLedNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "led";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("led", node->name);
+}
+
+TEST(CommandsTests, ValidateTestLedReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "led";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_led(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestLedCallsFunctions)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("led_test");
+
+    execute_test_led(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test pushbutton */
+TEST(CommandsTests, FindCommandNodeReturnsPushbuttonNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "pushbutton";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("pushbutton", node->name);
+}
+
+TEST(CommandsTests, ValidateTestPushbuttonReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "pushbutton";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_pushbutton(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestPushbuttonCallsFunctions)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("pushbutton_test");
+
+    execute_test_pushbutton(&cmd);
 }

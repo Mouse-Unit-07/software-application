@@ -72,4 +72,16 @@ enum validation_result validate_test(struct command const *cmd);
 enum validation_result validate_test_processor(struct command const *cmd);
 void execute_test_processor(struct command const *cmd);
 
+enum validation_result validate_test_battery(struct command const *cmd);
+void execute_test_battery(struct command const *cmd);
+
+enum validation_result validate_test_enabler(struct command const *cmd);
+void execute_test_enabler(struct command const *cmd);
+
+enum validation_result validate_test_led(struct command const *cmd);
+void execute_test_led(struct command const *cmd);
+
+enum validation_result validate_test_pushbutton(struct command const *cmd);
+void execute_test_pushbutton(struct command const *cmd);
+
 #endif /* COMMANDS_H_ */
