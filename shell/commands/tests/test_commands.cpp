@@ -64,37 +64,60 @@ TEST_GROUP(CommandsTests)
 /*============================================================================*/
 /*                                    Tests                                   */
 /*============================================================================*/
-TEST(CommandsTests, GetCommandTableSizeReturnsExpectedValue)
+TEST(CommandsTests, GetCommandTreeRootCountReturnsExpectedValue)
 {
-    LONGS_EQUAL(4u, get_command_table_size());
+    LONGS_EQUAL(4u, get_command_tree_root_count());
 }
 
-TEST(CommandsTests, GetCommandTableEntryAtIndexReturnsHelpCommand)
+TEST(CommandsTests, GetCommandTreeRootContainsHelpNode)
 {
-    struct command_table_entry entry{get_command_table_entry_at_index(0u)};
+    struct command_node const *root = get_command_tree_root();
 
-    STRCMP_EQUAL("help", entry.name);
-    STRCMP_EQUAL("Display available commands", entry.help);
+    STRCMP_EQUAL("help", root[0].name);
 
-    CHECK(entry.validate != nullptr);
-    CHECK(entry.execute != nullptr);
+    STRCMP_EQUAL("Display available commands", root[0].help);
+
+    CHECK(root[0].validate != nullptr);
+    CHECK(root[0].execute != nullptr);
 }
 
-TEST(CommandsTests, GetCommandTableEntryAtIndexReturnsEmptyEntryWhenOutOfRange)
+TEST(CommandsTests, FindCommandNodeReturnsNullForUnknownCommand)
 {
-    struct command_table_entry entry{get_command_table_entry_at_index(999u)};
+    struct command cmd{{0}};
 
-    POINTERS_EQUAL(nullptr, entry.name);
-    POINTERS_EQUAL(nullptr, entry.help);
-    POINTERS_EQUAL(nullptr, entry.validate);
-    POINTERS_EQUAL(nullptr, entry.execute);
+    strcpy(cmd.command, "invalid");
+
+    POINTERS_EQUAL(nullptr, find_command_node(&cmd));
+}
+
+TEST(CommandsTests, FindCommandNodeReturnsNullForEmptyCommand)
+{
+    struct command cmd{{0}};
+
+    POINTERS_EQUAL(nullptr, find_command_node(&cmd));
+}
+
+/*----------------------------------------------------------------------------*/
+/* help */
+TEST(CommandsTests, FindHelpCommandReturnsNode)
+{
+    struct command cmd{{0}};
+
+    strcpy(cmd.command, "help");
+
+    struct command_node const *node = find_command_node(&cmd);
+
+    CHECK(node != nullptr);
+
+    STRCMP_EQUAL("help", node->name);
+
+    POINTERS_EQUAL((void *)validate_help, (void *)node->validate);
+    POINTERS_EQUAL((void *)execute_help, (void *)node->execute);
 }
 
 TEST(CommandsTests, ValidateHelpReturnsSuccess)
 {
     struct command cmd{{0}};
-
-    strcpy(cmd.command, "help");
 
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_help(&cmd));
 }
@@ -102,27 +125,32 @@ TEST(CommandsTests, ValidateHelpReturnsSuccess)
 TEST(CommandsTests, ValidateHelpReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-
-    strcpy(cmd.command, "help");
     cmd.parameter_count = 1;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_help(&cmd));
 }
 
-TEST(CommandsTests, ValidateHelpReturnsNotMatched)
+/*----------------------------------------------------------------------------*/
+/* clear */
+TEST(CommandsTests, FindClearCommandReturnsNode)
 {
     struct command cmd{{0}};
 
-    strcpy(cmd.command, "motor");
+    strcpy(cmd.command, "clear");
 
-    LONGS_EQUAL(COMMAND_VALIDATION_NOT_MATCHED, validate_help(&cmd));
+    struct command_node const *node = find_command_node(&cmd);
+
+    CHECK(node != nullptr);
+
+    STRCMP_EQUAL("clear", node->name);
+
+    POINTERS_EQUAL((void *)validate_clear, (void *)node->validate);
+    POINTERS_EQUAL((void *)execute_clear, (void *)node->execute);
 }
 
 TEST(CommandsTests, ValidateClearReturnsSuccess)
 {
     struct command cmd{{0}};
-
-    strcpy(cmd.command, "clear");
 
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_clear(&cmd));
 }
@@ -130,27 +158,32 @@ TEST(CommandsTests, ValidateClearReturnsSuccess)
 TEST(CommandsTests, ValidateClearReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-
-    strcpy(cmd.command, "clear");
     cmd.parameter_count = 1;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_clear(&cmd));
 }
 
-TEST(CommandsTests, ValidateClearReturnsNotMatched)
+/*----------------------------------------------------------------------------*/
+/* faults */
+TEST(CommandsTests, FindFaultsCommandReturnsNode)
 {
     struct command cmd{{0}};
 
-    strcpy(cmd.command, "invalid");
+    strcpy(cmd.command, "faults");
 
-    LONGS_EQUAL(COMMAND_VALIDATION_NOT_MATCHED, validate_clear(&cmd));
+    struct command_node const *node = find_command_node(&cmd);
+
+    CHECK(node != nullptr);
+
+    STRCMP_EQUAL("faults", node->name);
+
+    POINTERS_EQUAL((void *)validate_hardware_faults, (void *)node->validate);
+    POINTERS_EQUAL((void *)execute_hardware_faults, (void *)node->execute);
 }
 
 TEST(CommandsTests, ValidateHardwareFaultsReturnsSuccess)
 {
     struct command cmd{{0}};
-
-    strcpy(cmd.command, "faults");
 
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_hardware_faults(&cmd));
 }
@@ -158,35 +191,41 @@ TEST(CommandsTests, ValidateHardwareFaultsReturnsSuccess)
 TEST(CommandsTests, ValidateHardwareFaultsReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-
-    strcpy(cmd.command, "faults");
     cmd.parameter_count = 1;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_hardware_faults(&cmd));
 }
 
-TEST(CommandsTests, ValidateHardwareFaultsReturnsNotMatched)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "invalid");
-
-    LONGS_EQUAL(COMMAND_VALIDATION_NOT_MATCHED, validate_hardware_faults(&cmd));
-}
-
 TEST(CommandsTests, ExecuteHardwareFaultsCallsFunctions)
 {
     struct command cmd{{0}};
+
     mock().expectOneCall("print_hardware_state");
 
     execute_hardware_faults(&cmd);
 }
 
-TEST(CommandsTests, ValidateTimeReturnsSuccess)
+/*----------------------------------------------------------------------------*/
+/* time */
+TEST(CommandsTests, FindTimeCommandReturnsNode)
 {
     struct command cmd{{0}};
 
     strcpy(cmd.command, "time");
+
+    struct command_node const *node = find_command_node(&cmd);
+
+    CHECK(node != nullptr);
+
+    STRCMP_EQUAL("time", node->name);
+
+    POINTERS_EQUAL((void *)validate_get_time, (void *)node->validate);
+    POINTERS_EQUAL((void *)execute_get_time, (void *)node->execute);
+}
+
+TEST(CommandsTests, ValidateTimeReturnsSuccess)
+{
+    struct command cmd{{0}};
 
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_time(&cmd));
 }
@@ -194,20 +233,9 @@ TEST(CommandsTests, ValidateTimeReturnsSuccess)
 TEST(CommandsTests, ValidateTimeReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-
-    strcpy(cmd.command, "time");
     cmd.parameter_count = 1;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_time(&cmd));
-}
-
-TEST(CommandsTests, ValidateTimeReturnsNotMatched)
-{
-    struct command cmd{{0}};
-
-    strcpy(cmd.command, "invalid");
-
-    LONGS_EQUAL(COMMAND_VALIDATION_NOT_MATCHED, validate_get_time(&cmd));
 }
 
 TEST(CommandsTests, ExecuteTimeCallsFunctions)

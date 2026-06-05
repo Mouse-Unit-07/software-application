@@ -20,13 +20,12 @@
 /*----------------------------------------------------------------------------*/
 /*                         Private Function Prototypes                        */
 /*----------------------------------------------------------------------------*/
-static enum validation_result validate_parameterless_command(struct command const *cmd,
-                                                             const char *name);
+static enum validation_result validate_parameterless_command(struct command const *cmd);
 
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
 /*----------------------------------------------------------------------------*/
-static const struct command_table_entry command_table[] =
+static const struct command_node root_commands[] =
 {
     {
         .name = "help",
@@ -36,7 +35,7 @@ static const struct command_table_entry command_table[] =
     },
     {
         .name = "clear",
-        .help = "Clear the console",
+        .help = "Clear console",
         .validate = validate_clear,
         .execute = execute_clear
     },
@@ -48,58 +47,61 @@ static const struct command_table_entry command_table[] =
     },
     {
         .name = "time",
-        .help = "Display current time (time since initialization)",
-        .validate = validate_hardware_faults,
-        .execute = execute_hardware_faults
+        .help = "Display current time",
+        .validate = validate_get_time,
+        .execute = execute_get_time
     }
 };
 
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Definitions                        */
 /*----------------------------------------------------------------------------*/
-uint32_t get_command_table_size(void)
+struct command_node const *get_command_tree_root(void)
 {
-    return sizeof(command_table) / sizeof(command_table[0]);
+    return root_commands;
 }
 
-struct command_table_entry get_command_table_entry_at_index(uint32_t index)
+struct command_node const *find_command_node(struct command const *cmd)
 {
-    struct command_table_entry entry = {0};
+    struct command_node const *root = get_command_tree_root();
 
-    if (index >= get_command_table_size()) {
-        return entry;
+    for (uint32_t i = 0u; i < get_command_tree_root_count(); i++) {
+        if (strcmp(root[i].name, cmd->command) == 0) {
+            return &root[i];
+        }
     }
 
-    return command_table[index];
+    return NULL;
+}
+
+uint32_t get_command_tree_root_count(void)
+{
+    return sizeof(root_commands) / sizeof(root_commands[0]);
 }
 
 /*----------------------------------------------------------------------------*/
 /* help */
 enum validation_result validate_help(struct command const *cmd)
 {
-    return validate_parameterless_command(cmd, "help");
+    return validate_parameterless_command(cmd);
 }
 
 void execute_help(struct command const *cmd)
 {
     (void)cmd; /* unused due to no parameters */
 
-    printf("\r\n");
-    printf("Available Commands\r\n");
-    printf("------------------\r\n");
+    struct command_node const *root = get_command_tree_root();
 
-    for (uint32_t i = 0u; i < get_command_table_size(); i++) {
-        printf("%-16s %s\r\n", command_table[i].name, command_table[i].help);
+    for (uint32_t i = 0u; i < get_command_tree_root_count(); i++) {
+        printf("%-16s %s\r\n", root[i].name, root[i].help);
     }
-
-    printf("\r\n");
 }
 
 /*----------------------------------------------------------------------------*/
 /* clear */
 enum validation_result validate_clear(struct command const *cmd)
 {
-    return validate_parameterless_command(cmd, "clear");
+    return validate_parameterless_command(cmd);
 }
 
 void execute_clear(struct command const *cmd)
@@ -113,7 +115,7 @@ void execute_clear(struct command const *cmd)
 /* faults */
 enum validation_result validate_hardware_faults(struct command const *cmd)
 {
-    return validate_parameterless_command(cmd, "faults");
+    return validate_parameterless_command(cmd);
 }
 
 void execute_hardware_faults(struct command const *cmd)
@@ -127,7 +129,7 @@ void execute_hardware_faults(struct command const *cmd)
 /* time */
 enum validation_result validate_get_time(struct command const *cmd)
 {
-    return validate_parameterless_command(cmd, "time");
+    return validate_parameterless_command(cmd);
 }
 
 void execute_get_time(struct command const *cmd)
@@ -142,13 +144,8 @@ void execute_get_time(struct command const *cmd)
 /*----------------------------------------------------------------------------*/
 /*                        Private Function Definitions                        */
 /*----------------------------------------------------------------------------*/
-static enum validation_result validate_parameterless_command(struct command const *cmd,
-                                                             const char *name)
+static enum validation_result validate_parameterless_command(struct command const *cmd)
 {
-    if (strcmp(cmd->command, name) != 0) {
-        return COMMAND_VALIDATION_NOT_MATCHED;
-    }
-
     if (cmd->parameter_count != 0) {
         return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
     }

@@ -32,18 +32,23 @@ enum validation_result
     COMMAND_VALIDATION_NOT_MATCHED
 };
 
-struct command_table_entry {
+struct command_node {
     char const *name;
     char const *help;
+
     enum validation_result (*validate)(struct command const *cmd);
     void (*execute)(struct command const *cmd);
+
+    struct command_node const *children;
+    uint32_t child_count;
 };
 
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Prototypes                         */
 /*----------------------------------------------------------------------------*/
-uint32_t get_command_table_size(void);
-struct command_table_entry get_command_table_entry_at_index(uint32_t index);
+struct command_node const *get_command_tree_root(void);
+struct command_node const *find_command_node(struct command const *cmd);
+uint32_t get_command_tree_root_count(void);
 
 enum validation_result validate_help(struct command const *cmd);
 void execute_help(struct command const *cmd);

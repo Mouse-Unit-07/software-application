@@ -130,37 +130,36 @@ struct command parse_cli_buffer_contents(void)
 
 void process_command(struct command const *cmd)
 {
-    for (uint32_t i = 0u; i < get_command_table_size(); i++) {
-        struct command_table_entry entry = get_command_table_entry_at_index(i);
-        enum validation_result result = entry.validate(cmd);
+    struct command_node const *node = find_command_node(cmd);
 
-        switch (result) {
-            case COMMAND_VALIDATION_SUCCESS:
-                entry.execute(cmd);
-                return;
-
-            case COMMAND_VALIDATION_BAD_PARAMETER:
-                printf("Invalid parameter: %s\r\n", cmd->parameters[cmd->bad_parameter_index]);
-                return;
-
-            case COMMAND_VALIDATION_TOO_MANY_PARAMETERS:
-                printf("%s: Too many parameters\r\n", cmd->command);
-                return;
-
-            case COMMAND_VALIDATION_TOO_FEW_PARAMETERS:
-                printf("%s: Missing parameters\r\n", cmd->command);
-                return;
-
-            case COMMAND_VALIDATION_NOT_MATCHED:
-                break;
-
-            default:
-                printf("Command validation error\r\n");
-                break;
-        }
+    if (node == NULL) {
+        printf("Unrecognized command\r\n");
+        return;
     }
 
-    printf("Unrecognized command\r\n");
+    enum validation_result result = node->validate(cmd);
+
+    switch (result) {
+        case COMMAND_VALIDATION_SUCCESS:
+            node->execute(cmd);
+            return;
+
+        case COMMAND_VALIDATION_BAD_PARAMETER:
+            printf("Invalid parameter: %s\r\n", cmd->parameters[cmd->bad_parameter_index]);
+            return;
+
+        case COMMAND_VALIDATION_TOO_MANY_PARAMETERS:
+            printf("%s: Too many parameters\r\n", cmd->command);
+            return;
+
+        case COMMAND_VALIDATION_TOO_FEW_PARAMETERS:
+            printf("%s: Missing parameters\r\n", cmd->command);
+            return;
+
+        default:
+            printf("Command validation error\r\n");
+            return;
+    }
 }
 
 char *get_shell_buffer(void)
