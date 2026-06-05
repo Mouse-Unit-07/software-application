@@ -47,6 +47,8 @@ void process_command(struct command const *cmd);
 
 enum validation_result validate_help(struct command const *cmd);
 void execute_help(struct command const *cmd);
+enum validation_result validate_clear(struct command const *cmd);
+void execute_clear(struct command const *cmd);
 
 char *get_shell_buffer(void);
 uint32_t get_shell_buffer_size(void);

@@ -49,6 +49,12 @@ static const struct command_table_entry command_table[] =
         .help = "Display available commands",
         .validate = validate_help,
         .execute = execute_help
+    },
+    {
+        .name = "clear",
+        .help = "Clear the console",
+        .validate = validate_clear,
+        .execute = execute_clear
     }
 };
 
@@ -196,7 +202,7 @@ enum validation_result validate_help(struct command const *cmd)
 
 void execute_help(struct command const *cmd)
 {
-    (void)cmd; /* prevents unused variable warning */
+    (void)cmd; /* unused due to no parameters */
 
     printf("\r\n");
     printf("Available Commands\r\n");
@@ -207,6 +213,26 @@ void execute_help(struct command const *cmd)
     }
 
     printf("\r\n");
+}
+
+enum validation_result validate_clear(struct command const *cmd)
+{
+    if (strcmp(cmd->command, "clear") != 0) {
+        return COMMAND_VALIDATION_NOT_MATCHED;
+    }
+
+    if (cmd->parameter_count != 0) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_clear(struct command const *cmd)
+{
+    (void)cmd; /* unused due to no parameters */
+
+    printf("\e[1;1H\e[2J"); 
 }
 
 char *get_shell_buffer(void)
