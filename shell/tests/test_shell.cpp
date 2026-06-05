@@ -329,6 +329,34 @@ TEST(ShellTests, PollShellResetsStateAfterCommand)
     CHECK_FALSE(get_ready_for_parsing());
 }
 
+TEST(ShellTests, ValidateClearReturnsSuccess)
+{
+    struct command cmd{{0}};
+
+    strcpy(cmd.command, "clear");
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_clear(&cmd));
+}
+
+TEST(ShellTests, ValidateClearReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+
+    strcpy(cmd.command, "clear");
+    cmd.parameter_count = 1;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_clear(&cmd));
+}
+
+TEST(ShellTests, ValidateClearReturnsNotMatched)
+{
+    struct command cmd{{0}};
+
+    strcpy(cmd.command, "invalid");
+
+    LONGS_EQUAL(COMMAND_VALIDATION_NOT_MATCHED, validate_clear(&cmd));
+}
+
 TEST(ShellTests, ValidateHardwareFaultsReturnsSuccess)
 {
     struct command cmd{{0}};
