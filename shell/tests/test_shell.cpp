@@ -73,6 +73,11 @@ void clear_cli_buffer(void)
     mock().actualCall("clear_cli_buffer");
 }
 
+void print_hardware_state(void)
+{
+    mock().actualCall("print_hardware_state");
+}
+
 }
 
 /*============================================================================*/
@@ -322,4 +327,40 @@ TEST(ShellTests, PollShellResetsStateAfterCommand)
     STRCMP_EQUAL("", get_shell_buffer());
     LONGS_EQUAL(0u, get_shell_buffer_size());
     CHECK_FALSE(get_ready_for_parsing());
+}
+
+TEST(ShellTests, ValidateHardwareFaultsReturnsSuccess)
+{
+    struct command cmd{{0}};
+
+    strcpy(cmd.command, "faults");
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_hardware_faults(&cmd));
+}
+
+TEST(ShellTests, ValidateHardwareFaultsReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+
+    strcpy(cmd.command, "faults");
+    cmd.parameter_count = 1;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_hardware_faults(&cmd));
+}
+
+TEST(ShellTests, ValidateHardwareFaultsReturnsNotMatched)
+{
+    struct command cmd{{0}};
+
+    strcpy(cmd.command, "invalid");
+
+    LONGS_EQUAL(COMMAND_VALIDATION_NOT_MATCHED, validate_hardware_faults(&cmd));
+}
+
+TEST(ShellTests, ExecuteHardwareFaultsCallsFunctions)
+{
+    struct command cmd{{0}};
+    mock().expectOneCall("print_hardware_state");
+
+    execute_hardware_faults(&cmd);
 }

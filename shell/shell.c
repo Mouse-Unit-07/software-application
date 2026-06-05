@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include "fault_detector.h"
 #include "user_interface.h"
 #include "shell.h"
 
@@ -55,7 +56,13 @@ static const struct command_table_entry command_table[] =
         .help = "Clear the console",
         .validate = validate_clear,
         .execute = execute_clear
-    }
+    },
+    {
+        .name = "faults",
+        .help = "Display all hardware faults",
+        .validate = validate_hardware_faults,
+        .execute = execute_hardware_faults
+    },
 };
 
 /*----------------------------------------------------------------------------*/
@@ -233,6 +240,26 @@ void execute_clear(struct command const *cmd)
     (void)cmd; /* unused due to no parameters */
 
     printf("\e[1;1H\e[2J"); 
+}
+
+enum validation_result validate_hardware_faults(struct command const *cmd)
+{
+    if (strcmp(cmd->command, "faults") != 0) {
+        return COMMAND_VALIDATION_NOT_MATCHED;
+    }
+
+    if (cmd->parameter_count != 0) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_hardware_faults(struct command const *cmd)
+{
+    (void)cmd; /* unused due to no parameters */
+
+    print_hardware_state();
 }
 
 char *get_shell_buffer(void)
