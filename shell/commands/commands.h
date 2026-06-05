@@ -43,8 +43,7 @@ struct command_node {
     uint32_t child_count;
 };
 
-struct command_match
-{
+struct command_match {
     struct command_node const *node;
     uint32_t depth;
 };

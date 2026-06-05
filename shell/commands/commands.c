@@ -93,7 +93,7 @@ struct command_node const *get_command_tree_root(void)
 uint32_t get_command_tree_root_count(void)
 {
     return sizeof(root_commands) / sizeof(root_commands[0]);
-}   
+}
 
 struct command_match find_command_node(struct command const *cmd)
 {
@@ -149,7 +149,7 @@ void execute_clear(struct command const *cmd)
 {
     (void)cmd; /* unused due to no parameters */
 
-    printf("\e[1;1H\e[2J"); 
+    printf("\e[1;1H\e[2J");
 }
 
 /*----------------------------------------------------------------------------*/
@@ -178,8 +178,8 @@ void execute_get_time(struct command const *cmd)
     (void)cmd; /* unused due to no parameters */
 
     uint32_t time_sec = get_current_global_time_sec();
-    printf("time passed since init: %" PRIu32 " min, %" PRIu32 " sec\r\n", 
-           time_sec / 60, time_sec % 60);
+    printf("time passed since init: %" PRIu32 " min, %" PRIu32 " sec\r\n", time_sec / 60,
+           time_sec % 60);
 }
 
 /*----------------------------------------------------------------------------*/

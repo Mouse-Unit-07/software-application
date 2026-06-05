@@ -87,7 +87,7 @@ TEST(CommandsTests, FindCommandNodeReturnsNullForUnknownCommand)
     cmd.token_count = 1;
     cmd.tokens[0] = "invalid";
 
-    struct command_match match{find_command_node(&cmd)}; 
+    struct command_match match{find_command_node(&cmd)};
 
     POINTERS_EQUAL(nullptr, match.node);
 }
@@ -96,7 +96,7 @@ TEST(CommandsTests, FindCommandNodeReturnsNullForEmptyCommand)
 {
     struct command cmd{{0}};
 
-    struct command_match match{find_command_node(&cmd)}; 
+    struct command_match match{find_command_node(&cmd)};
 
     POINTERS_EQUAL(nullptr, match.node);
 }
