@@ -23,6 +23,8 @@
 /*----------------------------------------------------------------------------*/
 static enum validation_result validate_parameterless_command(struct command const *cmd,
                                                              uint32_t token_count);
+static void print_help_recursive(struct command_node const *nodes, uint32_t count,
+                                 char const *prefix);
 
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
@@ -133,11 +135,7 @@ void execute_help(struct command const *cmd)
 {
     (void)cmd; /* unused due to no parameters */
 
-    struct command_node const *root = get_command_tree_root();
-
-    for (uint32_t i = 0u; i < get_command_tree_root_count(); i++) {
-        printf("%-16s %s\r\n", root[i].name, root[i].help);
-    }
+    print_help_recursive(get_command_tree_root(), get_command_tree_root_count(), "");
 }
 
 /*----------------------------------------------------------------------------*/
@@ -226,4 +224,24 @@ static enum validation_result validate_parameterless_command(struct command cons
     }
 
     return COMMAND_VALIDATION_SUCCESS;
+}
+
+static void print_help_recursive(struct command_node const *nodes, uint32_t count,
+                                 char const *prefix)
+{
+    char command_name[MAX_COMMAND_NAME_SIZE];
+
+    for (uint32_t i = 0u; i < count; i++) {
+        if ((prefix != NULL) && (prefix[0] != '\0')) {
+            snprintf(command_name, sizeof(command_name), "%s %s", prefix, nodes[i].name);
+        } else {
+            snprintf(command_name, sizeof(command_name), "%s", nodes[i].name);
+        }
+
+        printf("%-24s %s\r\n", command_name, nodes[i].help);
+
+        if (nodes[i].child_count > 0u) {
+            print_help_recursive(nodes[i].children, nodes[i].child_count, command_name);
+        }
+    }
 }

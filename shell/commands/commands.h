@@ -12,7 +12,7 @@
 /*----------------------------------------------------------------------------*/
 enum
 {
-    MAX_COMMAND_SIZE = 32,
+    MAX_COMMAND_NAME_SIZE = 32,
     MAX_PARAMETER_COUNT = 8
 };
 
