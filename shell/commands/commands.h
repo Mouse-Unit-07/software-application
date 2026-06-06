@@ -87,6 +87,17 @@ void execute_test_led(struct command const *cmd);
 enum validation_result validate_test_pushbutton(struct command *cmd);
 void execute_test_pushbutton(struct command const *cmd);
 
+enum validation_result validate_test_ir(struct command *cmd);
+
+enum validation_result validate_test_ir_distance(struct command *cmd);
+void execute_test_ir_distance(struct command const *cmd);
+
+enum validation_result validate_test_ir_free(struct command *cmd);
+void execute_test_ir_free(struct command const *cmd);
+
+enum validation_result validate_test_ir_speed(struct command *cmd);
+void execute_test_ir_speed(struct command const *cmd);
+
 /*----------------------------------------------------------------------------*/
 /* get commands */
 enum validation_result validate_get(struct command *cmd);

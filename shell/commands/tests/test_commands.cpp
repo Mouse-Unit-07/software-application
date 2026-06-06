@@ -15,6 +15,7 @@ extern "C"
 #include <stdint.h>
 #include "maze_solver_common.h"
 #include "wall_follower.h"
+#include "device_self_tests.h"
 #include "commands.h"
 
 }
@@ -122,6 +123,34 @@ void run_partial_flood_fill(bool enable_print)
         .withBoolParameter("enable_print", enable_print);
 }
 
+void infrared_sensors_distance_test(struct ir_distance_test_config cfg)
+{
+    mock().actualCall("infrared_sensors_distance_test")
+        .withUnsignedIntParameter("start_distance_cm",
+                                  cfg.start_distance_cm)
+        .withUnsignedIntParameter("end_distance_cm",
+                                  cfg.end_distance_cm)
+        .withUnsignedIntParameter("trials_per_distance",
+                                  cfg.trials_per_distance)
+        .withUnsignedIntParameter("time_per_trial_ms",
+                                  cfg.time_per_trial_ms)
+        .withUnsignedIntParameter("setup_delay_ms",
+                                  cfg.setup_delay_ms);
+}
+
+void infrared_sensors_free_reading_test(struct ir_free_reading_test_config cfg)
+{
+    mock().actualCall("infrared_sensors_free_reading_test")
+        .withUnsignedIntParameter("time_per_sensor_ms", cfg.time_per_sensor_ms)
+        .withUnsignedIntParameter("setup_delay_ms", cfg.setup_delay_ms);
+}
+
+void infrared_sensors_read_speed_test(uint32_t time_per_sensor_ms)
+{
+    mock().actualCall("infrared_sensors_read_speed_test")
+        .withUnsignedIntParameter("time_per_sensor_ms", time_per_sensor_ms);
+}
+
 }
 
 /*============================================================================*/
@@ -149,7 +178,7 @@ TEST(CommandsTests, GetCommandTreeRootCountReturnsExpectedValue)
     LONGS_EQUAL(8u, get_command_tree_root_count());
 }
 
-TEST(CommandsTests, TestCommandContainsFiveSubcommands)
+TEST(CommandsTests, TestCommandContainsSubcommands)
 {
     struct command cmd{{0}};
     cmd.token_count = 1;
@@ -157,7 +186,7 @@ TEST(CommandsTests, TestCommandContainsFiveSubcommands)
 
     struct command_node const *node = find_command_node(&cmd).node;
 
-    LONGS_EQUAL(5u, node->child_count);
+    LONGS_EQUAL(6u, node->child_count);
 }
 
 TEST(CommandsTests, GetCommandTreeRootContainsHelpNode)
@@ -573,6 +602,209 @@ TEST(CommandsTests, ExecuteTestPushbuttonCallsFunctions)
     mock().expectOneCall("pushbutton_test");
 
     execute_test_pushbutton(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test ir */
+TEST(CommandsTests, FindCommandNodeReturnsIrNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "ir";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("ir", node->name);
+}
+
+TEST(CommandsTests, ValidateTestIrReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "ir";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_ir(&cmd));
+}
+
+TEST(CommandsTests, TestIrCommandMatchDepthIsTwo)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "ir";
+
+    struct command_match match{find_command_node(&cmd)};
+
+    LONGS_EQUAL(2u, match.depth);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test ir distance */
+TEST(CommandsTests, FindCommandNodeReturnsIrDistanceNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "ir";
+    cmd.tokens[2] = "distance";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("distance", node->name);
+}
+
+TEST(CommandsTests, ValidateTestIrDistanceReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 8;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_ir_distance(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestIrDistanceReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 7;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_ir_distance(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestIrDistanceReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 9;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_test_ir_distance(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestIrDistanceCallsFunctions)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 8;
+    cmd.tokens[3] = "5";
+    cmd.tokens[4] = "30";
+    cmd.tokens[5] = "10";
+    cmd.tokens[6] = "100";
+    cmd.tokens[7] = "500";
+
+    mock().expectOneCall("infrared_sensors_distance_test")
+        .withUnsignedIntParameter("start_distance_cm", 5u)
+        .withUnsignedIntParameter("end_distance_cm", 30u)
+        .withUnsignedIntParameter("trials_per_distance", 10u)
+        .withUnsignedIntParameter("time_per_trial_ms", 100u)
+        .withUnsignedIntParameter("setup_delay_ms", 500u);
+
+    execute_test_ir_distance(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test ir free */
+TEST(CommandsTests, FindCommandNodeReturnsIrFreeNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "ir";
+    cmd.tokens[2] = "free";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("free", node->name);
+}
+
+TEST(CommandsTests, ValidateTestIrFreeReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 5;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_ir_free(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestIrFreeReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 4;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_ir_free(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestIrFreeReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 6;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_test_ir_free(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestIrFreeCallsFunctions)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 5;
+    cmd.tokens[3] = "100";
+    cmd.tokens[4] = "500";
+
+    mock().expectOneCall("infrared_sensors_free_reading_test")
+        .withUnsignedIntParameter("time_per_sensor_ms", 100u)
+        .withUnsignedIntParameter("setup_delay_ms", 500u);
+
+    execute_test_ir_free(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test ir speed */
+TEST(CommandsTests, FindCommandNodeReturnsIrSpeedNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "ir";
+    cmd.tokens[2] = "speed";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("speed", node->name);
+}
+
+TEST(CommandsTests, ValidateTestIrSpeedReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 4;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_ir_speed(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestIrSpeedReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_ir_speed(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestIrSpeedReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 5;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_test_ir_speed(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestIrSpeedCallsFunctions)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 4;
+    cmd.tokens[3] = "250";
+
+    mock().expectOneCall("infrared_sensors_read_speed_test")
+        .withUnsignedIntParameter("time_per_sensor_ms", 250u);
+
+    execute_test_ir_speed(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/

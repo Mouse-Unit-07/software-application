@@ -40,6 +40,7 @@ enum
 {
     ROOT_COMMAND_TOKEN_COUNT = 1,
     TEST_COMMAND_TOKEN_COUNT = 2,
+    TEST_IR_COMMAND_TOKEN_COUNT = 3,
     GET_COMMAND_TOKEN_COUNT = 2,
     SET_COMMAND_TOKEN_COUNT = 2,
     SOLVE_COMMAND_TOKEN_COUNT = 2,
@@ -51,16 +52,52 @@ enum
     PARAM_1_OFFSET,
     PARAM_2_OFFSET,
     PARAM_3_OFFSET,
-    PARAM_4_OFFSET
+    PARAM_4_OFFSET,
+    PARAM_5_OFFSET
 };
 
 enum
 {
     MAZE_SOLVER_PARAMETER_COUNT = 5,
+
     WALLFOLLOWER_PARAM_COUNT_MIN = 1,
     WALLFOLLOWER_PARAM_COUNT_MAX = 2,
     FLOODFILL_PARAM_COUNT_MIN = 0,
     FLOODFILL_PARAM_COUNT_MAX = 1,
+
+    IR_DISTANCE_PARAMETER_COUNT = 5,
+    IR_FREE_PARAMETER_COUNT = 2,
+    IR_SPEED_PARAMETER_COUNT = 1
+};
+
+static const struct command_node test_ir_commands[] =
+{
+    {
+        .name = "distance",
+        .help =
+            "Run IR distance test: "
+            "start_distance_cm end_distance_cm "
+            "trials_per_distance time_per_trial_ms "
+            "setup_delay_ms",
+        .validate = validate_test_ir_distance,
+        .execute = execute_test_ir_distance
+    },
+    {
+        .name = "free",
+        .help =
+            "Run IR free-reading test: "
+            "time_per_sensor_ms setup_delay_ms",
+        .validate = validate_test_ir_free,
+        .execute = execute_test_ir_free
+    },
+    {
+        .name = "speed",
+        .help =
+            "Run IR read-speed test: "
+            "time_per_sensor_ms",
+        .validate = validate_test_ir_speed,
+        .execute = execute_test_ir_speed
+    }
 };
 
 static const struct command_node test_commands[] =
@@ -94,6 +131,14 @@ static const struct command_node test_commands[] =
         .help = "Run pushbutton self-test",
         .validate = validate_test_pushbutton,
         .execute = execute_test_pushbutton
+    },
+    {
+        .name = "ir",
+        .help = "Run IR sensor tests",
+        .validate = validate_test_ir,
+        .execute = NULL,
+        .children = test_ir_commands,
+        .child_count = sizeof(test_ir_commands) / sizeof(test_ir_commands[0])
     }
 };
 
@@ -402,6 +447,108 @@ void execute_test_pushbutton(struct command const *cmd)
     printf("running pushbutton test...\r\n");
     pushbutton_test();
     printf("ending pushbutton test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test ir */
+enum validation_result validate_test_ir(struct command *cmd)
+{
+    if (cmd->token_count == TEST_COMMAND_TOKEN_COUNT) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+/*----------------------------------------------------------------------------*/
+/* test IR distance */
+enum validation_result validate_test_ir_distance(struct command *cmd)
+{
+    uint32_t expected = TEST_IR_COMMAND_TOKEN_COUNT + IR_DISTANCE_PARAMETER_COUNT;
+
+    if (cmd->token_count < expected) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    if (cmd->token_count > expected) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_test_ir_distance(struct command const *cmd)
+{
+    uint32_t base = TEST_IR_COMMAND_TOKEN_COUNT;
+
+    struct ir_distance_test_config cfg;
+    cfg.start_distance_cm = (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
+    cfg.end_distance_cm = (uint32_t)strtoul(cmd->tokens[base + PARAM_1_OFFSET], NULL, 10);
+    cfg.trials_per_distance = (uint32_t)strtoul(cmd->tokens[base + PARAM_2_OFFSET], NULL, 10);
+    cfg.time_per_trial_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_3_OFFSET], NULL, 10);
+    cfg.setup_delay_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_4_OFFSET], NULL, 10);
+
+    printf("running IR sensors distance test...\r\n");
+    infrared_sensors_distance_test(cfg);
+    printf("ending IR sensors distance test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test IR free */
+enum validation_result validate_test_ir_free(struct command *cmd)
+{
+    uint32_t expected = TEST_IR_COMMAND_TOKEN_COUNT + IR_FREE_PARAMETER_COUNT;
+
+    if (cmd->token_count < expected) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    if (cmd->token_count > expected) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_test_ir_free(struct command const *cmd)
+{
+    uint32_t base = TEST_IR_COMMAND_TOKEN_COUNT;
+
+    struct ir_free_reading_test_config cfg;
+    cfg.time_per_sensor_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
+    cfg.setup_delay_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_1_OFFSET], NULL, 10);
+
+    printf("running IR sensors free reading test...\r\n");
+    infrared_sensors_free_reading_test(cfg);
+    printf("ending IR sensors free reading test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test IR speed */
+enum validation_result validate_test_ir_speed(struct command *cmd)
+{
+    uint32_t expected = TEST_IR_COMMAND_TOKEN_COUNT + IR_SPEED_PARAMETER_COUNT;
+
+    if (cmd->token_count < expected) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    if (cmd->token_count > expected) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_test_ir_speed(struct command const *cmd)
+{
+    uint32_t base = TEST_IR_COMMAND_TOKEN_COUNT;
+
+    uint32_t time_per_sensor_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
+
+    printf("running IR sensors read speed test...\r\n");
+    infrared_sensors_read_speed_test(time_per_sensor_ms);
+    printf("ending IR sensors read speed test...\r\n");
 }
 
 /*----------------------------------------------------------------------------*/
