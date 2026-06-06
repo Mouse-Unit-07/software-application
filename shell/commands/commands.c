@@ -19,6 +19,8 @@
 #include "global_time.h"
 #include "maze_solver_common.h"
 #include "configuration.h"
+#include "wall_follower.h"
+#include "partial_flood_fill.h"
 #include "commands.h"
 
 /*----------------------------------------------------------------------------*/
@@ -40,11 +42,25 @@ enum
     TEST_COMMAND_TOKEN_COUNT = 2,
     GET_COMMAND_TOKEN_COUNT = 2,
     SET_COMMAND_TOKEN_COUNT = 2,
+    SOLVE_COMMAND_TOKEN_COUNT = 2,
 };
 
 enum
 {
-    MAZE_SOLVER_PARAMETER_COUNT = 5
+    PARAM_0_OFFSET = 0,
+    PARAM_1_OFFSET,
+    PARAM_2_OFFSET,
+    PARAM_3_OFFSET,
+    PARAM_4_OFFSET
+};
+
+enum
+{
+    MAZE_SOLVER_PARAMETER_COUNT = 5,
+    WALLFOLLOWER_PARAM_COUNT_MIN = 1,
+    WALLFOLLOWER_PARAM_COUNT_MAX = 2,
+    FLOODFILL_PARAM_COUNT_MIN = 0,
+    FLOODFILL_PARAM_COUNT_MAX = 1,
 };
 
 static const struct command_node test_commands[] =
@@ -121,6 +137,22 @@ static const struct command_node set_commands[] =
     }
 };
 
+static const struct command_node solve_commands[] =
+{
+    {
+        .name = "wallfollower",
+        .help = "Run wall follower: left|right [enable]",
+        .validate = validate_solve_wallfollower,
+        .execute = execute_solve_wallfollower
+    },
+    {
+        .name = "floodfill",
+        .help = "Run partial flood fill [enable]",
+        .validate = validate_solve_floodfill,
+        .execute = execute_solve_floodfill
+    }
+};
+
 static const struct command_node root_commands[] =
 {
     {
@@ -170,6 +202,14 @@ static const struct command_node root_commands[] =
         .execute = NULL,
         .children = set_commands,
         .child_count = sizeof(set_commands) / sizeof(set_commands[0])
+    },
+    {
+        .name = "solve",
+        .help = "Run maze solving algorithms",
+        .validate = validate_solve,
+        .execute = NULL,
+        .children = solve_commands,
+        .child_count = sizeof(solve_commands) / sizeof(solve_commands[0])
     },
 };
 
@@ -456,13 +496,15 @@ enum validation_result validate_set_solver_test(struct command *cmd)
         return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
     }
 
+    uint32_t base_offset = SET_COMMAND_TOKEN_COUNT;
+    uint32_t param_0_offset = base_offset + PARAM_0_OFFSET;
+
     if (cmd->token_count == edit_token_count) {
         struct maze_solver_config cfg;
-
-        cfg.maze_size = (uint32_t)strtoul(cmd->tokens[2], NULL, 10);
+        cfg.maze_size = (uint32_t)strtoul(cmd->tokens[param_0_offset], NULL, 10);
 
         if (cfg.maze_size > 16u) {
-            cmd->bad_parameter_index = 2u;
+            cmd->bad_parameter_index = param_0_offset;
             return COMMAND_VALIDATION_BAD_PARAMETER;
         }
     }
@@ -477,14 +519,138 @@ void execute_set_solver_test(struct command const *cmd)
         return;
     }
 
+    uint32_t base_offset = SET_COMMAND_TOKEN_COUNT;
+    uint32_t param_0_offset = base_offset + PARAM_0_OFFSET;
+    uint32_t param_1_offset = base_offset + PARAM_1_OFFSET;
+    uint32_t param_2_offset = base_offset + PARAM_2_OFFSET;
+    uint32_t param_3_offset = base_offset + PARAM_3_OFFSET;
+    uint32_t param_4_offset = base_offset + PARAM_4_OFFSET;
+
     struct maze_solver_config cfg;
-    cfg.maze_size = (uint32_t)strtoul(cmd->tokens[2], NULL, 10);
-    cfg.total_timeout_sec = (uint32_t)strtoul(cmd->tokens[3], NULL, 10);
-    cfg.move_forward_time_sec = (uint32_t)strtoul(cmd->tokens[4], NULL, 10);
-    cfg.rotate_90_deg_time_sec = (uint32_t)strtoul(cmd->tokens[5], NULL, 10);
-    cfg.rotate_180_deg_time_sec = (uint32_t)strtoul(cmd->tokens[6], NULL, 10);
+    cfg.maze_size = (uint32_t)strtoul(cmd->tokens[param_0_offset], NULL, 10);
+    cfg.total_timeout_sec = (uint32_t)strtoul(cmd->tokens[param_1_offset], NULL, 10);
+    cfg.move_forward_time_sec = (uint32_t)strtoul(cmd->tokens[param_2_offset], NULL, 10);
+    cfg.rotate_90_deg_time_sec = (uint32_t)strtoul(cmd->tokens[param_3_offset], NULL, 10);
+    cfg.rotate_180_deg_time_sec = (uint32_t)strtoul(cmd->tokens[param_4_offset], NULL, 10);
 
     set_test_maze_solver_config(cfg);
+}
+
+/*----------------------------------------------------------------------------*/
+/* solve */
+enum validation_result validate_solve(struct command *cmd)
+{
+    if (cmd->token_count == ROOT_COMMAND_TOKEN_COUNT) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+/*----------------------------------------------------------------------------*/
+/* solve wallfollower */
+enum validation_result validate_solve_wallfollower(struct command *cmd)
+{
+    uint32_t min_token_count = SOLVE_COMMAND_TOKEN_COUNT + WALLFOLLOWER_PARAM_COUNT_MIN;
+    uint32_t max_token_count = SOLVE_COMMAND_TOKEN_COUNT + WALLFOLLOWER_PARAM_COUNT_MAX;
+
+    if (cmd->token_count < min_token_count) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    if (cmd->token_count > max_token_count) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    uint32_t base_offset = SOLVE_COMMAND_TOKEN_COUNT;
+    uint32_t param_0_offset = base_offset + PARAM_0_OFFSET;
+    uint32_t param_1_offset = base_offset + PARAM_1_OFFSET;
+
+    if ((strcmp(cmd->tokens[param_0_offset], "left") != 0)
+        && (strcmp(cmd->tokens[param_0_offset], "right") != 0)) {
+        cmd->bad_parameter_index = param_0_offset;
+        return COMMAND_VALIDATION_BAD_PARAMETER;
+    }
+
+    if (cmd->token_count == max_token_count) {
+        if (strcmp(cmd->tokens[param_1_offset], "enable") != 0) {
+            cmd->bad_parameter_index = param_1_offset;
+            return COMMAND_VALIDATION_BAD_PARAMETER;
+        }
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_solve_wallfollower(struct command const *cmd)
+{
+    bool enable_print = false;
+    enum wall_follower_mode mode;
+
+    uint32_t base_offset = SOLVE_COMMAND_TOKEN_COUNT;
+    uint32_t param_0_offset = base_offset + PARAM_0_OFFSET;
+    uint32_t param_1_offset = base_offset + PARAM_1_OFFSET;
+
+    if (strcmp(cmd->tokens[param_0_offset], "left") == 0) {
+        mode = WALL_FOLLOWER_LEFT;
+    } else {
+        mode = WALL_FOLLOWER_RIGHT;
+    }
+
+    uint32_t max_token_count = SOLVE_COMMAND_TOKEN_COUNT + WALLFOLLOWER_PARAM_COUNT_MAX;
+
+    if (cmd->token_count == max_token_count) {
+        if (strcmp(cmd->tokens[param_1_offset], "enable") == 0) {
+            enable_print = true;
+        }
+    }
+
+    run_wall_follower(mode, enable_print);
+}
+
+/*----------------------------------------------------------------------------*/
+/* solve floodfill */
+enum validation_result validate_solve_floodfill(struct command *cmd)
+{
+    uint32_t min_token_count = SOLVE_COMMAND_TOKEN_COUNT + FLOODFILL_PARAM_COUNT_MIN;
+    uint32_t max_token_count = SOLVE_COMMAND_TOKEN_COUNT + FLOODFILL_PARAM_COUNT_MAX;
+
+    if (cmd->token_count < min_token_count) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    if (cmd->token_count > max_token_count) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    uint32_t base_offset = SOLVE_COMMAND_TOKEN_COUNT;
+    uint32_t param_0_offset = base_offset + PARAM_0_OFFSET;
+
+    if (cmd->token_count == max_token_count) {
+        if (strcmp(cmd->tokens[param_0_offset], "enable") != 0) {
+            cmd->bad_parameter_index = param_0_offset;
+            return COMMAND_VALIDATION_BAD_PARAMETER;
+        }
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_solve_floodfill(struct command const *cmd)
+{
+    bool enable_print = false;
+
+    uint32_t max_token_count = SOLVE_COMMAND_TOKEN_COUNT + FLOODFILL_PARAM_COUNT_MAX;
+    uint32_t base_offset = SOLVE_COMMAND_TOKEN_COUNT;
+    uint32_t param_0_offset = base_offset + PARAM_0_OFFSET;
+
+    if (cmd->token_count == max_token_count) {
+        if (strcmp(cmd->tokens[param_0_offset], "enable") == 0) {
+            enable_print = true;
+        }
+    }
+
+    run_partial_flood_fill(enable_print);
 }
 
 /*----------------------------------------------------------------------------*/

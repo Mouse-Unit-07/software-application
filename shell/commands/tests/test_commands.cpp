@@ -14,6 +14,7 @@ extern "C"
 #include <stdbool.h>
 #include <stdint.h>
 #include "maze_solver_common.h"
+#include "wall_follower.h"
 #include "commands.h"
 
 }
@@ -108,6 +109,19 @@ void set_test_maze_solver_config(struct maze_solver_config cfg)
                                   cfg.rotate_180_deg_time_sec);
 }
 
+void run_wall_follower(enum wall_follower_mode mode, bool enable_print)
+{
+    mock().actualCall("run_wall_follower")
+        .withUnsignedIntParameter("mode", (uint32_t)mode)
+        .withBoolParameter("enable_print", enable_print);
+}
+
+void run_partial_flood_fill(bool enable_print)
+{
+    mock().actualCall("run_partial_flood_fill")
+        .withBoolParameter("enable_print", enable_print);
+}
+
 }
 
 /*============================================================================*/
@@ -132,7 +146,7 @@ TEST_GROUP(CommandsTests)
 /*============================================================================*/
 TEST(CommandsTests, GetCommandTreeRootCountReturnsExpectedValue)
 {
-    LONGS_EQUAL(7u, get_command_tree_root_count());
+    LONGS_EQUAL(8u, get_command_tree_root_count());
 }
 
 TEST(CommandsTests, TestCommandContainsFiveSubcommands)
@@ -879,4 +893,239 @@ TEST(CommandsTests, ExecuteSetSolverTestUpdatesTestConfig)
         .withUnsignedIntParameter("rotate_180_deg_time_sec", 40u);
 
     execute_set_solver_test(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* solve */
+TEST(CommandsTests, RootContainsSolveNode)
+{
+    struct command_node const *root = get_command_tree_root();
+
+    CHECK_TRUE(strcmp(root[7].name, "solve") == 0);
+}
+
+TEST(CommandsTests, SolveCommandContainsTwoSubcommands)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "solve";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    LONGS_EQUAL(2u, node->child_count);
+}
+
+TEST(CommandsTests, FindCommandNodeReturnsSolveNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "solve";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("solve", node->name);
+}
+
+TEST(CommandsTests, ValidateSolveReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "solve";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_solve(&cmd));
+}
+
+/*----------------------------------------------------------------------------*/
+/* solve wallfollower */
+TEST(CommandsTests, FindCommandNodeReturnsWallFollowerNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    cmd.tokens[0] = "solve";
+    cmd.tokens[1] = "wallfollower";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("wallfollower", node->name);
+}
+
+TEST(CommandsTests, WallFollowerCommandMatchDepthIsTwo)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    cmd.tokens[0] = "solve";
+    cmd.tokens[1] = "wallfollower";
+
+    struct command_match match = find_command_node(&cmd);
+
+    LONGS_EQUAL(2u, match.depth);
+}
+
+TEST(CommandsTests, ValidateSolveWallFollowerLeftReturnsSuccess)
+{
+    struct command cmd{{0}};
+
+    cmd.token_count = 3;
+
+    cmd.tokens[0] = "solve";
+    cmd.tokens[1] = "wallfollower";
+    cmd.tokens[2] = "left";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve_wallfollower(&cmd));
+}
+
+TEST(CommandsTests, ValidateSolveWallFollowerRightEnableReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 4;
+    cmd.tokens[0] = "solve";
+    cmd.tokens[1] = "wallfollower";
+    cmd.tokens[2] = "right";
+    cmd.tokens[3] = "enable";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve_wallfollower(&cmd));
+}
+
+TEST(CommandsTests, ValidateSolveWallFollowerReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_solve_wallfollower(&cmd));
+}
+
+TEST(CommandsTests, ValidateSolveWallFollowerReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 5;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_solve_wallfollower(&cmd));
+}
+
+TEST(CommandsTests, ValidateSolveWallFollowerRejectsBadMode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[2] = "bad";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_solve_wallfollower(&cmd));
+
+    LONGS_EQUAL(2u, cmd.bad_parameter_index);
+}
+
+TEST(CommandsTests, ValidateSolveWallFollowerRejectsBadPrintOption)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 4;
+    cmd.tokens[2] = "left";
+    cmd.tokens[3] = "bad";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_solve_wallfollower(&cmd));
+
+    LONGS_EQUAL(3u, cmd.bad_parameter_index);
+}
+
+TEST(CommandsTests, ExecuteSolveWallFollowerLeft)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[2] = "left";
+
+    mock().expectOneCall("run_wall_follower")
+        .withUnsignedIntParameter("mode", WALL_FOLLOWER_LEFT)
+        .withBoolParameter("enable_print", false);
+
+    execute_solve_wallfollower(&cmd);
+}
+
+TEST(CommandsTests, ExecuteSolveWallFollowerRightEnable)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 4;
+    cmd.tokens[2] = "right";
+    cmd.tokens[3] = "enable";
+
+    mock().expectOneCall("run_wall_follower")
+        .withUnsignedIntParameter("mode", WALL_FOLLOWER_RIGHT)
+        .withBoolParameter("enable_print", true);
+
+    execute_solve_wallfollower(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* solve floodfill */
+TEST(CommandsTests, FindCommandNodeReturnsFloodFillNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "solve";
+    cmd.tokens[1] = "floodfill";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("floodfill", node->name);
+}
+
+TEST(CommandsTests, ValidateSolveFloodFillReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve_floodfill(&cmd));
+}
+
+TEST(CommandsTests, ValidateSolveFloodFillEnableReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[2] = "enable";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve_floodfill(&cmd));
+}
+
+TEST(CommandsTests, ValidateSolveFloodFillReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 4;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_solve_floodfill(&cmd));
+}
+
+TEST(CommandsTests, ValidateSolveFloodFillRejectsBadParameter)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[2] = "bad";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_solve_floodfill(&cmd));
+
+    LONGS_EQUAL(2u, cmd.bad_parameter_index);
+}
+
+TEST(CommandsTests, ExecuteSolveFloodFillWithoutPrint)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    mock().expectOneCall("run_partial_flood_fill")
+        .withBoolParameter("enable_print", false);
+
+    execute_solve_floodfill(&cmd);
+}
+
+TEST(CommandsTests, ExecuteSolveFloodFillWithPrint)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[2] = "enable";
+
+    mock().expectOneCall("run_partial_flood_fill")
+        .withBoolParameter("enable_print", true);
+
+    execute_solve_floodfill(&cmd);
 }

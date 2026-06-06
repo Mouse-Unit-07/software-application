@@ -110,4 +110,14 @@ void execute_set_solver_default(struct command const *cmd);
 enum validation_result validate_set_solver_test(struct command *cmd);
 void execute_set_solver_test(struct command const *cmd);
 
+/*----------------------------------------------------------------------------*/
+/* solve commands */
+enum validation_result validate_solve(struct command *cmd);
+
+enum validation_result validate_solve_wallfollower(struct command *cmd);
+void execute_solve_wallfollower(struct command const *cmd);
+
+enum validation_result validate_solve_floodfill(struct command *cmd);
+void execute_solve_floodfill(struct command const *cmd);
+
 #endif /* COMMANDS_H_ */
