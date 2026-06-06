@@ -42,6 +42,8 @@ void startup(void)
     init_user_interface();
     init_navigation();
 
+    init_configuration();
+
     init_maze_solver_common();
     set_maze_solver_config(get_default_maze_solver_config());
 }
@@ -49,6 +51,8 @@ void startup(void)
 void shutdown(void)
 {
     deinit_maze_solver_common();
+
+    deinit_configuration();
 
     deinit_navigation();
     deinit_user_interface();

@@ -92,6 +92,16 @@ void deinit_navigation(void)
     mock().actualCall("deinit_navigation");
 }
 
+void init_configuration(void)
+{
+    mock().actualCall("init_configuration");
+}
+
+void deinit_configuration(void)
+{
+    mock().actualCall("deinit_configuration");
+}
+
 void init_maze_solver_common(void)
 {
     mock().actualCall("init_maze_solver_common");
@@ -148,6 +158,8 @@ TEST(StartupTests, StartupCallsFunctions)
     mock().expectOneCall("init_user_interface");
     mock().expectOneCall("init_navigation");
 
+    mock().expectOneCall("init_configuration");
+
     mock().expectOneCall("init_maze_solver_common");
     mock().expectOneCall("get_default_maze_solver_config");
     mock().expectOneCall("set_maze_solver_config");
@@ -158,6 +170,8 @@ TEST(StartupTests, StartupCallsFunctions)
 TEST(StartupTests, ShutdownCallsFunctions)
 {
     mock().expectOneCall("deinit_maze_solver_common");
+
+    mock().expectOneCall("deinit_configuration");
 
     mock().expectOneCall("deinit_navigation");
     mock().expectOneCall("deinit_user_interface");
