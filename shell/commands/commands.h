@@ -98,6 +98,14 @@ void execute_test_ir_free(struct command const *cmd);
 enum validation_result validate_test_ir_speed(struct command *cmd);
 void execute_test_ir_speed(struct command const *cmd);
 
+enum validation_result validate_test_wheel_encoder(struct command *cmd);
+
+enum validation_result validate_test_wheel_encoder_target(struct command *cmd);
+void execute_test_wheel_encoder_target(struct command const *cmd);
+
+enum validation_result validate_test_wheel_encoder_deceleration(struct command *cmd);
+void execute_test_wheel_encoder_deceleration(struct command const *cmd);
+
 /*----------------------------------------------------------------------------*/
 /* get commands */
 enum validation_result validate_get(struct command *cmd);

@@ -41,6 +41,7 @@ enum
     ROOT_COMMAND_TOKEN_COUNT = 1,
     TEST_COMMAND_TOKEN_COUNT = 2,
     TEST_IR_COMMAND_TOKEN_COUNT = 3,
+    TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT = 3,
     GET_COMMAND_TOKEN_COUNT = 2,
     SET_COMMAND_TOKEN_COUNT = 2,
     SOLVE_COMMAND_TOKEN_COUNT = 2,
@@ -67,7 +68,10 @@ enum
 
     IR_DISTANCE_PARAMETER_COUNT = 5,
     IR_FREE_PARAMETER_COUNT = 2,
-    IR_SPEED_PARAMETER_COUNT = 1
+    IR_SPEED_PARAMETER_COUNT = 1,
+
+    WHEEL_ENCODER_TARGET_PARAMETER_COUNT = 6,
+    WHEEL_ENCODER_DECEL_PARAMETER_COUNT = 6
 };
 
 static const struct command_node test_ir_commands[] =
@@ -97,6 +101,28 @@ static const struct command_node test_ir_commands[] =
             "time_per_sensor_ms",
         .validate = validate_test_ir_speed,
         .execute = execute_test_ir_speed
+    }
+};
+
+static const struct command_node test_wheel_encoder_commands[] =
+{
+    {
+        .name = "target",
+        .help =
+            "Run wheel encoder target test: "
+            "timeout_ms drift_delay_ms encoder_target "
+            "start_speed end_speed speed_step",
+        .validate = validate_test_wheel_encoder_target,
+        .execute = execute_test_wheel_encoder_target
+    },
+    {
+        .name = "deceleration",
+        .help =
+            "Run wheel encoder deceleration test: "
+            "timeout_ms drift_delay_ms encoder_target "
+            "start_speed top_speed max_accel_decel_percent",
+        .validate = validate_test_wheel_encoder_deceleration,
+        .execute = execute_test_wheel_encoder_deceleration
     }
 };
 
@@ -139,6 +165,14 @@ static const struct command_node test_commands[] =
         .execute = NULL,
         .children = test_ir_commands,
         .child_count = sizeof(test_ir_commands) / sizeof(test_ir_commands[0])
+    },
+    {
+        .name = "wheel-encoder",
+        .help = "Run wheel motor and encoder tests",
+        .validate = validate_test_wheel_encoder,
+        .execute = NULL,
+        .children = test_wheel_encoder_commands,
+        .child_count = sizeof(test_wheel_encoder_commands) / sizeof(test_wheel_encoder_commands[0])
     }
 };
 
@@ -549,6 +583,85 @@ void execute_test_ir_speed(struct command const *cmd)
     printf("running IR sensors read speed test...\r\n");
     infrared_sensors_read_speed_test(time_per_sensor_ms);
     printf("ending IR sensors read speed test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test wheel-encoder */
+enum validation_result validate_test_wheel_encoder(struct command *cmd)
+{
+    if (cmd->token_count == TEST_COMMAND_TOKEN_COUNT) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+/*----------------------------------------------------------------------------*/
+/* test wheel-encoder target */
+enum validation_result validate_test_wheel_encoder_target(struct command *cmd)
+{
+    uint32_t expected = TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT + WHEEL_ENCODER_TARGET_PARAMETER_COUNT;
+
+    if (cmd->token_count < expected) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    if (cmd->token_count > expected) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_test_wheel_encoder_target(struct command const *cmd)
+{
+    uint32_t base = TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT;
+
+    struct wheel_motor_and_encoder_test_config cfg;
+    cfg.timeout_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
+    cfg.drift_delay_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_1_OFFSET], NULL, 10);
+    cfg.encoder_target = (int32_t)strtol(cmd->tokens[base + PARAM_2_OFFSET], NULL, 10);
+    cfg.start_speed = (uint8_t)strtoul(cmd->tokens[base + PARAM_3_OFFSET], NULL, 10);
+    cfg.end_speed = (uint8_t)strtoul(cmd->tokens[base + PARAM_4_OFFSET], NULL, 10);
+    cfg.speed_step = (uint8_t)strtoul(cmd->tokens[base + PARAM_5_OFFSET], NULL, 10);
+
+    printf("running wheel encoder target test...\r\n");
+    wheel_motor_and_encoder_test(cfg);
+    printf("ending wheel encoder target test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test wheel-encoder deceleration */
+enum validation_result validate_test_wheel_encoder_deceleration(struct command *cmd)
+{
+    uint32_t expected = TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT + WHEEL_ENCODER_DECEL_PARAMETER_COUNT;
+
+    if (cmd->token_count < expected) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    if (cmd->token_count > expected) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_test_wheel_encoder_deceleration(struct command const *cmd)
+{
+    uint32_t base = TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT;
+
+    struct wheel_motor_deceleration_test_config cfg;
+    cfg.timeout_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
+    cfg.drift_delay_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_1_OFFSET], NULL, 10);
+    cfg.encoder_target = (int32_t)strtol(cmd->tokens[base + PARAM_2_OFFSET], NULL, 10);
+    cfg.start_speed = (uint8_t)strtoul(cmd->tokens[base + PARAM_3_OFFSET], NULL, 10);
+    cfg.top_speed = (uint8_t)strtoul(cmd->tokens[base + PARAM_4_OFFSET], NULL, 10);
+    cfg.max_accel_decel_percent = (uint8_t)strtoul(cmd->tokens[base + PARAM_5_OFFSET], NULL, 10);
+
+    printf("running wheel encoder deceleration test...\r\n");
+    wheel_motor_deceleration_test(cfg);
+    printf("ending wheel encoder deceleration test...\r\n");
 }
 
 /*----------------------------------------------------------------------------*/

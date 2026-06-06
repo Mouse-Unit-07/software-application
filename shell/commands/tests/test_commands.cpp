@@ -151,6 +151,28 @@ void infrared_sensors_read_speed_test(uint32_t time_per_sensor_ms)
         .withUnsignedIntParameter("time_per_sensor_ms", time_per_sensor_ms);
 }
 
+void wheel_motor_and_encoder_test(struct wheel_motor_and_encoder_test_config cfg)
+{
+    mock().actualCall("wheel_motor_and_encoder_test")
+        .withUnsignedIntParameter("timeout_ms", cfg.timeout_ms)
+        .withUnsignedIntParameter("drift_delay_ms", cfg.drift_delay_ms)
+        .withIntParameter("encoder_target", cfg.encoder_target)
+        .withUnsignedIntParameter("start_speed", cfg.start_speed)
+        .withUnsignedIntParameter("end_speed", cfg.end_speed)
+        .withUnsignedIntParameter("speed_step", cfg.speed_step);
+}
+
+void wheel_motor_deceleration_test(struct wheel_motor_deceleration_test_config cfg)
+{
+    mock().actualCall("wheel_motor_deceleration_test")
+        .withUnsignedIntParameter("timeout_ms", cfg.timeout_ms)
+        .withUnsignedIntParameter("drift_delay_ms", cfg.drift_delay_ms)
+        .withIntParameter("encoder_target", cfg.encoder_target)
+        .withUnsignedIntParameter("start_speed", cfg.start_speed)
+        .withUnsignedIntParameter("top_speed", cfg.top_speed)
+        .withUnsignedIntParameter("max_accel_decel_percent", cfg.max_accel_decel_percent);
+}
+
 }
 
 /*============================================================================*/
@@ -186,7 +208,7 @@ TEST(CommandsTests, TestCommandContainsSubcommands)
 
     struct command_node const *node = find_command_node(&cmd).node;
 
-    LONGS_EQUAL(6u, node->child_count);
+    LONGS_EQUAL(7u, node->child_count);
 }
 
 TEST(CommandsTests, GetCommandTreeRootContainsHelpNode)
@@ -805,6 +827,168 @@ TEST(CommandsTests, ExecuteTestIrSpeedCallsFunctions)
         .withUnsignedIntParameter("time_per_sensor_ms", 250u);
 
     execute_test_ir_speed(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test wheel-encoder */
+TEST(CommandsTests, FindCommandNodeReturnsWheelEncoderNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "wheel-encoder";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("wheel-encoder", node->name);
+}
+
+TEST(CommandsTests, ValidateTestWheelEncoderReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "wheel-encoder";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_wheel_encoder(&cmd));
+}
+
+TEST(CommandsTests, TestWheelEncoderCommandMatchDepthIsTwo)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "wheel-encoder";
+
+    struct command_match match{find_command_node(&cmd)};
+
+    LONGS_EQUAL(2u, match.depth);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test wheel-encoder-target */
+TEST(CommandsTests, FindCommandNodeReturnsWheelEncoderTargetNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "wheel-encoder";
+    cmd.tokens[2] = "target";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("target", node->name);
+}
+
+TEST(CommandsTests, ValidateTestWheelEncoderTargetReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 9;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_wheel_encoder_target(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestWheelEncoderTargetReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 7;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_wheel_encoder_target(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestWheelEncoderTargetReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 10;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_test_wheel_encoder_target(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestWheelEncoderTargetCallsFunctions)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 8;
+    cmd.tokens[3] = "5000";
+    cmd.tokens[4] = "100";
+    cmd.tokens[5] = "2500";
+    cmd.tokens[6] = "10";
+    cmd.tokens[7] = "50";
+    cmd.tokens[8] = "5";
+
+    mock().expectOneCall("wheel_motor_and_encoder_test")
+        .withUnsignedIntParameter("timeout_ms", 5000u)
+        .withUnsignedIntParameter("drift_delay_ms", 100u)
+        .withIntParameter("encoder_target", 2500)
+        .withUnsignedIntParameter("start_speed", 10u)
+        .withUnsignedIntParameter("end_speed", 50u)
+        .withUnsignedIntParameter("speed_step", 5u);
+
+    execute_test_wheel_encoder_target(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test wheel-encoder-deceleration */
+TEST(CommandsTests, FindCommandNodeReturnsWheelEncoderDecelerationNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "wheel-encoder";
+    cmd.tokens[2] = "deceleration";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("deceleration", node->name);
+}
+
+TEST(CommandsTests, ValidateTestWheelEncoderDecelerationReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 9;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_wheel_encoder_deceleration(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestWheelEncoderDecelerationReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 7;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_wheel_encoder_deceleration(&cmd));
+}
+
+TEST(CommandsTests, ValidateTestWheelEncoderDecelerationReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 10;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_test_wheel_encoder_deceleration(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestWheelEncoderDecelerationCallsFunctions)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 8;
+    cmd.tokens[3] = "5000";
+    cmd.tokens[4] = "100";
+    cmd.tokens[5] = "2500";
+    cmd.tokens[6] = "10";
+    cmd.tokens[7] = "80";
+    cmd.tokens[8] = "25";
+
+    mock().expectOneCall("wheel_motor_deceleration_test")
+        .withUnsignedIntParameter("timeout_ms", 5000u)
+        .withUnsignedIntParameter("drift_delay_ms", 100u)
+        .withIntParameter("encoder_target", 2500)
+        .withUnsignedIntParameter("start_speed", 10u)
+        .withUnsignedIntParameter("top_speed", 80u)
+        .withUnsignedIntParameter("max_accel_decel_percent", 25u);
+
+    execute_test_wheel_encoder_deceleration(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/
