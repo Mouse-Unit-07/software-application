@@ -13,6 +13,7 @@ extern "C"
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "maze_solver_common.h"
 #include "commands.h"
 
 }
@@ -67,6 +68,46 @@ void pushbutton_test(void)
     mock().actualCall("pushbutton_test");
 }
 
+struct maze_solver_config get_default_maze_solver_config(void)
+{
+    struct maze_solver_config cfg{};
+    cfg.maze_size = 16u;
+    return cfg;
+}
+
+struct maze_solver_config get_test_maze_solver_config(void)
+{
+    struct maze_solver_config cfg{};
+    cfg.maze_size = 8u;
+    return cfg;
+}
+
+struct maze_solver_config get_maze_solver_config(void)
+{
+    struct maze_solver_config cfg{};
+    return cfg;
+}
+
+void set_maze_solver_config(struct maze_solver_config cfg)
+{
+    mock().actualCall("set_maze_solver_config")
+        .withUnsignedIntParameter("maze_size", cfg.maze_size);
+}
+
+void set_test_maze_solver_config(struct maze_solver_config cfg)
+{
+    mock().actualCall("set_test_maze_solver_config")
+        .withUnsignedIntParameter("maze_size", cfg.maze_size)
+        .withUnsignedIntParameter("total_timeout_sec",
+                                  cfg.total_timeout_sec)
+        .withUnsignedIntParameter("move_forward_time_sec",
+                                  cfg.move_forward_time_sec)
+        .withUnsignedIntParameter("rotate_90_deg_time_sec",
+                                  cfg.rotate_90_deg_time_sec)
+        .withUnsignedIntParameter("rotate_180_deg_time_sec",
+                                  cfg.rotate_180_deg_time_sec);
+}
+
 }
 
 /*============================================================================*/
@@ -91,7 +132,7 @@ TEST_GROUP(CommandsTests)
 /*============================================================================*/
 TEST(CommandsTests, GetCommandTreeRootCountReturnsExpectedValue)
 {
-    LONGS_EQUAL(5u, get_command_tree_root_count());
+    LONGS_EQUAL(7u, get_command_tree_root_count());
 }
 
 TEST(CommandsTests, TestCommandContainsFiveSubcommands)
@@ -518,4 +559,324 @@ TEST(CommandsTests, ExecuteTestPushbuttonCallsFunctions)
     mock().expectOneCall("pushbutton_test");
 
     execute_test_pushbutton(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get */
+TEST(CommandsTests, RootContainsGetNode)
+{
+    struct command_node const *root = get_command_tree_root();
+
+    CHECK_TRUE(strcmp(root[5].name, "get") == 0);
+}
+
+TEST(CommandsTests, FindCommandNodeReturnsGetNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "get";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("get", node->name);
+}
+
+TEST(CommandsTests, ValidateGetReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "get";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_get(&cmd));
+}
+
+/*----------------------------------------------------------------------------*/
+/* get solver-default */
+TEST(CommandsTests, FindCommandNodeReturnsGetSolverDefaultNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "solver-default";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("solver-default", node->name);
+}
+
+TEST(CommandsTests, ValidateGetSolverDefaultReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "solver-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_solver_default(&cmd));
+}
+
+TEST(CommandsTests, ValidateGetSolverDefaultReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "solver-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_solver_default(&cmd));
+}
+
+TEST(CommandsTests, ExecuteGetSolverDefaultRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_solver_default(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get solver-test */
+TEST(CommandsTests, FindCommandNodeReturnsGetSolverTestNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "solver-test";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("solver-test", node->name);
+}
+
+TEST(CommandsTests, ValidateGetSolverTestReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "solver-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_solver_test(&cmd));
+}
+
+TEST(CommandsTests, ValidateGetSolverTestReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "solver-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_solver_test(&cmd));
+}
+
+TEST(CommandsTests, ExecuteGetSolverTestRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_solver_test(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get solver-current */
+TEST(CommandsTests, FindCommandNodeReturnsGetSolverCurrentNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "solver-current";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("solver-current", node->name);
+}
+
+TEST(CommandsTests, ValidateGetSolverCurrentReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "solver-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_solver_current(&cmd));
+}
+
+TEST(CommandsTests, ValidateGetSolverCurrentReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "solver-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_solver_current(&cmd));
+}
+
+TEST(CommandsTests, ExecuteGetSolverCurrentRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_solver_current(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* set */
+TEST(CommandsTests, RootContainsSetNode)
+{
+    struct command_node const *root = get_command_tree_root();
+
+    CHECK_TRUE(strcmp(root[6].name, "set") == 0);
+}
+
+TEST(CommandsTests, FindCommandNodeReturnsSetNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "set";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("set", node->name);
+}
+
+TEST(CommandsTests, ValidateSetReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 1;
+    cmd.tokens[0] = "set";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_set(&cmd));
+}
+
+/*----------------------------------------------------------------------------*/
+/* set solver-default */
+TEST(CommandsTests, FindCommandNodeReturnsSolverDefaultNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "set";
+    cmd.tokens[1] = "solver-default";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("solver-default", node->name);
+}
+
+TEST(CommandsTests, ValidateSetSolverDefaultReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_solver_default(&cmd));
+}
+
+TEST(CommandsTests, ExecuteSetSolverDefaultCallsFunctions)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("set_maze_solver_config")
+        .withUnsignedIntParameter("maze_size", 16u);
+
+    execute_set_solver_default(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* set solver-test */
+TEST(CommandsTests, FindCommandNodeReturnsSolverTestNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "set";
+    cmd.tokens[1] = "solver-test";
+
+    struct command_node const *node = find_command_node(&cmd).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("solver-test", node->name);
+}
+
+TEST(CommandsTests, ValidateSetSolverTestReturnsSuccessForDefaultConfig)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_solver_test(&cmd));
+}
+
+TEST(CommandsTests, ValidateSetSolverTestReturnsSuccessForEditConfig)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 7;
+    cmd.tokens[2] = "16";
+    cmd.tokens[3] = "60";
+    cmd.tokens[4] = "1";
+    cmd.tokens[5] = "1";
+    cmd.tokens[6] = "2";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_solver_test(&cmd));
+}
+
+TEST(CommandsTests, ValidateSetSolverTestReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 6;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_set_solver_test(&cmd));
+}
+
+TEST(CommandsTests, ValidateSetSolverTestReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 8;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_set_solver_test(&cmd));
+}
+
+TEST(CommandsTests, ValidateSetSolverTestReturnsBadParameter)
+{
+    struct command cmd{{0}};
+
+    cmd.token_count = 7;
+
+    cmd.tokens[2] = "17";
+    cmd.tokens[3] = "60";
+    cmd.tokens[4] = "1";
+    cmd.tokens[5] = "1";
+    cmd.tokens[6] = "2";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_set_solver_test(&cmd));
+    LONGS_EQUAL(2u, cmd.bad_parameter_index);
+}
+
+TEST(CommandsTests, ExecuteSetSolverTestUsesStoredTestConfig)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    mock().expectOneCall("set_maze_solver_config")
+        .withUnsignedIntParameter("maze_size", 8u);
+
+    execute_set_solver_test(&cmd);
+}
+
+TEST(CommandsTests, ExecuteSetSolverTestUpdatesTestConfig)
+{
+    struct command cmd{{0}};
+
+    cmd.token_count = 7;
+
+    cmd.tokens[2] = "16";
+    cmd.tokens[3] = "100";
+    cmd.tokens[4] = "10";
+    cmd.tokens[5] = "20";
+    cmd.tokens[6] = "40";
+
+    mock().expectOneCall("set_test_maze_solver_config")
+        .withUnsignedIntParameter("maze_size", 16u)
+        .withUnsignedIntParameter("total_timeout_sec", 100u)
+        .withUnsignedIntParameter("move_forward_time_sec", 10u)
+        .withUnsignedIntParameter("rotate_90_deg_time_sec", 20u)
+        .withUnsignedIntParameter("rotate_180_deg_time_sec", 40u);
+
+    execute_set_solver_test(&cmd);
 }

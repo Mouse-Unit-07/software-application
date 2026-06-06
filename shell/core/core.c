@@ -132,7 +132,7 @@ struct command parse_cli_buffer_contents(void)
     return cmd;
 }
 
-void process_command(struct command const *cmd)
+void process_command(struct command *cmd)
 {
     struct command_match match = find_command_node(cmd);
 

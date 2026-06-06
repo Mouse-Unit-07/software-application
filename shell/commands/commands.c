@@ -12,10 +12,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "device_self_tests.h"
 #include "fault_detector.h"
 #include "global_time.h"
+#include "maze_solver_common.h"
+#include "configuration.h"
 #include "commands.h"
 
 /*----------------------------------------------------------------------------*/
@@ -26,6 +29,8 @@ static enum validation_result validate_parameterless_command(struct command cons
 static void print_help_recursive(struct command_node const *nodes, uint32_t count,
                                  char const *prefix);
 
+static void print_maze_solver_config(struct maze_solver_config cfg);
+
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
 /*----------------------------------------------------------------------------*/
@@ -33,7 +38,13 @@ enum
 {
     ROOT_COMMAND_TOKEN_COUNT = 1,
     TEST_COMMAND_TOKEN_COUNT = 2,
-    TEST_SUBCOMMAND_TOKEN_COUNT = 3
+    GET_COMMAND_TOKEN_COUNT = 2,
+    SET_COMMAND_TOKEN_COUNT = 2,
+};
+
+enum
+{
+    MAZE_SOLVER_PARAMETER_COUNT = 5
 };
 
 static const struct command_node test_commands[] =
@@ -70,6 +81,46 @@ static const struct command_node test_commands[] =
     }
 };
 
+static const struct command_node get_commands[] =
+{
+    {
+        .name = "solver-default",
+        .help = "Display default solver configuration",
+        .validate = validate_get_solver_default,
+        .execute = execute_get_solver_default
+    },
+    {
+        .name = "solver-test",
+        .help = "Display test solver configuration",
+        .validate = validate_get_solver_test,
+        .execute = execute_get_solver_test
+    },
+    {
+        .name = "solver-current",
+        .help = "Display current solver configuration",
+        .validate = validate_get_solver_current,
+        .execute = execute_get_solver_current
+    }
+};
+
+static const struct command_node set_commands[] =
+{
+    {
+        .name = "solver-default",
+        .help = "Use default solver configuration",
+        .validate = validate_set_solver_default,
+        .execute = execute_set_solver_default
+    },
+    {
+        .name = "solver-test",
+        .help = "Use test solver configuration; optionally pass: "
+            "maze_size, total_timeout_sec, move_forward_time_sec, "
+            "rotate_90_deg_time_sec, rotate_180_deg_time_sec",
+        .validate = validate_set_solver_test,
+        .execute = execute_set_solver_test
+    }
+};
+
 static const struct command_node root_commands[] =
 {
     {
@@ -103,6 +154,22 @@ static const struct command_node root_commands[] =
         .execute = NULL,
         .children = test_commands,
         .child_count = sizeof(test_commands) / sizeof(test_commands[0])
+    },
+    {
+        .name = "get",
+        .help = "Read configuration values",
+        .validate = validate_get,
+        .execute = NULL,
+        .children = get_commands,
+        .child_count = sizeof(get_commands) / sizeof(get_commands[0])
+    },
+    {
+        .name = "set",
+        .help = "Choose configuration values to use w/ or w/o new values for test configs",
+        .validate = validate_set,
+        .execute = NULL,
+        .children = set_commands,
+        .child_count = sizeof(set_commands) / sizeof(set_commands[0])
     },
 };
 
@@ -150,7 +217,7 @@ struct command_match find_command_node(struct command const *cmd)
 
 /*----------------------------------------------------------------------------*/
 /* help */
-enum validation_result validate_help(struct command const *cmd)
+enum validation_result validate_help(struct command *cmd)
 {
     return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
 }
@@ -164,7 +231,7 @@ void execute_help(struct command const *cmd)
 
 /*----------------------------------------------------------------------------*/
 /* clear */
-enum validation_result validate_clear(struct command const *cmd)
+enum validation_result validate_clear(struct command *cmd)
 {
     return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
 }
@@ -178,7 +245,7 @@ void execute_clear(struct command const *cmd)
 
 /*----------------------------------------------------------------------------*/
 /* faults */
-enum validation_result validate_hardware_faults(struct command const *cmd)
+enum validation_result validate_hardware_faults(struct command *cmd)
 {
     return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
 }
@@ -192,7 +259,7 @@ void execute_hardware_faults(struct command const *cmd)
 
 /*----------------------------------------------------------------------------*/
 /* time */
-enum validation_result validate_get_time(struct command const *cmd)
+enum validation_result validate_get_time(struct command *cmd)
 {
     return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
 }
@@ -208,7 +275,7 @@ void execute_get_time(struct command const *cmd)
 
 /*----------------------------------------------------------------------------*/
 /* test */
-enum validation_result validate_test(struct command const *cmd)
+enum validation_result validate_test(struct command *cmd)
 {
     if (cmd->token_count == ROOT_COMMAND_TOKEN_COUNT) {
         return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
@@ -219,7 +286,7 @@ enum validation_result validate_test(struct command const *cmd)
 
 /*----------------------------------------------------------------------------*/
 /* test processor */
-enum validation_result validate_test_processor(struct command const *cmd)
+enum validation_result validate_test_processor(struct command *cmd)
 {
     return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
 }
@@ -235,7 +302,7 @@ void execute_test_processor(struct command const *cmd)
 
 /*----------------------------------------------------------------------------*/
 /* test battery */
-enum validation_result validate_test_battery(struct command const *cmd)
+enum validation_result validate_test_battery(struct command *cmd)
 {
     return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
 }
@@ -251,7 +318,7 @@ void execute_test_battery(struct command const *cmd)
 
 /*----------------------------------------------------------------------------*/
 /* test enabler */
-enum validation_result validate_test_enabler(struct command const *cmd)
+enum validation_result validate_test_enabler(struct command *cmd)
 {
     return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
 }
@@ -267,7 +334,7 @@ void execute_test_enabler(struct command const *cmd)
 
 /*----------------------------------------------------------------------------*/
 /* test led */
-enum validation_result validate_test_led(struct command const *cmd)
+enum validation_result validate_test_led(struct command *cmd)
 {
     return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
 }
@@ -282,8 +349,8 @@ void execute_test_led(struct command const *cmd)
 }
 
 /*----------------------------------------------------------------------------*/
-/* test led */
-enum validation_result validate_test_pushbutton(struct command const *cmd)
+/* test pushbutton */
+enum validation_result validate_test_pushbutton(struct command *cmd)
 {
     return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
 }
@@ -295,6 +362,129 @@ void execute_test_pushbutton(struct command const *cmd)
     printf("running pushbutton test...\r\n");
     pushbutton_test();
     printf("ending pushbutton test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* get */
+enum validation_result validate_get(struct command *cmd)
+{
+    if (cmd->token_count == ROOT_COMMAND_TOKEN_COUNT) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+/*----------------------------------------------------------------------------*/
+/* get solver-default */
+enum validation_result validate_get_solver_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_solver_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_maze_solver_config(get_default_maze_solver_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get solver-test */
+enum validation_result validate_get_solver_test(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_solver_test(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_maze_solver_config(get_test_maze_solver_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get solver-current */
+enum validation_result validate_get_solver_current(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_solver_current(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_maze_solver_config(get_maze_solver_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* set */
+enum validation_result validate_set(struct command *cmd)
+{
+    if (cmd->token_count == ROOT_COMMAND_TOKEN_COUNT) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+/*----------------------------------------------------------------------------*/
+/* set solver-default */
+enum validation_result validate_set_solver_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, SET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_set_solver_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    set_maze_solver_config(get_default_maze_solver_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* set solver-test */
+enum validation_result validate_set_solver_test(struct command *cmd)
+{
+    uint32_t edit_token_count = SET_COMMAND_TOKEN_COUNT + MAZE_SOLVER_PARAMETER_COUNT;
+
+    if ((cmd->token_count != SET_COMMAND_TOKEN_COUNT) && (cmd->token_count != edit_token_count)) {
+        if (cmd->token_count < edit_token_count) {
+            return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+        }
+
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    if (cmd->token_count == edit_token_count) {
+        struct maze_solver_config cfg;
+
+        cfg.maze_size = (uint32_t)strtoul(cmd->tokens[2], NULL, 10);
+
+        if (cfg.maze_size > 16u) {
+            cmd->bad_parameter_index = 2u;
+            return COMMAND_VALIDATION_BAD_PARAMETER;
+        }
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_set_solver_test(struct command const *cmd)
+{
+    if (cmd->token_count == SET_COMMAND_TOKEN_COUNT) {
+        set_maze_solver_config(get_test_maze_solver_config());
+        return;
+    }
+
+    struct maze_solver_config cfg;
+    cfg.maze_size = (uint32_t)strtoul(cmd->tokens[2], NULL, 10);
+    cfg.total_timeout_sec = (uint32_t)strtoul(cmd->tokens[3], NULL, 10);
+    cfg.move_forward_time_sec = (uint32_t)strtoul(cmd->tokens[4], NULL, 10);
+    cfg.rotate_90_deg_time_sec = (uint32_t)strtoul(cmd->tokens[5], NULL, 10);
+    cfg.rotate_180_deg_time_sec = (uint32_t)strtoul(cmd->tokens[6], NULL, 10);
+
+    set_test_maze_solver_config(cfg);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -328,4 +518,13 @@ static void print_help_recursive(struct command_node const *nodes, uint32_t coun
             print_help_recursive(nodes[i].children, nodes[i].child_count, command_name);
         }
     }
+}
+
+static void print_maze_solver_config(struct maze_solver_config cfg)
+{
+    printf("maze_size                = %" PRIu32 "\r\n", cfg.maze_size);
+    printf("total_timeout_sec        = %" PRIu32 "\r\n", cfg.total_timeout_sec);
+    printf("move_forward_time_sec    = %" PRIu32 "\r\n", cfg.move_forward_time_sec);
+    printf("rotate_90_deg_time_sec   = %" PRIu32 "\r\n", cfg.rotate_90_deg_time_sec);
+    printf("rotate_180_deg_time_sec  = %" PRIu32 "\r\n", cfg.rotate_180_deg_time_sec);
 }

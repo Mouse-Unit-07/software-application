@@ -22,7 +22,7 @@ void poll_shell(void);
 /* helpers exposed for testing */
 void load_cli_buffer_contents(void);
 struct command parse_cli_buffer_contents(void);
-void process_command(struct command const *cmd);
+void process_command(struct command *cmd);
 
 char *get_shell_buffer(void);
 uint32_t get_shell_buffer_size(void);

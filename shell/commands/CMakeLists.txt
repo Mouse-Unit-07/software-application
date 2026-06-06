@@ -12,7 +12,8 @@ target_include_directories(commands_lib PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
 )
 
-target_link_libraries(commands_lib PRIVATE
+target_link_libraries(commands_lib PUBLIC
     mouse_driver_lib
     maze_solver_lib
+    configuration_lib
 )
