@@ -13,6 +13,7 @@ extern "C"
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "maze_solver_common.h"
 #include "startup.h"
 
 }
@@ -91,6 +92,31 @@ void deinit_navigation(void)
     mock().actualCall("deinit_navigation");
 }
 
+void init_maze_solver_common(void)
+{
+    mock().actualCall("init_maze_solver_common");
+}
+
+void deinit_maze_solver_common(void)
+{
+    mock().actualCall("deinit_maze_solver_common");
+}
+
+struct maze_solver_config get_default_maze_solver_config(void)
+{
+    mock().actualCall("get_default_maze_solver_config");
+
+    struct maze_solver_config cfg{};
+    return cfg;
+}
+
+void set_maze_solver_config(struct maze_solver_config cfg)
+{
+    (void)cfg;
+
+    mock().actualCall("set_maze_solver_config");
+}
+
 }
 
 /*============================================================================*/
@@ -122,11 +148,17 @@ TEST(StartupTests, StartupCallsFunctions)
     mock().expectOneCall("init_user_interface");
     mock().expectOneCall("init_navigation");
 
+    mock().expectOneCall("init_maze_solver_common");
+    mock().expectOneCall("get_default_maze_solver_config");
+    mock().expectOneCall("set_maze_solver_config");
+
     startup();
 }
 
 TEST(StartupTests, ShutdownCallsFunctions)
 {
+    mock().expectOneCall("deinit_maze_solver_common");
+
     mock().expectOneCall("deinit_navigation");
     mock().expectOneCall("deinit_user_interface");
     mock().expectOneCall("deinit_device_self_tests");

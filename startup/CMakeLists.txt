@@ -14,4 +14,5 @@ target_include_directories(startup_lib PUBLIC
 
 target_link_libraries(startup_lib PUBLIC
     mouse_driver_lib
+    configuration_lib
 )

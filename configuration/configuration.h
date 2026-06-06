@@ -15,6 +15,6 @@
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Prototypes                         */
 /*----------------------------------------------------------------------------*/
-
+struct maze_solver_config get_default_maze_solver_config(void);
 
 #endif /* CONFIGURATION_H_ */

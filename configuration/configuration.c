@@ -10,8 +10,7 @@
 /*----------------------------------------------------------------------------*/
 #include <stdbool.h>
 #include <stdint.h>
-#include "device_self_tests.h"
-#include "navigation.h"
+#include "maze_solver_common.h"
 #include "configuration.h"
 
 /*----------------------------------------------------------------------------*/
@@ -27,7 +26,19 @@
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Definitions                        */
 /*----------------------------------------------------------------------------*/
+struct maze_solver_config get_default_maze_solver_config(void)
+{
+    struct maze_solver_config cfg =
+    {
+        .maze_size = 16u,
+        .total_timeout_sec = 10u * 60u,
+        .move_forward_time_sec = 1u,
+        .rotate_90_deg_time_sec = 1u,
+        .rotate_180_deg_time_sec = 1u
+    };
 
+    return cfg;
+}
 
 /*----------------------------------------------------------------------------*/
 /*                        Private Function Definitions                        */
