@@ -121,6 +121,11 @@ void wheel_motor_deceleration_test(struct wheel_motor_deceleration_test_config c
         .withUnsignedIntParameter("max_accel_decel_percent", cfg.max_accel_decel_percent);
 }
 
+void vacuum_test(void)
+{
+    mock().actualCall("vacuum_test");
+}
+
 }
 
 /*============================================================================*/
@@ -158,7 +163,7 @@ TEST(CommandsTests, GetTestNodeReturnsValidNode)
 
 TEST(CommandsTests, GetTestCommandsCountReturnsExpectedValue)
 {
-    LONGS_EQUAL(7u, get_test_commands_count());
+    LONGS_EQUAL(8u, get_test_commands_count());
 }
 
 TEST(CommandsTests, TestCommandsAreInExpectedOrder)
@@ -172,9 +177,10 @@ TEST(CommandsTests, TestCommandsAreInExpectedOrder)
     STRCMP_EQUAL("pushbutton", commands[4].name);
     STRCMP_EQUAL("ir", commands[5].name);
     STRCMP_EQUAL("wheel-encoder", commands[6].name);
+    STRCMP_EQUAL("vacuum", commands[7].name);
 }
 
-TEST(CommandsTests, TestCommandContainsSevenSubcommands)
+TEST(CommandsTests, TestCommandContainsSubcommands)
 {
     struct command cmd{{0}};
     cmd.token_count = 1;
@@ -184,7 +190,7 @@ TEST(CommandsTests, TestCommandContainsSevenSubcommands)
         find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
 
     CHECK(node != nullptr);
-    LONGS_EQUAL(7u, node->child_count);
+    LONGS_EQUAL(8u, node->child_count);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -838,4 +844,39 @@ TEST(CommandsTests, ExecuteTestWheelEncoderDecelerationCallsFunctions)
         .withUnsignedIntParameter("max_accel_decel_percent", 25u);
 
     execute_test_wheel_encoder_deceleration(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test vacuum */
+TEST(CommandsTests, FindCommandNodeReturnsVacuumNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "vacuum";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("vacuum", node->name);
+}
+
+TEST(CommandsTests, ValidateTestVacuumReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "test";
+    cmd.tokens[1] = "vacuum";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test_vacuum(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestVacuumCallsFunctions)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("vacuum_test");
+
+    execute_test_vacuum(&cmd);
 }

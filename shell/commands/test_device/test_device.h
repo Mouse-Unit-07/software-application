@@ -55,4 +55,7 @@ void execute_test_wheel_encoder_target(struct command const *cmd);
 enum validation_result validate_test_wheel_encoder_deceleration(struct command *cmd);
 void execute_test_wheel_encoder_deceleration(struct command const *cmd);
 
+enum validation_result validate_test_vacuum(struct command *cmd);
+void execute_test_vacuum(struct command const *cmd);
+
 #endif /* TEST_DEVICE_H_ */

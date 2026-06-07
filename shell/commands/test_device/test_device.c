@@ -141,7 +141,13 @@ static const struct command_node test_commands[] =
         .execute = NULL,
         .children = test_wheel_encoder_commands,
         .child_count = sizeof(test_wheel_encoder_commands) / sizeof(test_wheel_encoder_commands[0])
-    }
+    },
+    {
+        .name = "vacuum",
+        .help = "Run vacuum self-test",
+        .validate = validate_test_vacuum,
+        .execute = execute_test_vacuum
+    },
 };
 
 static const struct command_node test_node =
@@ -443,6 +449,22 @@ void execute_test_wheel_encoder_deceleration(struct command const *cmd)
     printf("running wheel encoder deceleration test...\r\n");
     wheel_motor_deceleration_test(cfg);
     printf("ending wheel encoder deceleration test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test vacuum */
+enum validation_result validate_test_vacuum(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_vacuum(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("running vacuum test...\r\n");
+    vacuum_test();
+    printf("ending vacuum test...\r\n");
 }
 
 /*----------------------------------------------------------------------------*/
