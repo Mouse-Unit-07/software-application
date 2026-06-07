@@ -30,4 +30,31 @@ void execute_get_solver_test(struct command const *cmd);
 enum validation_result validate_get_solver_current(struct command *cmd);
 void execute_get_solver_current(struct command const *cmd);
 
+enum validation_result validate_get_mouse_physical_default(struct command *cmd);
+void execute_get_mouse_physical_default(struct command const *cmd);
+
+enum validation_result validate_get_mouse_physical_test(struct command *cmd);
+void execute_get_mouse_physical_test(struct command const *cmd);
+
+enum validation_result validate_get_mouse_physical_current(struct command *cmd);
+void execute_get_mouse_physical_current(struct command const *cmd);
+
+enum validation_result validate_get_mouse_calculated(struct command *cmd);
+void execute_get_mouse_calculated(struct command const *cmd);
+
+enum validation_result validate_get_maze_physical_default(struct command *cmd);
+void execute_get_maze_physical_default(struct command const *cmd);
+
+enum validation_result validate_get_maze_physical_test(struct command *cmd);
+void execute_get_maze_physical_test(struct command const *cmd);
+
+enum validation_result validate_get_maze_physical_current(struct command *cmd);
+void execute_get_maze_physical_current(struct command const *cmd);
+
+enum validation_result validate_get_maze_calculated(struct command *cmd);
+void execute_get_maze_calculated(struct command const *cmd);
+
+enum validation_result validate_get_navigation(struct command *cmd);
+void execute_get_navigation(struct command const *cmd);
+
 #endif /* GET_H_ */
