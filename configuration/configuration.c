@@ -75,47 +75,47 @@ void deinit_configuration(void)
            sizeof(test_maze_physical_params));
 }
 
-struct maze_solver_config get_default_maze_solver_config(void)
+struct maze_solver_config get_saved_default_maze_solver_config(void)
 {
     return default_maze_solver_config;
 }
 
-struct maze_solver_config get_test_maze_solver_config(void)
+struct maze_solver_config get_saved_test_maze_solver_config(void)
 {
     return test_maze_solver_config;
 }
 
-void set_test_maze_solver_config(struct maze_solver_config cfg)
+void save_maze_solver_config_as_test(struct maze_solver_config cfg)
 {
     test_maze_solver_config = cfg;
 }
 
-struct mouse_physical_params get_default_mouse_physical_params(void)
+struct mouse_physical_params get_saved_default_mouse_physical_params(void)
 {
     return default_mouse_physical_params;
 }
 
-struct mouse_physical_params get_test_mouse_physical_params(void)
+struct mouse_physical_params get_saved_test_mouse_physical_params(void)
 {
     return test_mouse_physical_params;
 }
 
-void set_test_mouse_physical_params(struct mouse_physical_params cfg)
+void save_mouse_physical_params_as_test(struct mouse_physical_params cfg)
 {
     test_mouse_physical_params = cfg;
 }
 
-struct maze_physical_params get_default_maze_physical_params(void)
+struct maze_physical_params get_saved_default_maze_physical_params(void)
 {
     return default_maze_physical_params;
 }
 
-struct maze_physical_params get_test_maze_physical_params(void)
+struct maze_physical_params get_saved_test_maze_physical_params(void)
 {
     return test_maze_physical_params;
 }
 
-void set_test_maze_physical_params(struct maze_physical_params cfg)
+void save_maze_physical_params_as_test(struct maze_physical_params cfg)
 {
     test_maze_physical_params = cfg;
 }

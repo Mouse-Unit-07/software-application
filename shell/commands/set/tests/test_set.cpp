@@ -51,14 +51,14 @@ void deinit_test_fakes(void)
 extern "C"
 {
 
-struct maze_solver_config get_default_maze_solver_config(void)
+struct maze_solver_config get_saved_default_maze_solver_config(void)
 {
     struct maze_solver_config cfg{};
     cfg.maze_size = 16u;
     return cfg;
 }
 
-struct maze_solver_config get_test_maze_solver_config(void)
+struct maze_solver_config get_saved_test_maze_solver_config(void)
 {
     struct maze_solver_config cfg{};
     cfg.maze_size = 8u;
@@ -71,9 +71,9 @@ void set_maze_solver_config(struct maze_solver_config cfg)
         .withUnsignedIntParameter("maze_size", cfg.maze_size);
 }
 
-void set_test_maze_solver_config(struct maze_solver_config cfg)
+void save_maze_solver_config_as_test(struct maze_solver_config cfg)
 {
-    mock().actualCall("set_test_maze_solver_config")
+    mock().actualCall("save_maze_solver_config_as_test")
         .withUnsignedIntParameter("maze_size", cfg.maze_size)
         .withUnsignedIntParameter("total_timeout_sec", cfg.total_timeout_sec)
         .withUnsignedIntParameter("move_forward_time_sec", cfg.move_forward_time_sec)
@@ -81,23 +81,23 @@ void set_test_maze_solver_config(struct maze_solver_config cfg)
         .withUnsignedIntParameter("rotate_180_deg_time_sec", cfg.rotate_180_deg_time_sec);
 }
 
-struct mouse_physical_params get_default_mouse_physical_params(void)
+struct mouse_physical_params get_saved_default_mouse_physical_params(void)
 {
     struct mouse_physical_params p{};
     p.wheel_diameter_mm = 32.0f;
     return p;
 }
 
-struct mouse_physical_params get_test_mouse_physical_params(void)
+struct mouse_physical_params get_saved_test_mouse_physical_params(void)
 {
     struct mouse_physical_params p{};
     p.wheel_diameter_mm = 40.0f;
     return p;
 }
 
-void set_test_mouse_physical_params(struct mouse_physical_params p)
+void save_mouse_physical_params_as_test(struct mouse_physical_params p)
 {
-    mock().actualCall("set_test_mouse_physical_params")
+    mock().actualCall("save_mouse_physical_params_as_test")
         .withDoubleParameter("wheel_diameter_mm", p.wheel_diameter_mm);
 }
 
@@ -107,23 +107,23 @@ void calculate_mouse_params(struct mouse_physical_params p)
         .withDoubleParameter("wheel_diameter_mm", p.wheel_diameter_mm);
 }
 
-struct maze_physical_params get_default_maze_physical_params(void)
+struct maze_physical_params get_saved_default_maze_physical_params(void)
 {
     struct maze_physical_params p{};
     p.post_size_mm = 12.0f;
     return p;
 }
 
-struct maze_physical_params get_test_maze_physical_params(void)
+struct maze_physical_params get_saved_test_maze_physical_params(void)
 {
     struct maze_physical_params p{};
     p.post_size_mm = 20.0f;
     return p;
 }
 
-void set_test_maze_physical_params(struct maze_physical_params p)
+void save_maze_physical_params_as_test(struct maze_physical_params p)
 {
-    mock().actualCall("set_test_maze_physical_params")
+    mock().actualCall("save_maze_physical_params_as_test")
         .withDoubleParameter("post_size_mm", p.post_size_mm)
         .withDoubleParameter("wall_size_mm", p.wall_size_mm);
 }
@@ -429,7 +429,7 @@ TEST(SetTests, ExecuteSetSolverTestUpdatesTestConfig)
     cmd.tokens[5] = "20";
     cmd.tokens[6] = "40";
 
-    mock().expectOneCall("set_test_maze_solver_config")
+    mock().expectOneCall("save_maze_solver_config_as_test")
         .withUnsignedIntParameter("maze_size", 16u)
         .withUnsignedIntParameter("total_timeout_sec", 100u)
         .withUnsignedIntParameter("move_forward_time_sec", 10u)
@@ -522,7 +522,7 @@ TEST(SetTests, ExecuteSetMousePhysicalTestUpdatesConfig)
     cmd.tokens[6] = "9";
     cmd.tokens[7] = "27";
 
-    mock().expectOneCall("set_test_mouse_physical_params")
+    mock().expectOneCall("save_mouse_physical_params_as_test")
         .withDoubleParameter("wheel_diameter_mm", 32.0);;
 
     mock().expectOneCall("calculate_mouse_params")
@@ -612,7 +612,7 @@ TEST(SetTests, ExecuteSetMazePhysicalTestUpdatesConfig)
     cmd.tokens[2] = "12";
     cmd.tokens[3] = "6";
 
-    mock().expectOneCall("set_test_maze_physical_params")
+    mock().expectOneCall("save_maze_physical_params_as_test")
         .withDoubleParameter("post_size_mm", 12.0)
         .withDoubleParameter("wall_size_mm", 6.0);
 

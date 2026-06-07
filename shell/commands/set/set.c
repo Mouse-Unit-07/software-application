@@ -133,7 +133,7 @@ void execute_set_solver_default(struct command const *cmd)
 {
     (void)cmd;
 
-    set_maze_solver_config(get_default_maze_solver_config());
+    set_maze_solver_config(get_saved_default_maze_solver_config());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -169,7 +169,7 @@ enum validation_result validate_set_solver_test(struct command *cmd)
 void execute_set_solver_test(struct command const *cmd)
 {
     if (cmd->token_count == SET_COMMAND_TOKEN_COUNT) {
-        set_maze_solver_config(get_test_maze_solver_config());
+        set_maze_solver_config(get_saved_test_maze_solver_config());
         return;
     }
 
@@ -187,7 +187,7 @@ void execute_set_solver_test(struct command const *cmd)
     cfg.rotate_90_deg_time_sec = (uint32_t)strtoul(cmd->tokens[param_3_offset], NULL, 10);
     cfg.rotate_180_deg_time_sec = (uint32_t)strtoul(cmd->tokens[param_4_offset], NULL, 10);
 
-    set_test_maze_solver_config(cfg);
+    save_maze_solver_config_as_test(cfg);
     set_maze_solver_config(cfg);
 }
 
@@ -202,7 +202,7 @@ void execute_set_mouse_physical_default(struct command const *cmd)
 {
     (void)cmd;
 
-    calculate_mouse_params(get_default_mouse_physical_params());
+    calculate_mouse_params(get_saved_default_mouse_physical_params());
     calculate_navigation_params();
 }
 
@@ -226,7 +226,7 @@ enum validation_result validate_set_mouse_physical_test(struct command *cmd)
 void execute_set_mouse_physical_test(struct command const *cmd)
 {
     if (cmd->token_count == SET_COMMAND_TOKEN_COUNT) {
-        calculate_mouse_params(get_test_mouse_physical_params());
+        calculate_mouse_params(get_saved_test_mouse_physical_params());
         calculate_navigation_params();
         return;
     }
@@ -241,7 +241,7 @@ void execute_set_mouse_physical_test(struct command const *cmd)
     p.motor_pinion_gear_teeth = strtof(cmd->tokens[base_offset + PARAM_4_OFFSET], NULL);
     p.wheel_gear_teeth = strtof(cmd->tokens[base_offset + PARAM_5_OFFSET], NULL);
 
-    set_test_mouse_physical_params(p);
+    save_mouse_physical_params_as_test(p);
     calculate_mouse_params(p);
     calculate_navigation_params();
 }
@@ -257,7 +257,7 @@ void execute_set_maze_physical_default(struct command const *cmd)
 {
     (void)cmd;
 
-    calculate_maze_params(get_default_maze_physical_params());
+    calculate_maze_params(get_saved_default_maze_physical_params());
     calculate_navigation_params();
 }
 
@@ -281,7 +281,7 @@ enum validation_result validate_set_maze_physical_test(struct command *cmd)
 void execute_set_maze_physical_test(struct command const *cmd)
 {
     if (cmd->token_count == SET_COMMAND_TOKEN_COUNT) {
-        calculate_maze_params(get_test_maze_physical_params());
+        calculate_maze_params(get_saved_test_maze_physical_params());
         calculate_navigation_params();
         return;
     }
@@ -292,7 +292,7 @@ void execute_set_maze_physical_test(struct command const *cmd)
     p.post_size_mm = strtof(cmd->tokens[base_offset + PARAM_0_OFFSET], NULL);
     p.wall_size_mm = strtof(cmd->tokens[base_offset + PARAM_1_OFFSET], NULL);
 
-    set_test_maze_physical_params(p);
+    save_maze_physical_params_as_test(p);
     calculate_maze_params(p);
     calculate_navigation_params();
 }

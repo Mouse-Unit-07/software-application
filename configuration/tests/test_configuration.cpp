@@ -91,11 +91,11 @@ TEST(ConfigurationTests, InitConfigurationResetsTestConfigToDefaults)
     cfg.rotate_90_deg_time_sec = 3u;
     cfg.rotate_180_deg_time_sec = 4u;
 
-    set_test_maze_solver_config(cfg);
+    save_maze_solver_config_as_test(cfg);
 
     init_configuration();
 
-    struct maze_solver_config result{get_test_maze_solver_config()};
+    struct maze_solver_config result{get_saved_test_maze_solver_config()};
 
     check_default_maze_solver_config(result);
 }
@@ -110,11 +110,11 @@ TEST(ConfigurationTests, InitConfigurationResetsMousePhysicalParamsToDefaults)
     cfg.motor_pinion_gear_teeth = 5.0;
     cfg.wheel_gear_teeth = 6.0;
 
-    set_test_mouse_physical_params(cfg);
+    save_mouse_physical_params_as_test(cfg);
 
     init_configuration();
 
-    check_default_mouse_physical_params(get_test_mouse_physical_params());
+    check_default_mouse_physical_params(get_saved_test_mouse_physical_params());
 }
 
 TEST(ConfigurationTests, InitConfigurationResetsMazePhysicalParamsToDefaults)
@@ -123,11 +123,11 @@ TEST(ConfigurationTests, InitConfigurationResetsMazePhysicalParamsToDefaults)
     cfg.post_size_mm = 1.0;
     cfg.wall_size_mm = 2.0;
 
-    set_test_maze_physical_params(cfg);
+    save_maze_physical_params_as_test(cfg);
 
     init_configuration();
 
-    check_default_maze_physical_params(get_test_maze_physical_params());
+    check_default_maze_physical_params(get_saved_test_maze_physical_params());
 }
 
 TEST(ConfigurationTests, DeinitConfigurationResetsTestConfigToDefaults)
@@ -139,11 +139,11 @@ TEST(ConfigurationTests, DeinitConfigurationResetsTestConfigToDefaults)
     cfg.rotate_90_deg_time_sec = 3u;
     cfg.rotate_180_deg_time_sec = 4u;
 
-    set_test_maze_solver_config(cfg);
+    save_maze_solver_config_as_test(cfg);
 
     deinit_configuration();
 
-    struct maze_solver_config result{get_test_maze_solver_config()};
+    struct maze_solver_config result{get_saved_test_maze_solver_config()};
 
     check_default_maze_solver_config(result);
 }
@@ -158,11 +158,11 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMousePhysicalParamsToDefaults)
     cfg.motor_pinion_gear_teeth = 5.0;
     cfg.wheel_gear_teeth = 6.0;
 
-    set_test_mouse_physical_params(cfg);
+    save_mouse_physical_params_as_test(cfg);
 
     deinit_configuration();
 
-    check_default_mouse_physical_params(get_test_mouse_physical_params());
+    check_default_mouse_physical_params(get_saved_test_mouse_physical_params());
 }
 
 TEST(ConfigurationTests, DeinitConfigurationResetsMazePhysicalParamsToDefaults)
@@ -171,23 +171,23 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMazePhysicalParamsToDefaults)
     cfg.post_size_mm = 1.0;
     cfg.wall_size_mm = 2.0;
 
-    set_test_maze_physical_params(cfg);
+    save_maze_physical_params_as_test(cfg);
 
     deinit_configuration();
 
-    check_default_maze_physical_params(get_test_maze_physical_params());
+    check_default_maze_physical_params(get_saved_test_maze_physical_params());
 }
 
 TEST(ConfigurationTests, DefaultMazeSolverConfigContainsExpectedValues)
 {
-    struct maze_solver_config cfg{get_default_maze_solver_config()};
+    struct maze_solver_config cfg{get_saved_default_maze_solver_config()};
 
     check_default_maze_solver_config(cfg);
 }
 
 TEST(ConfigurationTests, TestMazeSolverConfigInitiallyContainsExpectedValues)
 {
-    struct maze_solver_config cfg{get_test_maze_solver_config()};
+    struct maze_solver_config cfg{get_saved_test_maze_solver_config()};
 
     check_default_maze_solver_config(cfg);
 }
@@ -201,9 +201,9 @@ TEST(ConfigurationTests, SetTestMazeSolverConfigUpdatesValues)
     cfg.rotate_90_deg_time_sec = 3u;
     cfg.rotate_180_deg_time_sec = 4u;
 
-    set_test_maze_solver_config(cfg);
+    save_maze_solver_config_as_test(cfg);
 
-    struct maze_solver_config result{get_test_maze_solver_config()};
+    struct maze_solver_config result{get_saved_test_maze_solver_config()};
 
     LONGS_EQUAL(8u, result.maze_size);
     LONGS_EQUAL(123u, result.total_timeout_sec);
@@ -214,12 +214,12 @@ TEST(ConfigurationTests, SetTestMazeSolverConfigUpdatesValues)
 
 TEST(ConfigurationTests, DefaultMousePhysicalParamsContainExpectedValues)
 {
-    check_default_mouse_physical_params(get_default_mouse_physical_params());
+    check_default_mouse_physical_params(get_saved_default_mouse_physical_params());
 }
 
 TEST(ConfigurationTests, TestMousePhysicalParamsInitiallyContainExpectedValues)
 {
-    check_default_mouse_physical_params(get_test_mouse_physical_params());
+    check_default_mouse_physical_params(get_saved_test_mouse_physical_params());
 }
 
 TEST(ConfigurationTests, SetTestMousePhysicalParamsUpdatesValues)
@@ -232,9 +232,9 @@ TEST(ConfigurationTests, SetTestMousePhysicalParamsUpdatesValues)
     cfg.motor_pinion_gear_teeth = 5.0;
     cfg.wheel_gear_teeth = 6.0;
 
-    set_test_mouse_physical_params(cfg);
+    save_mouse_physical_params_as_test(cfg);
 
-    struct mouse_physical_params result = get_test_mouse_physical_params();
+    struct mouse_physical_params result = get_saved_test_mouse_physical_params();
 
     DOUBLES_EQUAL(1.0, result.wheel_diameter_mm, FLOAT_TOLERANCE);
     DOUBLES_EQUAL(2.0, result.wheel_base_mm, FLOAT_TOLERANCE);
@@ -246,12 +246,12 @@ TEST(ConfigurationTests, SetTestMousePhysicalParamsUpdatesValues)
 
 TEST(ConfigurationTests, DefaultMazePhysicalParamsContainExpectedValues)
 {
-    check_default_maze_physical_params(get_default_maze_physical_params());
+    check_default_maze_physical_params(get_saved_default_maze_physical_params());
 }
 
 TEST(ConfigurationTests, TestMazePhysicalParamsInitiallyContainExpectedValues)
 {
-    check_default_maze_physical_params(get_test_maze_physical_params());
+    check_default_maze_physical_params(get_saved_test_maze_physical_params());
 }
 
 TEST(ConfigurationTests, SetTestMazePhysicalParamsUpdatesValues)
@@ -260,9 +260,9 @@ TEST(ConfigurationTests, SetTestMazePhysicalParamsUpdatesValues)
     cfg.post_size_mm = 1.0;
     cfg.wall_size_mm = 2.0;
 
-    set_test_maze_physical_params(cfg);
+    save_maze_physical_params_as_test(cfg);
 
-    struct maze_physical_params result = get_test_maze_physical_params();
+    struct maze_physical_params result = get_saved_test_maze_physical_params();
 
     DOUBLES_EQUAL(1.0, result.post_size_mm, FLOAT_TOLERANCE);
     DOUBLES_EQUAL(2.0, result.wall_size_mm, FLOAT_TOLERANCE);

@@ -113,9 +113,9 @@ void deinit_maze_solver_common(void)
     mock().actualCall("deinit_maze_solver_common");
 }
 
-struct maze_solver_config get_default_maze_solver_config(void)
+struct maze_solver_config get_saved_default_maze_solver_config(void)
 {
-    mock().actualCall("get_default_maze_solver_config");
+    mock().actualCall("get_saved_default_maze_solver_config");
 
     struct maze_solver_config cfg{};
     return cfg;
@@ -128,17 +128,17 @@ void set_maze_solver_config(struct maze_solver_config cfg)
     mock().actualCall("set_maze_solver_config");
 }
 
-struct mouse_physical_params get_default_mouse_physical_params(void)
+struct mouse_physical_params get_saved_default_mouse_physical_params(void)
 {
-    mock().actualCall("get_default_mouse_physical_params");
+    mock().actualCall("get_saved_default_mouse_physical_params");
 
     struct mouse_physical_params cfg{};
     return cfg;
 }
 
-struct maze_physical_params get_default_maze_physical_params(void)
+struct maze_physical_params get_saved_default_maze_physical_params(void)
 {
-    mock().actualCall("get_default_maze_physical_params");
+    mock().actualCall("get_saved_default_maze_physical_params");
 
     struct maze_physical_params cfg{};
     return cfg;
@@ -193,16 +193,16 @@ TEST(StartupTests, StartupCallsFunctions)
     mock().expectOneCall("init_device_self_tests");
     mock().expectOneCall("init_user_interface");
     mock().expectOneCall("init_navigation");
-    mock().expectOneCall("get_default_mouse_physical_params");
+    mock().expectOneCall("get_saved_default_mouse_physical_params");
     mock().expectOneCall("calculate_mouse_params");
-    mock().expectOneCall("get_default_maze_physical_params");
+    mock().expectOneCall("get_saved_default_maze_physical_params");
     mock().expectOneCall("calculate_maze_params");
     mock().expectOneCall("calculate_navigation_params");
 
     mock().expectOneCall("init_configuration");
 
     mock().expectOneCall("init_maze_solver_common");
-    mock().expectOneCall("get_default_maze_solver_config");
+    mock().expectOneCall("get_saved_default_maze_solver_config");
     mock().expectOneCall("set_maze_solver_config");
 
     startup();

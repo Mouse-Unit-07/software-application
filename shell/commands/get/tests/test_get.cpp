@@ -51,14 +51,14 @@ void deinit_test_fakes(void)
 extern "C"
 {
 
-struct maze_solver_config get_default_maze_solver_config(void)
+struct maze_solver_config get_saved_default_maze_solver_config(void)
 {
     struct maze_solver_config cfg{};
     cfg.maze_size = 16u;
     return cfg;
 }
 
-struct maze_solver_config get_test_maze_solver_config(void)
+struct maze_solver_config get_saved_test_maze_solver_config(void)
 {
     struct maze_solver_config cfg{};
     cfg.maze_size = 8u;
@@ -106,28 +106,28 @@ struct navigation_params get_navigation_params(void)
     return p;
 }
 
-struct mouse_physical_params get_default_mouse_physical_params(void)
+struct mouse_physical_params get_saved_default_mouse_physical_params(void)
 {
     struct mouse_physical_params p{};
     p.wheel_diameter_mm = 32.0;
     return p;
 }
 
-struct mouse_physical_params get_test_mouse_physical_params(void)
+struct mouse_physical_params get_saved_test_mouse_physical_params(void)
 {
     struct mouse_physical_params p{};
     p.wheel_diameter_mm = 28.0;
     return p;
 }
 
-struct maze_physical_params get_default_maze_physical_params(void)
+struct maze_physical_params get_saved_default_maze_physical_params(void)
 {
     struct maze_physical_params p{};
     p.post_size_mm = 12.0;
     return p;
 }
 
-struct maze_physical_params get_test_maze_physical_params(void)
+struct maze_physical_params get_saved_test_maze_physical_params(void)
 {
     struct maze_physical_params p{};
     p.post_size_mm = 10.0;

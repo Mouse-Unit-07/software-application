@@ -162,7 +162,7 @@ void execute_get_solver_default(struct command const *cmd)
 {
     (void)cmd;
 
-    print_maze_solver_config(get_default_maze_solver_config());
+    print_maze_solver_config(get_saved_default_maze_solver_config());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -176,7 +176,7 @@ void execute_get_solver_test(struct command const *cmd)
 {
     (void)cmd;
 
-    print_maze_solver_config(get_test_maze_solver_config());
+    print_maze_solver_config(get_saved_test_maze_solver_config());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -204,7 +204,7 @@ void execute_get_mouse_physical_default(struct command const *cmd)
 {
     (void)cmd;
 
-    print_mouse_physical_params(get_default_mouse_physical_params());
+    print_mouse_physical_params(get_saved_default_mouse_physical_params());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -218,7 +218,7 @@ void execute_get_mouse_physical_test(struct command const *cmd)
 {
     (void)cmd;
 
-    print_mouse_physical_params(get_test_mouse_physical_params());
+    print_mouse_physical_params(get_saved_test_mouse_physical_params());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -260,7 +260,7 @@ void execute_get_maze_physical_default(struct command const *cmd)
 {
     (void)cmd;
 
-    print_maze_physical_params(get_default_maze_physical_params());
+    print_maze_physical_params(get_saved_default_maze_physical_params());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -274,7 +274,7 @@ void execute_get_maze_physical_test(struct command const *cmd)
 {
     (void)cmd;
 
-    print_maze_physical_params(get_test_maze_physical_params());
+    print_maze_physical_params(get_saved_test_maze_physical_params());
 }
 
 /*----------------------------------------------------------------------------*/
