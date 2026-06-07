@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "navigation.h"
 #include "maze_solver_common.h"
 #include "configuration.h"
 #include "command.h"
@@ -33,6 +34,8 @@ enum
 enum
 {
     MAZE_SOLVER_PARAMETER_COUNT = 5,
+    MOUSE_PHYSICAL_PARAMETER_COUNT = 6,
+    MAZE_PHYSICAL_PARAMETER_COUNT = 2
 };
 
 static const struct command_node set_commands[] =
@@ -50,7 +53,35 @@ static const struct command_node set_commands[] =
             "rotate_90_deg_time_sec, rotate_180_deg_time_sec",
         .validate = validate_set_solver_test,
         .execute = execute_set_solver_test
-    }
+    },
+    {
+        .name = "mouse-physical-default",
+        .help = "Use default mouse physical parameters",
+        .validate = validate_set_mouse_physical_default,
+        .execute = execute_set_mouse_physical_default
+    },
+    {
+        .name = "mouse-physical-test",
+        .help = "Use test mouse physical parameters; optionally pass: "
+            "wheel_diameter_mm, wheel_base_mm, max_motor_rpm, "
+            "encoder_events_per_revolution, motor_pinion_gear_teeth, "
+            "wheel_gear_teeth",
+        .validate = validate_set_mouse_physical_test,
+        .execute = execute_set_mouse_physical_test
+    },
+    {
+        .name = "maze-physical-default",
+        .help = "Use default maze physical parameters",
+        .validate = validate_set_maze_physical_default,
+        .execute = execute_set_maze_physical_default
+    },
+    {
+        .name = "maze-physical-test",
+        .help = "Use test maze physical parameters; optionally pass: "
+            "post_size_mm, wall_size_mm",
+        .validate = validate_set_maze_physical_test,
+        .execute = execute_set_maze_physical_test
+    },
 };
 
 static const struct command_node set_node =
@@ -157,6 +188,113 @@ void execute_set_solver_test(struct command const *cmd)
     cfg.rotate_180_deg_time_sec = (uint32_t)strtoul(cmd->tokens[param_4_offset], NULL, 10);
 
     set_test_maze_solver_config(cfg);
+    set_maze_solver_config(cfg);
+}
+
+/*----------------------------------------------------------------------------*/
+/* set mouse-physical-default */
+enum validation_result validate_set_mouse_physical_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, SET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_set_mouse_physical_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    calculate_mouse_params(get_default_mouse_physical_params());
+    calculate_navigation_params();
+}
+
+/*----------------------------------------------------------------------------*/
+/* set mouse-physical-test */
+enum validation_result validate_set_mouse_physical_test(struct command *cmd)
+{
+    uint32_t max_token_count = SET_COMMAND_TOKEN_COUNT + MOUSE_PHYSICAL_PARAMETER_COUNT;
+
+    if ((cmd->token_count != SET_COMMAND_TOKEN_COUNT) && (cmd->token_count != max_token_count)) {
+        if (cmd->token_count < max_token_count) {
+            return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+        }
+
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_set_mouse_physical_test(struct command const *cmd)
+{
+    if (cmd->token_count == SET_COMMAND_TOKEN_COUNT) {
+        calculate_mouse_params(get_test_mouse_physical_params());
+        calculate_navigation_params();
+        return;
+    }
+
+    uint32_t base_offset = SET_COMMAND_TOKEN_COUNT;
+
+    struct mouse_physical_params p = {0};
+    p.wheel_diameter_mm = strtof(cmd->tokens[base_offset + PARAM_0_OFFSET], NULL);
+    p.wheel_base_mm = strtof(cmd->tokens[base_offset + PARAM_1_OFFSET], NULL);
+    p.max_motor_rpm = strtof(cmd->tokens[base_offset + PARAM_2_OFFSET], NULL);
+    p.encoder_events_per_revolution = strtof(cmd->tokens[base_offset + PARAM_3_OFFSET], NULL);
+    p.motor_pinion_gear_teeth = strtof(cmd->tokens[base_offset + PARAM_4_OFFSET], NULL);
+    p.wheel_gear_teeth = strtof(cmd->tokens[base_offset + PARAM_5_OFFSET], NULL);
+
+    set_test_mouse_physical_params(p);
+    calculate_mouse_params(p);
+    calculate_navigation_params();
+}
+
+/*----------------------------------------------------------------------------*/
+/* set maze-physical-default */
+enum validation_result validate_set_maze_physical_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, SET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_set_maze_physical_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    calculate_maze_params(get_default_maze_physical_params());
+    calculate_navigation_params();
+}
+
+/*----------------------------------------------------------------------------*/
+/* set maze-physical-test */
+enum validation_result validate_set_maze_physical_test(struct command *cmd)
+{
+    uint32_t max_token_count = SET_COMMAND_TOKEN_COUNT + MAZE_PHYSICAL_PARAMETER_COUNT;
+
+    if ((cmd->token_count != SET_COMMAND_TOKEN_COUNT) && (cmd->token_count != max_token_count)) {
+        if (cmd->token_count < max_token_count) {
+            return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+        }
+
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_set_maze_physical_test(struct command const *cmd)
+{
+    if (cmd->token_count == SET_COMMAND_TOKEN_COUNT) {
+        calculate_maze_params(get_test_maze_physical_params());
+        calculate_navigation_params();
+        return;
+    }
+
+    uint32_t base_offset = SET_COMMAND_TOKEN_COUNT;
+
+    struct maze_physical_params p = {0};
+    p.post_size_mm = strtof(cmd->tokens[base_offset + PARAM_0_OFFSET], NULL);
+    p.wall_size_mm = strtof(cmd->tokens[base_offset + PARAM_1_OFFSET], NULL);
+
+    set_test_maze_physical_params(p);
+    calculate_maze_params(p);
+    calculate_navigation_params();
 }
 
 /*----------------------------------------------------------------------------*/

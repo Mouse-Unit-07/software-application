@@ -27,4 +27,16 @@ void execute_set_solver_default(struct command const *cmd);
 enum validation_result validate_set_solver_test(struct command *cmd);
 void execute_set_solver_test(struct command const *cmd);
 
+enum validation_result validate_set_mouse_physical_default(struct command *cmd);
+void execute_set_mouse_physical_default(struct command const *cmd);
+
+enum validation_result validate_set_mouse_physical_test(struct command *cmd);
+void execute_set_mouse_physical_test(struct command const *cmd);
+
+enum validation_result validate_set_maze_physical_default(struct command *cmd);
+void execute_set_maze_physical_default(struct command const *cmd);
+
+enum validation_result validate_set_maze_physical_test(struct command *cmd);
+void execute_set_maze_physical_test(struct command const *cmd);
+
 #endif /* SET_H_ */
