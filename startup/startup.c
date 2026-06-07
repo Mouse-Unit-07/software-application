@@ -41,6 +41,9 @@ void startup(void)
     init_device_self_tests();
     init_user_interface();
     init_navigation();
+    calculate_mouse_params(get_default_mouse_physical_params());
+    calculate_maze_params(get_default_maze_physical_params());
+    calculate_navigation_params();
 
     init_configuration();
 

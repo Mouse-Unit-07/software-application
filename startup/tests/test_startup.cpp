@@ -14,6 +14,7 @@ extern "C"
 #include <stdbool.h>
 #include <stdint.h>
 #include "maze_solver_common.h"
+#include "navigation.h"
 #include "startup.h"
 
 }
@@ -127,6 +128,41 @@ void set_maze_solver_config(struct maze_solver_config cfg)
     mock().actualCall("set_maze_solver_config");
 }
 
+struct mouse_physical_params get_default_mouse_physical_params(void)
+{
+    mock().actualCall("get_default_mouse_physical_params");
+
+    struct mouse_physical_params cfg{};
+    return cfg;
+}
+
+struct maze_physical_params get_default_maze_physical_params(void)
+{
+    mock().actualCall("get_default_maze_physical_params");
+
+    struct maze_physical_params cfg{};
+    return cfg;
+}
+
+void calculate_mouse_params(struct mouse_physical_params p)
+{
+    (void)p;
+
+    mock().actualCall("calculate_mouse_params");
+}
+
+void calculate_maze_params(struct maze_physical_params p)
+{
+    (void)p;
+
+    mock().actualCall("calculate_maze_params");
+}
+
+void calculate_navigation_params(void)
+{
+    mock().actualCall("calculate_navigation_params");
+}
+
 }
 
 /*============================================================================*/
@@ -157,6 +193,11 @@ TEST(StartupTests, StartupCallsFunctions)
     mock().expectOneCall("init_device_self_tests");
     mock().expectOneCall("init_user_interface");
     mock().expectOneCall("init_navigation");
+    mock().expectOneCall("get_default_mouse_physical_params");
+    mock().expectOneCall("calculate_mouse_params");
+    mock().expectOneCall("get_default_maze_physical_params");
+    mock().expectOneCall("calculate_maze_params");
+    mock().expectOneCall("calculate_navigation_params");
 
     mock().expectOneCall("init_configuration");
 
