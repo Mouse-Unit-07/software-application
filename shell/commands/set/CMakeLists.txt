@@ -1,19 +1,19 @@
 #--------------------------------- FILE INFO ----------------------------------#
 # Filename           : CMakeLists.txt                                          #
 #                                                                              #
-# CMakeLists.txt file for core source files                                    #
+# CMakeLists.txt file for set source files                                     #
 #                                                                              #
 #------------------------------------------------------------------------------#
-add_library(core_lib STATIC
-    ${CMAKE_CURRENT_LIST_DIR}/core.c
+add_library(set_lib STATIC
+    ${CMAKE_CURRENT_LIST_DIR}/set.c
 )
 
-target_include_directories(core_lib PUBLIC
+target_include_directories(set_lib PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
 )
 
-target_link_libraries(core_lib PUBLIC
-    mouse_driver_lib
+target_link_libraries(set_lib PUBLIC
+    maze_solver_lib
+    configuration_lib
     command_lib
-    root_lib
 )

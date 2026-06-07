@@ -13,7 +13,7 @@ extern "C"
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "commands.h"
+#include "command.h"
 #include "core.h"
 
 }
@@ -49,6 +49,20 @@ void feedCharacters(char const *str)
     }
 }
 
+void init_shell_for_test(void)
+{
+    mock().disable();
+    init_shell();
+    mock().enable();
+}
+
+void deinit_shell_for_test(void)
+{
+    mock().disable();
+    deinit_shell();
+    mock().enable();
+}
+
 /*============================================================================*/
 /*                            Mock Implementations                            */
 /*============================================================================*/
@@ -74,6 +88,25 @@ void clear_cli_buffer(void)
     mock().actualCall("clear_cli_buffer");
 }
 
+void init_root(void)
+{
+    mock().actualCall("init_root");
+}
+
+void deinit_root(void)
+{
+    mock().actualCall("deinit_root");
+}
+
+struct command_match find_command_node_in_root(struct command *cmd)
+{
+    mock().actualCall("find_command_node_in_root")
+        .withPointerParameter("cmd", cmd);
+
+    struct command_match match{};
+    return match;
+}
+
 }
 
 /*============================================================================*/
@@ -83,7 +116,7 @@ TEST_GROUP(ShellTests)
 {
     void setup() override
     {
-        init_shell();
+        init_shell_for_test();
         mock().clear();
     }
 
@@ -91,16 +124,17 @@ TEST_GROUP(ShellTests)
     {
         mock().checkExpectations();
         mock().clear();
-        deinit_shell();
+        deinit_shell_for_test();
     }
 };
 
 /*============================================================================*/
 /*                                    Tests                                   */
 /*============================================================================*/
-TEST(ShellTests, InitShellResetsState)
+TEST(ShellTests, InitShellResetsStateAndCallsFunctions)
 {
     strcpy(get_shell_buffer(), "abc");
+    mock().expectOneCall("init_root");
 
     init_shell();
 
@@ -109,9 +143,10 @@ TEST(ShellTests, InitShellResetsState)
     CHECK_FALSE(get_ready_for_parsing());
 }
 
-TEST(ShellTests, DeinitShellResetsState)
+TEST(ShellTests, DeinitShellResetsStateAndCallsFunctions)
 {
     strcpy(get_shell_buffer(), "abc");
+    mock().expectOneCall("deinit_root");
 
     deinit_shell();
 
@@ -289,6 +324,8 @@ TEST(ShellTests, PollShellIgnoresEmptyLine)
 TEST(ShellTests, PollShellResetsStateAfterCommand)
 {
     feedCharacters("help\r");
+
+    mock().ignoreOtherCalls();
 
     poll_shell();
 

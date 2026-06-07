@@ -1,19 +1,13 @@
 #--------------------------------- FILE INFO ----------------------------------#
 # Filename           : CMakeLists.txt                                          #
 #                                                                              #
-# CMakeLists.txt file for core source files                                    #
+# CMakeLists.txt file for command source files                                 #
 #                                                                              #
 #------------------------------------------------------------------------------#
-add_library(core_lib STATIC
-    ${CMAKE_CURRENT_LIST_DIR}/core.c
+add_library(command_lib STATIC
+    ${CMAKE_CURRENT_LIST_DIR}/command.c
 )
 
-target_include_directories(core_lib PUBLIC
+target_include_directories(command_lib PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
-)
-
-target_link_libraries(core_lib PUBLIC
-    mouse_driver_lib
-    command_lib
-    root_lib
 )

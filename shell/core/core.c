@@ -13,7 +13,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "user_interface.h"
-#include "commands.h"
+#include "command.h"
+#include "root.h"
 #include "core.h"
 
 /*----------------------------------------------------------------------------*/
@@ -39,12 +40,14 @@ static bool ready_for_parsing = false;
 /*----------------------------------------------------------------------------*/
 void init_shell(void)
 {
+    init_root();
     reset_shell_state();
 }
 
 void deinit_shell(void)
 {
     reset_shell_state();
+    deinit_root();
 }
 
 void poll_shell(void)
@@ -134,7 +137,7 @@ struct command parse_cli_buffer_contents(void)
 
 void process_command(struct command *cmd)
 {
-    struct command_match match = find_command_node(cmd);
+    struct command_match match = find_command_node_in_root(cmd);
 
     if (match.node == NULL) {
         printf("Unrecognized command\r\n");
