@@ -491,7 +491,7 @@ void execute_get_move_forward_one_wall_default(struct command const *cmd)
 {
     (void)cmd;
 
-    print_move_forward_control_config(get_saved_default_move_forward_control_no_wall_config());
+    print_move_forward_control_config(get_saved_default_move_forward_control_one_wall_config());
 }
 
 /*----------------------------------------------------------------------------*/

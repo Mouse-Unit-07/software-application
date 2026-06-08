@@ -91,217 +91,218 @@ extern "C"
 
 struct maze_solver_config get_saved_default_maze_solver_config(void)
 {
+    mock().actualCall("get_saved_default_maze_solver_config");
     struct maze_solver_config cfg{};
-    cfg.maze_size = 16u;
     return cfg;
 }
 
 struct maze_solver_config get_saved_test_maze_solver_config(void)
 {
+    mock().actualCall("get_saved_test_maze_solver_config");
     struct maze_solver_config cfg{};
-    cfg.maze_size = 8u;
     return cfg;
 }
 
 struct maze_solver_config get_maze_solver_config(void)
 {
+    mock().actualCall("get_maze_solver_config");
     struct maze_solver_config cfg{};
     return cfg;
 }
 
 struct mouse_physical_params get_mouse_physical_params(void)
 {
+    mock().actualCall("get_mouse_physical_params");
     struct mouse_physical_params p{};
-    p.wheel_diameter_mm = 32.0;
     return p;
 }
 
 struct mouse_calculated_params get_mouse_calculated_params(void)
 {
+    mock().actualCall("get_mouse_calculated_params");
     struct mouse_calculated_params p{};
-    p.gear_ratio = 3.0;
     return p;
 }
 
 struct maze_physical_params get_maze_physical_params(void)
 {
+    mock().actualCall("get_maze_physical_params");
     struct maze_physical_params p{};
-    p.post_size_mm = 12.0;
     return p;
 }
 
 struct maze_calculated_params get_maze_calculated_params(void)
 {
+    mock().actualCall("get_maze_calculated_params");
     struct maze_calculated_params p{};
-    p.cell_size_mm = 168.0;
     return p;
 }
 
 struct navigation_params get_navigation_params(void)
 {
+    mock().actualCall("get_navigation_params");
     struct navigation_params p{};
-    p.move_forward_one_cell_target_ticks = 1000;
     return p;
 }
 
 struct mouse_physical_params get_saved_default_mouse_physical_params(void)
 {
+    mock().actualCall("get_saved_default_mouse_physical_params");
     struct mouse_physical_params p{};
-    p.wheel_diameter_mm = 32.0;
     return p;
 }
 
 struct mouse_physical_params get_saved_test_mouse_physical_params(void)
 {
+    mock().actualCall("get_saved_test_mouse_physical_params");
     struct mouse_physical_params p{};
-    p.wheel_diameter_mm = 28.0;
     return p;
 }
 
 struct maze_physical_params get_saved_default_maze_physical_params(void)
 {
+    mock().actualCall("get_saved_default_maze_physical_params");
     struct maze_physical_params p{};
-    p.post_size_mm = 12.0;
     return p;
 }
 
 struct maze_physical_params get_saved_test_maze_physical_params(void)
 {
+    mock().actualCall("get_saved_test_maze_physical_params");
     struct maze_physical_params p{};
-    p.post_size_mm = 10.0;
     return p;
 }
 
 struct move_forward_control_config get_saved_default_move_forward_control_no_wall_config(void)
 {
+    mock().actualCall("get_saved_default_move_forward_control_no_wall_config");
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 140;
     return cfg;
 }
 
 struct move_forward_control_config get_saved_test_move_forward_control_no_wall_config(void)
 {
+    mock().actualCall("get_saved_test_move_forward_control_no_wall_config");
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 141;
     return cfg;
 }
 
 struct move_forward_control_config get_saved_default_move_forward_control_one_wall_config(void)
 {
+    mock().actualCall("get_saved_default_move_forward_control_one_wall_config");
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 142;
     return cfg;
 }
 
 struct move_forward_control_config get_saved_test_move_forward_control_one_wall_config(void)
 {
+    mock().actualCall("get_saved_test_move_forward_control_one_wall_config");
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 143;
     return cfg;
 }
 
 struct move_forward_control_config get_saved_default_move_forward_control_both_wall_config(void)
 {
+    mock().actualCall("get_saved_default_move_forward_control_both_wall_config");
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 144;
     return cfg;
 }
 
 struct move_forward_control_config get_saved_test_move_forward_control_both_wall_config(void)
 {
+    mock().actualCall("get_saved_test_move_forward_control_both_wall_config");
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 145;
     return cfg;
 }
 
 struct move_forward_control_config get_no_wall_move_forward_control_config(void)
 {
+    mock().actualCall("get_no_wall_move_forward_control_config");
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 146;
     return cfg;
 }
 
 struct move_forward_control_config get_one_wall_move_forward_control_config(void)
 {
+    mock().actualCall("get_one_wall_move_forward_control_config");
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 147;
     return cfg;
 }
 
 struct move_forward_control_config get_both_wall_move_forward_control_config(void)
 {
+    mock().actualCall("get_both_wall_move_forward_control_config");
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 148;
     return cfg;
 }
 
 struct rotate_control_config get_saved_default_rotate_control_config(void)
 {
+    mock().actualCall("get_saved_default_rotate_control_config");
     struct rotate_control_config cfg{};
-    cfg.base_speed = 150;
     return cfg;
 }
 
 struct rotate_control_config get_saved_test_rotate_control_config(void)
 {
+    mock().actualCall("get_saved_test_rotate_control_config");
     struct rotate_control_config cfg{};
-    cfg.base_speed = 151;
     return cfg;
 }
 
 struct rotate_control_config get_rotate_control_config(void)
 {
+    mock().actualCall("get_rotate_control_config");
     struct rotate_control_config cfg{};
-    cfg.base_speed = 152;
     return cfg;
 }
 
 struct front_wall_detection_config get_saved_default_front_wall_detection_config(void)
 {
+    mock().actualCall("get_saved_default_front_wall_detection_config");
     struct front_wall_detection_config cfg{};
-    cfg.reading_threshold = 160;
     return cfg;
 }
 
 struct front_wall_detection_config get_saved_test_front_wall_detection_config(void)
 {
+    mock().actualCall("get_saved_test_front_wall_detection_config");
     struct front_wall_detection_config cfg{};
-    cfg.reading_threshold = 161;
     return cfg;
 }
 
 struct front_wall_detection_config get_front_wall_detection_config(void)
 {
+    mock().actualCall("get_front_wall_detection_config");
     struct front_wall_detection_config cfg{};
-    cfg.reading_threshold = 162;
     return cfg;
 }
 
 struct side_wall_detection_config get_saved_default_side_wall_detection_config(void)
 {
+    mock().actualCall("get_saved_default_side_wall_detection_config");
     struct side_wall_detection_config cfg{};
-    cfg.reading_threshold = 49;
     return cfg;
 }
 
 struct side_wall_detection_config get_saved_test_side_wall_detection_config(void)
 {
+    mock().actualCall("get_saved_test_side_wall_detection_config");
     struct side_wall_detection_config cfg{};
-    cfg.reading_threshold = 50;
     return cfg;
 }
 
 struct side_wall_detection_config get_side_wall_detection_config(void)
 {
+    mock().actualCall("get_side_wall_detection_config");
     struct side_wall_detection_config cfg{};
-    cfg.reading_threshold = 51;
     return cfg;
 }
 
 struct side_wall_calculated_params get_side_wall_calculated_params(void)
 {
+    mock().actualCall("get_side_wall_calculated_params");
     struct side_wall_calculated_params p{};
-    p.reading_start_offset_ticks = 1;
     return p;
 }
 
@@ -433,7 +434,7 @@ TEST(GetTests, ValidateGetSolverDefaultReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetSolverDefaultRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_default_maze_solver_config");
     execute_get_solver_default(&cmd);
 }
 
@@ -457,7 +458,7 @@ TEST(GetTests, ValidateGetSolverTestReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetSolverTestRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_test_maze_solver_config");
     execute_get_solver_test(&cmd);
 }
 
@@ -481,7 +482,7 @@ TEST(GetTests, ValidateGetSolverCurrentReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetSolverCurrentRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_maze_solver_config");
     execute_get_solver_current(&cmd);
 }
 
@@ -505,7 +506,7 @@ TEST(GetTests, ValidateGetMousePhysicalDefaultReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetMousePhysicalDefaultRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_default_mouse_physical_params");
     execute_get_mouse_physical_default(&cmd);
 }
 
@@ -529,8 +530,8 @@ TEST(GetTests, ValidateGetMousePhysicalDefaultTestReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetMousePhysicalDefaultTestRuns)
 {
     struct command cmd{{0}};
-
-    execute_get_mouse_physical_default(&cmd);
+    mock().expectOneCall("get_saved_test_mouse_physical_params");
+    execute_get_mouse_physical_test(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -553,7 +554,7 @@ TEST(GetTests, ValidateGetMousePhysicalDefaultCurrentReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetMousePhysicalDefaultCurrentRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_mouse_physical_params");
     execute_get_mouse_physical_current(&cmd);
 }
 
@@ -577,7 +578,7 @@ TEST(GetTests, ValidateGetMouseCalculatedReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetMouseCalculatedRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_mouse_calculated_params");
     execute_get_mouse_calculated(&cmd);
 }
 
@@ -601,7 +602,7 @@ TEST(GetTests, ValidateGetMazePhysicalDefaultReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetMazePhysicalDefaultRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_default_maze_physical_params");
     execute_get_maze_physical_default(&cmd);
 }
 
@@ -625,7 +626,7 @@ TEST(GetTests, ValidateGetMazePhysicalTestReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetMazePhysicalTestRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_test_maze_physical_params");
     execute_get_maze_physical_test(&cmd);
 }
 
@@ -649,7 +650,7 @@ TEST(GetTests, ValidateGetMazePhysicalCurrentReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetMazePhysicalCurrentRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_maze_physical_params");
     execute_get_maze_physical_current(&cmd);
 }
 
@@ -673,7 +674,7 @@ TEST(GetTests, ValidateGetMazeCalculatedReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetMazeCalculatedRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_maze_calculated_params");
     execute_get_maze_calculated(&cmd);
 }
 
@@ -697,7 +698,7 @@ TEST(GetTests, ValidateGetNavigationReturnsTooManyParameters)
 TEST(GetTests, ExecuteGetNavigationRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_navigation_params");
     execute_get_navigation(&cmd);
 }
 
@@ -721,7 +722,7 @@ TEST(GetTests, ValidateMoveForwardNoWallDefaultReturnsTooManyParameters)
 TEST(GetTests, ExecuteMoveForwardNoWallDefaultRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_default_move_forward_control_no_wall_config");
     execute_get_move_forward_no_wall_default(&cmd);
 }
 
@@ -745,7 +746,7 @@ TEST(GetTests, ValidateMoveForwardNoWallTestReturnsTooManyParameters)
 TEST(GetTests, ExecuteMoveForwardNoWallTestRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_test_move_forward_control_no_wall_config");
     execute_get_move_forward_no_wall_test(&cmd);
 }
 
@@ -769,7 +770,7 @@ TEST(GetTests, ValidateMoveForwardNoWallCurrentReturnsTooManyParameters)
 TEST(GetTests, ExecuteMoveForwardNoWallCurrentRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_no_wall_move_forward_control_config");
     execute_get_move_forward_no_wall_current(&cmd);
 }
 
@@ -793,7 +794,7 @@ TEST(GetTests, ValidateMoveForwardOneWallDefaultReturnsTooManyParameters)
 TEST(GetTests, ExecuteMoveForwardOneWallDefaultRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_default_move_forward_control_one_wall_config");
     execute_get_move_forward_one_wall_default(&cmd);
 }
 
@@ -817,7 +818,7 @@ TEST(GetTests, ValidateMoveForwardOneWallTestReturnsTooManyParameters)
 TEST(GetTests, ExecuteMoveForwardOneWallTestRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_test_move_forward_control_one_wall_config");
     execute_get_move_forward_one_wall_test(&cmd);
 }
 
@@ -841,7 +842,7 @@ TEST(GetTests, ValidateMoveForwardOneWallCurrentReturnsTooManyParameters)
 TEST(GetTests, ExecuteMoveForwardOneWallCurrentRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_one_wall_move_forward_control_config");
     execute_get_move_forward_one_wall_current(&cmd);
 }
 
@@ -865,7 +866,7 @@ TEST(GetTests, ValidateMoveForwardBothWallDefaultReturnsTooManyParameters)
 TEST(GetTests, ExecuteMoveForwardBothWallDefaultRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_default_move_forward_control_both_wall_config");
     execute_get_move_forward_both_wall_default(&cmd);
 }
 
@@ -889,7 +890,7 @@ TEST(GetTests, ValidateMoveForwardBothWallTestReturnsTooManyParameters)
 TEST(GetTests, ExecuteMoveForwardBothWallTestRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_test_move_forward_control_both_wall_config");
     execute_get_move_forward_both_wall_test(&cmd);
 }
 
@@ -913,7 +914,7 @@ TEST(GetTests, ValidateMoveForwardBothWallCurrentReturnsTooManyParameters)
 TEST(GetTests, ExecuteMoveForwardBothWallCurrentRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_both_wall_move_forward_control_config");
     execute_get_move_forward_both_wall_current(&cmd);
 }
 
@@ -937,7 +938,7 @@ TEST(GetTests, ValidateRotateDefaultReturnsTooManyParameters)
 TEST(GetTests, ExecuteRotateDefaultRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_default_rotate_control_config");
     execute_get_rotate_default(&cmd);
 }
 
@@ -961,7 +962,7 @@ TEST(GetTests, ValidateRotateTestReturnsTooManyParameters)
 TEST(GetTests, ExecuteRotateTestRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_test_rotate_control_config");
     execute_get_rotate_test(&cmd);
 }
 
@@ -985,7 +986,7 @@ TEST(GetTests, ValidateRotateCurrentReturnsTooManyParameters)
 TEST(GetTests, ExecuteRotateCurrentRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_rotate_control_config");
     execute_get_rotate_current(&cmd);
 }
 
@@ -1009,7 +1010,7 @@ TEST(GetTests, ValidateFrontWallDefaultReturnsTooManyParameters)
 TEST(GetTests, ExecuteFrontWallDefaultRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_default_front_wall_detection_config");
     execute_get_front_wall_default(&cmd);
 }
 
@@ -1033,7 +1034,7 @@ TEST(GetTests, ValidateFrontWallTestReturnsTooManyParameters)
 TEST(GetTests, ExecuteFrontWallTestRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_test_front_wall_detection_config");
     execute_get_front_wall_test(&cmd);
 }
 
@@ -1057,7 +1058,7 @@ TEST(GetTests, ValidateFrontWallCurrentReturnsTooManyParameters)
 TEST(GetTests, ExecuteFrontWallCurrentRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_front_wall_detection_config");
     execute_get_front_wall_current(&cmd);
 }
 
@@ -1081,7 +1082,7 @@ TEST(GetTests, ValidateSideWallDefaultReturnsTooManyParameters)
 TEST(GetTests, ExecuteSideWallDefaultRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_default_side_wall_detection_config");
     execute_get_side_wall_default(&cmd);
 }
 
@@ -1105,7 +1106,7 @@ TEST(GetTests, ValidateSideWallTestReturnsTooManyParameters)
 TEST(GetTests, ExecuteSideWallTestRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_saved_test_side_wall_detection_config");
     execute_get_side_wall_test(&cmd);
 }
 
@@ -1129,7 +1130,7 @@ TEST(GetTests, ValidateSideWallCurrentReturnsTooManyParameters)
 TEST(GetTests, ExecuteSideWallCurrentRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_side_wall_detection_config");
     execute_get_side_wall_current(&cmd);
 }
 
@@ -1153,6 +1154,6 @@ TEST(GetTests, ValidateSideWallCalculatedReturnsTooManyParameters)
 TEST(GetTests, ExecuteSideWallCalculatedRuns)
 {
     struct command cmd{{0}};
-
+    mock().expectOneCall("get_side_wall_calculated_params");
     execute_get_side_wall_calculated(&cmd);
 }
