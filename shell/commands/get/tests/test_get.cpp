@@ -134,6 +134,139 @@ struct maze_physical_params get_saved_test_maze_physical_params(void)
     return p;
 }
 
+struct move_forward_control_config get_saved_default_move_forward_control_no_wall_config(void)
+{
+    struct move_forward_control_config cfg{};
+    cfg.base_speed = 140;
+    return cfg;
+}
+
+struct move_forward_control_config get_saved_test_move_forward_control_no_wall_config(void)
+{
+    struct move_forward_control_config cfg{};
+    cfg.base_speed = 141;
+    return cfg;
+}
+
+struct move_forward_control_config get_saved_default_move_forward_control_one_wall_config(void)
+{
+    struct move_forward_control_config cfg{};
+    cfg.base_speed = 142;
+    return cfg;
+}
+
+struct move_forward_control_config get_saved_test_move_forward_control_one_wall_config(void)
+{
+    struct move_forward_control_config cfg{};
+    cfg.base_speed = 143;
+    return cfg;
+}
+
+struct move_forward_control_config get_saved_default_move_forward_control_both_wall_config(void)
+{
+    struct move_forward_control_config cfg{};
+    cfg.base_speed = 144;
+    return cfg;
+}
+
+struct move_forward_control_config get_saved_test_move_forward_control_both_wall_config(void)
+{
+    struct move_forward_control_config cfg{};
+    cfg.base_speed = 145;
+    return cfg;
+}
+
+struct move_forward_control_config get_no_wall_move_forward_control_config(void)
+{
+    struct move_forward_control_config cfg{};
+    cfg.base_speed = 146;
+    return cfg;
+}
+
+struct move_forward_control_config get_one_wall_move_forward_control_config(void)
+{
+    struct move_forward_control_config cfg{};
+    cfg.base_speed = 147;
+    return cfg;
+}
+
+struct move_forward_control_config get_both_wall_move_forward_control_config(void)
+{
+    struct move_forward_control_config cfg{};
+    cfg.base_speed = 148;
+    return cfg;
+}
+
+struct rotate_control_config get_saved_default_rotate_control_config(void)
+{
+    struct rotate_control_config cfg{};
+    cfg.base_speed = 150;
+    return cfg;
+}
+
+struct rotate_control_config get_saved_test_rotate_control_config(void)
+{
+    struct rotate_control_config cfg{};
+    cfg.base_speed = 151;
+    return cfg;
+}
+
+struct rotate_control_config get_rotate_control_config(void)
+{
+    struct rotate_control_config cfg{};
+    cfg.base_speed = 152;
+    return cfg;
+}
+
+struct front_wall_detection_config get_saved_default_front_wall_detection_config(void)
+{
+    struct front_wall_detection_config cfg{};
+    cfg.reading_threshold = 160;
+    return cfg;
+}
+
+struct front_wall_detection_config get_saved_test_front_wall_detection_config(void)
+{
+    struct front_wall_detection_config cfg{};
+    cfg.reading_threshold = 161;
+    return cfg;
+}
+
+struct front_wall_detection_config get_front_wall_detection_config(void)
+{
+    struct front_wall_detection_config cfg{};
+    cfg.reading_threshold = 162;
+    return cfg;
+}
+
+struct side_wall_detection_config get_saved_default_side_wall_detection_config(void)
+{
+    struct side_wall_detection_config cfg{};
+    cfg.reading_threshold = 49;
+    return cfg;
+}
+
+struct side_wall_detection_config get_saved_test_side_wall_detection_config(void)
+{
+    struct side_wall_detection_config cfg{};
+    cfg.reading_threshold = 50;
+    return cfg;
+}
+
+struct side_wall_detection_config get_side_wall_detection_config(void)
+{
+    struct side_wall_detection_config cfg{};
+    cfg.reading_threshold = 51;
+    return cfg;
+}
+
+struct side_wall_calculated_params get_side_wall_calculated_params(void)
+{
+    struct side_wall_calculated_params p{};
+    p.reading_start_offset_ticks = 1;
+    return p;
+}
+
 }
 
 /*============================================================================*/
@@ -171,7 +304,7 @@ TEST(GetTests, GetGetNodeReturnsExpectedNode)
 
 TEST(GetTests, GetGetCommandsCountReturnsExpectedValue)
 {
-    LONGS_EQUAL(12u, get_get_commands_count());
+    LONGS_EQUAL(31u, get_get_commands_count());
 }
 
 TEST(GetTests, GetGetCommandsContainsSolverDefaultNode)
@@ -858,4 +991,821 @@ TEST(GetTests, ExecuteGetNavigationRuns)
     struct command cmd{{0}};
 
     execute_get_navigation(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-no-wall-default */
+TEST(GetTests, FindCommandNodeReturnsMoveForwardNoWallDefaultNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-no-wall-default";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("move-forward-no-wall-default", node->name);
+}
+
+TEST(GetTests, ValidateMoveForwardNoWallDefaultReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-no-wall-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_move_forward_no_wall_default(&cmd));
+}
+
+TEST(GetTests, ValidateMoveForwardNoWallDefaultReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-no-wall-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_move_forward_no_wall_default(&cmd));
+}
+
+TEST(GetTests, ExecuteMoveForwardNoWallDefaultRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_move_forward_no_wall_default(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-no-wall-test */
+TEST(GetTests, FindCommandNodeReturnsMoveForwardNoWallTestNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-no-wall-test";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("move-forward-no-wall-test", node->name);
+}
+
+TEST(GetTests, ValidateMoveForwardNoWallTestReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-no-wall-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_move_forward_no_wall_test(&cmd));
+}
+
+TEST(GetTests, ValidateMoveForwardNoWallTestReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-no-wall-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_move_forward_no_wall_test(&cmd));
+}
+
+TEST(GetTests, ExecuteMoveForwardNoWallTestRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_move_forward_no_wall_test(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-no-wall-current */
+TEST(GetTests, FindCommandNodeReturnsMoveForwardNoWallCurrentNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-no-wall-current";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("move-forward-no-wall-current", node->name);
+}
+
+TEST(GetTests, ValidateMoveForwardNoWallCurrentReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-no-wall-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_move_forward_no_wall_current(&cmd));
+}
+
+TEST(GetTests, ValidateMoveForwardNoWallCurrentReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-no-wall-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_move_forward_no_wall_current(&cmd));
+}
+
+TEST(GetTests, ExecuteMoveForwardNoWallCurrentRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_move_forward_no_wall_current(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-one-wall-default */
+TEST(GetTests, FindCommandNodeReturnsMoveForwardOneWallDefaultNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-one-wall-default";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("move-forward-one-wall-default", node->name);
+}
+
+TEST(GetTests, ValidateMoveForwardOneWallDefaultReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-one-wall-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_move_forward_one_wall_default(&cmd));
+}
+
+TEST(GetTests, ValidateMoveForwardOneWallDefaultReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-one-wall-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_move_forward_one_wall_default(&cmd));
+}
+
+TEST(GetTests, ExecuteMoveForwardOneWallDefaultRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_move_forward_one_wall_default(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-one-wall-test */
+TEST(GetTests, FindCommandNodeReturnsMoveForwardOneWallTestNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-one-wall-test";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("move-forward-one-wall-test", node->name);
+}
+
+TEST(GetTests, ValidateMoveForwardOneWallTestReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-one-wall-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_move_forward_one_wall_test(&cmd));
+}
+
+TEST(GetTests, ValidateMoveForwardOneWallTestReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-one-wall-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_move_forward_one_wall_test(&cmd));
+}
+
+TEST(GetTests, ExecuteMoveForwardOneWallTestRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_move_forward_one_wall_test(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-one-wall-current */
+TEST(GetTests, FindCommandNodeReturnsMoveForwardOneWallCurrentNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-one-wall-current";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("move-forward-one-wall-current", node->name);
+}
+
+TEST(GetTests, ValidateMoveForwardOneWallCurrentReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-one-wall-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_move_forward_one_wall_current(&cmd));
+}
+
+TEST(GetTests, ValidateMoveForwardOneWallCurrentReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-one-wall-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_move_forward_one_wall_current(&cmd));
+}
+
+TEST(GetTests, ExecuteMoveForwardOneWallCurrentRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_move_forward_one_wall_current(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-both-wall-default */
+TEST(GetTests, FindCommandNodeReturnsMoveForwardBothWallDefaultNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-both-wall-default";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("move-forward-both-wall-default", node->name);
+}
+
+TEST(GetTests, ValidateMoveForwardBothWallDefaultReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-both-wall-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_move_forward_both_wall_default(&cmd));
+}
+
+TEST(GetTests, ValidateMoveForwardBothWallDefaultReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-both-wall-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_move_forward_both_wall_default(&cmd));
+}
+
+TEST(GetTests, ExecuteMoveForwardBothWallDefaultRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_move_forward_both_wall_default(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-both-wall-test */
+TEST(GetTests, FindCommandNodeReturnsMoveForwardBothWallTestNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-both-wall-test";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("move-forward-both-wall-test", node->name);
+}
+
+TEST(GetTests, ValidateMoveForwardBothWallTestReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-both-wall-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_move_forward_both_wall_test(&cmd));
+}
+
+TEST(GetTests, ValidateMoveForwardBothWallTestReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-both-wall-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_move_forward_both_wall_test(&cmd));
+}
+
+TEST(GetTests, ExecuteMoveForwardBothWallTestRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_move_forward_both_wall_test(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-both-wall-current */
+TEST(GetTests, FindCommandNodeReturnsMoveForwardBothWallCurrentNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-both-wall-current";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("move-forward-both-wall-current", node->name);
+}
+
+TEST(GetTests, ValidateMoveForwardBothWallCurrentReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-both-wall-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_move_forward_both_wall_current(&cmd));
+}
+
+TEST(GetTests, ValidateMoveForwardBothWallCurrentReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "move-forward-both-wall-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_move_forward_both_wall_current(&cmd));
+}
+
+TEST(GetTests, ExecuteMoveForwardBothWallCurrentRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_move_forward_both_wall_current(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get rotate-default */
+TEST(GetTests, FindCommandNodeReturnsRotateDefaultNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "rotate-default";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("rotate-default", node->name);
+}
+
+TEST(GetTests, ValidateRotateDefaultReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "rotate-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_rotate_default(&cmd));
+}
+
+TEST(GetTests, ValidateRotateDefaultReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "rotate-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_rotate_default(&cmd));
+}
+
+TEST(GetTests, ExecuteRotateDefaultRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_rotate_default(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get rotate-test */
+TEST(GetTests, FindCommandNodeReturnsRotateTestNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "rotate-test";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("rotate-test", node->name);
+}
+
+TEST(GetTests, ValidateRotateTestReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "rotate-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_rotate_test(&cmd));
+}
+
+TEST(GetTests, ValidateRotateTestReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "rotate-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_rotate_test(&cmd));
+}
+
+TEST(GetTests, ExecuteRotateTestRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_rotate_test(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get rotate-current */
+TEST(GetTests, FindCommandNodeReturnsRotateCurrentNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "rotate-current";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("rotate-current", node->name);
+}
+
+TEST(GetTests, ValidateRotateCurrentReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "rotate-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_rotate_current(&cmd));
+}
+
+TEST(GetTests, ValidateRotateCurrentReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "rotate-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_rotate_current(&cmd));
+}
+
+TEST(GetTests, ExecuteRotateCurrentRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_rotate_current(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get front-wall-default */
+TEST(GetTests, FindCommandNodeReturnsFrontWallDefaultNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "front-wall-default";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("front-wall-default", node->name);
+}
+
+TEST(GetTests, ValidateFrontWallDefaultReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "front-wall-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_front_wall_default(&cmd));
+}
+
+TEST(GetTests, ValidateFrontWallDefaultReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "front-wall-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_front_wall_default(&cmd));
+}
+
+TEST(GetTests, ExecuteFrontWallDefaultRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_front_wall_default(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get front-wall-test */
+TEST(GetTests, FindCommandNodeReturnsFrontWallTestNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "front-wall-test";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("front-wall-test", node->name);
+}
+
+TEST(GetTests, ValidateFrontWallTestReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "front-wall-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_rotate_test(&cmd));
+}
+
+TEST(GetTests, ValidateFrontWallTestReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "front-wall-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_rotate_test(&cmd));
+}
+
+TEST(GetTests, ExecuteFrontWallTestRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_rotate_test(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get front-wall-current */
+TEST(GetTests, FindCommandNodeReturnsFrontWallCurrentNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "front-wall-current";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("front-wall-current", node->name);
+}
+
+TEST(GetTests, ValidateFrontWallCurrentReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "front-wall-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_rotate_current(&cmd));
+}
+
+TEST(GetTests, ValidateFrontWallCurrentReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "front-wall-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_rotate_current(&cmd));
+}
+
+TEST(GetTests, ExecuteFrontWallCurrentRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_rotate_current(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get side-wall-default */
+TEST(GetTests, FindCommandNodeReturnsSideWallDefaultNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-default";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("side-wall-default", node->name);
+}
+
+TEST(GetTests, ValidateSideWallDefaultReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_side_wall_default(&cmd));
+}
+
+TEST(GetTests, ValidateSideWallDefaultReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-default";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_side_wall_default(&cmd));
+}
+
+TEST(GetTests, ExecuteSideWallDefaultRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_side_wall_default(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get side-wall-test */
+TEST(GetTests, FindCommandNodeReturnsSideWallTestNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-test";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("side-wall-test", node->name);
+}
+
+TEST(GetTests, ValidateSideWallTestReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_side_wall_test(&cmd));
+}
+
+TEST(GetTests, ValidateSideWallTestReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-test";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_side_wall_test(&cmd));
+}
+
+TEST(GetTests, ExecuteSideWallTestRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_side_wall_test(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get side-wall-current */
+TEST(GetTests, FindCommandNodeReturnsSideWallCurrentNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-current";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("side-wall-current", node->name);
+}
+
+TEST(GetTests, ValidateSideWallCurrentReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_side_wall_current(&cmd));
+}
+
+TEST(GetTests, ValidateSideWallCurrentReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-current";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_side_wall_current(&cmd));
+}
+
+TEST(GetTests, ExecuteSideWallCurrentRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_side_wall_current(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get side-wall-calculated */
+TEST(GetTests, FindCommandNodeReturnsSideWallCalculatedNode)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-calculated";
+
+    struct command_node const *node =
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL("side-wall-calculated", node->name);
+}
+
+TEST(GetTests, ValidateSideWallCalculatedReturnsSuccess)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-calculated";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get_side_wall_calculated(&cmd));
+}
+
+TEST(GetTests, ValidateSideWallCalculatedReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+    cmd.tokens[0] = "get";
+    cmd.tokens[1] = "side-wall-calculated";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get_side_wall_calculated(&cmd));
+}
+
+TEST(GetTests, ExecuteSideWallCalculatedRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get_side_wall_calculated(&cmd);
 }

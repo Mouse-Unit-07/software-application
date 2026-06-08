@@ -28,6 +28,11 @@ static void print_mouse_calculated_params(struct mouse_calculated_params p);
 static void print_maze_physical_params(struct maze_physical_params p);
 static void print_maze_calculated_params(struct maze_calculated_params p);
 static void print_navigation_params(struct navigation_params p);
+static void print_move_forward_control_config(struct move_forward_control_config cfg);
+static void print_rotate_control_config(struct rotate_control_config cfg);
+static void print_front_wall_detection_config(struct front_wall_detection_config cfg);
+static void print_side_wall_detection_config(struct side_wall_detection_config cfg);
+static void print_side_wall_calculated_params(struct side_wall_calculated_params p);
 
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
@@ -110,7 +115,121 @@ static const struct command_node get_commands[] =
         .help = "Display navigation parameters",
         .validate = validate_get_navigation,
         .execute = execute_get_navigation
-    }
+    },
+    {
+        .name = "move-forward-no-wall-default",
+        .help = "Display default no-wall move-forward control config",
+        .validate = validate_get_move_forward_no_wall_default,
+        .execute = execute_get_move_forward_no_wall_default
+    },
+    {
+        .name = "move-forward-no-wall-test",
+        .help = "Display test no-wall move-forward control config",
+        .validate = validate_get_move_forward_no_wall_test,
+        .execute = execute_get_move_forward_no_wall_test
+    },
+    {
+        .name = "move-forward-no-wall-current",
+        .help = "Display current no-wall move-forward control config",
+        .validate = validate_get_move_forward_no_wall_current,
+        .execute = execute_get_move_forward_no_wall_current
+    },
+    {
+        .name = "move-forward-one-wall-default",
+        .help = "Display default one-wall move-forward control config",
+        .validate = validate_get_move_forward_one_wall_default,
+        .execute = execute_get_move_forward_one_wall_default
+    },
+    {
+        .name = "move-forward-one-wall-test",
+        .help = "Display test one-wall move-forward control config",
+        .validate = validate_get_move_forward_one_wall_test,
+        .execute = execute_get_move_forward_one_wall_test
+    },
+    {
+        .name = "move-forward-one-wall-current",
+        .help = "Display current one-wall move-forward control config",
+        .validate = validate_get_move_forward_one_wall_current,
+        .execute = execute_get_move_forward_one_wall_current
+    },
+    {
+        .name = "move-forward-both-wall-default",
+        .help = "Display default both-wall move-forward control config",
+        .validate = validate_get_move_forward_both_wall_default,
+        .execute = execute_get_move_forward_both_wall_default
+    },
+    {
+        .name = "move-forward-both-wall-test",
+        .help = "Display test both-wall move-forward control config",
+        .validate = validate_get_move_forward_both_wall_test,
+        .execute = execute_get_move_forward_both_wall_test
+    },
+    {
+        .name = "move-forward-both-wall-current",
+        .help = "Display current both-wall move-forward control config",
+        .validate = validate_get_move_forward_both_wall_current,
+        .execute = execute_get_move_forward_both_wall_current
+    },
+    {
+        .name = "rotate-default",
+        .help = "Display default rotation control config",
+        .validate = validate_get_rotate_default,
+        .execute = execute_get_rotate_default
+    },
+    {
+        .name = "rotate-test",
+        .help = "Display test rotation control config",
+        .validate = validate_get_rotate_test,
+        .execute = execute_get_rotate_test
+    },
+    {
+        .name = "rotate-current",
+        .help = "Display current rotation control config",
+        .validate = validate_get_rotate_current,
+        .execute = execute_get_rotate_current
+    },
+    {
+        .name = "front-wall-default",
+        .help = "Display default front-wall detection control config",
+        .validate = validate_get_front_wall_default,
+        .execute = execute_get_front_wall_default
+    },
+    {
+        .name = "front-wall-test",
+        .help = "Display test front-wall control config",
+        .validate = validate_get_front_wall_test,
+        .execute = execute_get_front_wall_test
+    },
+    {
+        .name = "front-wall-current",
+        .help = "Display current front-wall control config",
+        .validate = validate_get_front_wall_current,
+        .execute = execute_get_front_wall_current
+    },
+    {
+        .name = "side-wall-default",
+        .help = "Display default side-wall detection control config",
+        .validate = validate_get_side_wall_default,
+        .execute = execute_get_side_wall_default
+    },
+    {
+        .name = "side-wall-test",
+        .help = "Display test side-wall control config",
+        .validate = validate_get_side_wall_test,
+        .execute = execute_get_side_wall_test
+    },
+    {
+        .name = "side-wall-current",
+        .help = "Display current side-wall control config",
+        .validate = validate_get_side_wall_current,
+        .execute = execute_get_side_wall_current
+    },
+    {
+        .name = "side-wall-calculated",
+        .help = "Display side-wall calculated parameters",
+        .validate = validate_get_side_wall_calculated,
+        .execute = execute_get_side_wall_calculated
+    },
 };
 
 static const struct command_node get_node =
@@ -320,6 +439,271 @@ void execute_get_navigation(struct command const *cmd)
 }
 
 /*----------------------------------------------------------------------------*/
+/* get move-forward-no-wall-default */
+enum validation_result validate_get_move_forward_no_wall_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_no_wall_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_control_config(get_saved_default_move_forward_control_no_wall_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-no-wall-test */
+enum validation_result validate_get_move_forward_no_wall_test(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_no_wall_test(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_control_config(get_saved_test_move_forward_control_no_wall_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-no-wall-current */
+enum validation_result validate_get_move_forward_no_wall_current(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_no_wall_current(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_control_config(get_no_wall_move_forward_control_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-one-wall-default */
+enum validation_result validate_get_move_forward_one_wall_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_one_wall_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_control_config(get_saved_default_move_forward_control_no_wall_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-one-wall-test */
+enum validation_result validate_get_move_forward_one_wall_test(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_one_wall_test(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_control_config(get_saved_test_move_forward_control_one_wall_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-one-wall-current */
+enum validation_result validate_get_move_forward_one_wall_current(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_one_wall_current(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_control_config(get_one_wall_move_forward_control_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-both-wall-default */
+enum validation_result validate_get_move_forward_both_wall_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_both_wall_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_control_config(get_saved_default_move_forward_control_both_wall_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-both-wall-test */
+enum validation_result validate_get_move_forward_both_wall_test(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_both_wall_test(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_control_config(get_saved_test_move_forward_control_both_wall_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-both-wall-current */
+enum validation_result validate_get_move_forward_both_wall_current(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_both_wall_current(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_control_config(get_both_wall_move_forward_control_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get rotate-default */
+enum validation_result validate_get_rotate_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_rotate_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_rotate_control_config(get_saved_default_rotate_control_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get rotate-test */
+enum validation_result validate_get_rotate_test(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_rotate_test(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_rotate_control_config(get_saved_test_rotate_control_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get rotate-current */
+enum validation_result validate_get_rotate_current(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_rotate_current(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_rotate_control_config(get_rotate_control_config());
+}
+/*----------------------------------------------------------------------------*/
+/* get front-wall-default */
+enum validation_result validate_get_front_wall_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_front_wall_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_front_wall_detection_config(get_saved_default_front_wall_detection_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get front-wall-test */
+enum validation_result validate_get_front_wall_test(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_front_wall_test(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_front_wall_detection_config(get_saved_test_front_wall_detection_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get front-wall-current */
+enum validation_result validate_get_front_wall_current(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_front_wall_current(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_front_wall_detection_config(get_front_wall_detection_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get side-wall-default */
+enum validation_result validate_get_side_wall_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_side_wall_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_side_wall_detection_config(get_saved_default_side_wall_detection_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get side-wall-test */
+enum validation_result validate_get_side_wall_test(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_side_wall_test(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_side_wall_detection_config(get_saved_test_side_wall_detection_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get side-wall-current */
+enum validation_result validate_get_side_wall_current(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_side_wall_current(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_side_wall_detection_config(get_side_wall_detection_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get side-wall-calculated */
+enum validation_result validate_get_side_wall_calculated(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_side_wall_calculated(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_side_wall_calculated_params(get_side_wall_calculated_params());
+}
+
+/*----------------------------------------------------------------------------*/
 /*                        Private Function Definitions                        */
 /*----------------------------------------------------------------------------*/
 static void print_maze_solver_config(struct maze_solver_config cfg)
@@ -366,4 +750,50 @@ static void print_navigation_params(struct navigation_params p)
            p.move_forward_one_cell_target_ticks);
     printf("rotate_90_degree_ticks           = %" PRId32 "\r\n", p.rotate_90_degree_target_ticks);
     printf("rotate_180_degree_ticks          = %" PRId32 "\r\n", p.rotate_180_degree_target_ticks);
+}
+
+static void print_move_forward_control_config(struct move_forward_control_config cfg)
+{
+    printf("base_speed     = %" PRIu8 "\r\n", cfg.base_speed);
+    printf("min_speed      = %" PRIu8 "\r\n", cfg.min_speed);
+    printf("max_speed      = %" PRIu8 "\r\n", cfg.max_speed);
+    printf("kp_velocity    = %" PRId32 "\r\n", cfg.kp_velocity);
+    printf("kd_velocity    = %" PRId32 "\r\n", cfg.kd_velocity);
+    printf("kp_angle       = %" PRId32 "\r\n", cfg.kp_angle);
+    printf("kd_angle       = %" PRId32 "\r\n", cfg.kd_angle);
+    printf("kp_ir          = %" PRId32 "\r\n", cfg.kp_ir);
+    printf("kd_ir          = %" PRId32 "\r\n", cfg.kd_ir);
+    printf("pid_scale      = %" PRId32 "\r\n", cfg.pid_scale);
+    printf("wall_target    = %" PRIu32 "\r\n", cfg.wall_target);
+}
+
+static void print_rotate_control_config(struct rotate_control_config cfg)
+{
+    printf("base_speed     = %" PRIu8 "\r\n", cfg.base_speed);
+    printf("min_speed      = %" PRIu8 "\r\n", cfg.min_speed);
+    printf("max_speed      = %" PRIu8 "\r\n", cfg.max_speed);
+    printf("kp_velocity    = %" PRId32 "\r\n", cfg.kp_velocity);
+    printf("kd_velocity    = %" PRId32 "\r\n", cfg.kd_velocity);
+    printf("kp_angle       = %" PRId32 "\r\n", cfg.kp_angle);
+    printf("kd_angle       = %" PRId32 "\r\n", cfg.kd_angle);
+    printf("pid_scale      = %" PRId32 "\r\n", cfg.pid_scale);
+}
+
+static void print_front_wall_detection_config(struct front_wall_detection_config cfg)
+{
+    printf("reading_threshold        = %" PRIu32 "\r\n", cfg.reading_threshold);
+    printf("num_detection_samples    = %" PRIu32 "\r\n", cfg.num_detection_samples);
+}
+
+static void print_side_wall_detection_config(struct side_wall_detection_config cfg)
+{
+    printf("reading_threshold        = %" PRIu32 "\r\n", cfg.reading_threshold);
+    printf("slope_threshold          = %" PRIu32 "\r\n", cfg.slope_threshold);
+    printf("num_detection_samples    = %" PRIu32 "\r\n", cfg.num_detection_samples);
+    printf("reading_start_offset     = %.3f\r\n", cfg.reading_start_offset);
+}
+
+static void print_side_wall_calculated_params(struct side_wall_calculated_params p)
+{
+    printf("reading_start_offset_ticks    = %" PRIu32 "\r\n", p.reading_start_offset_ticks);
 }
