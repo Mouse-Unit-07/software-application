@@ -150,15 +150,13 @@ enum validation_result validate_set_solver_test(struct command *cmd)
         return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
     }
 
-    uint32_t base_offset = SET_COMMAND_TOKEN_COUNT;
-    uint32_t param_0_offset = base_offset + PARAM_0_OFFSET;
-
+    uint32_t base = SET_COMMAND_TOKEN_COUNT;
     if (cmd->token_count == max_token_count) {
         struct maze_solver_config cfg;
-        cfg.maze_size = (uint32_t)strtoul(cmd->tokens[param_0_offset], NULL, 10);
+        cfg.maze_size = (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
 
         if (cfg.maze_size > 16u) {
-            cmd->bad_parameter_index = param_0_offset;
+            cmd->bad_parameter_index = base + PARAM_0_OFFSET;
             return COMMAND_VALIDATION_BAD_PARAMETER;
         }
     }
@@ -173,19 +171,13 @@ void execute_set_solver_test(struct command const *cmd)
         return;
     }
 
-    uint32_t base_offset = SET_COMMAND_TOKEN_COUNT;
-    uint32_t param_0_offset = base_offset + PARAM_0_OFFSET;
-    uint32_t param_1_offset = base_offset + PARAM_1_OFFSET;
-    uint32_t param_2_offset = base_offset + PARAM_2_OFFSET;
-    uint32_t param_3_offset = base_offset + PARAM_3_OFFSET;
-    uint32_t param_4_offset = base_offset + PARAM_4_OFFSET;
-
+    uint32_t base = SET_COMMAND_TOKEN_COUNT;
     struct maze_solver_config cfg;
-    cfg.maze_size = (uint32_t)strtoul(cmd->tokens[param_0_offset], NULL, 10);
-    cfg.total_timeout_sec = (uint32_t)strtoul(cmd->tokens[param_1_offset], NULL, 10);
-    cfg.move_forward_time_sec = (uint32_t)strtoul(cmd->tokens[param_2_offset], NULL, 10);
-    cfg.rotate_90_deg_time_sec = (uint32_t)strtoul(cmd->tokens[param_3_offset], NULL, 10);
-    cfg.rotate_180_deg_time_sec = (uint32_t)strtoul(cmd->tokens[param_4_offset], NULL, 10);
+    cfg.maze_size = (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
+    cfg.total_timeout_sec = (uint32_t)strtoul(cmd->tokens[base + PARAM_1_OFFSET], NULL, 10);
+    cfg.move_forward_time_sec = (uint32_t)strtoul(cmd->tokens[base + PARAM_2_OFFSET], NULL, 10);
+    cfg.rotate_90_deg_time_sec = (uint32_t)strtoul(cmd->tokens[base + PARAM_3_OFFSET], NULL, 10);
+    cfg.rotate_180_deg_time_sec = (uint32_t)strtoul(cmd->tokens[base + PARAM_4_OFFSET], NULL, 10);
 
     save_maze_solver_config_as_test(cfg);
     set_maze_solver_config(cfg);
@@ -231,15 +223,15 @@ void execute_set_mouse_physical_test(struct command const *cmd)
         return;
     }
 
-    uint32_t base_offset = SET_COMMAND_TOKEN_COUNT;
+    uint32_t base = SET_COMMAND_TOKEN_COUNT;
 
     struct mouse_physical_params p = {0};
-    p.wheel_diameter_mm = strtof(cmd->tokens[base_offset + PARAM_0_OFFSET], NULL);
-    p.wheel_base_mm = strtof(cmd->tokens[base_offset + PARAM_1_OFFSET], NULL);
-    p.max_motor_rpm = strtof(cmd->tokens[base_offset + PARAM_2_OFFSET], NULL);
-    p.encoder_events_per_revolution = strtof(cmd->tokens[base_offset + PARAM_3_OFFSET], NULL);
-    p.motor_pinion_gear_teeth = strtof(cmd->tokens[base_offset + PARAM_4_OFFSET], NULL);
-    p.wheel_gear_teeth = strtof(cmd->tokens[base_offset + PARAM_5_OFFSET], NULL);
+    p.wheel_diameter_mm = strtof(cmd->tokens[base + PARAM_0_OFFSET], NULL);
+    p.wheel_base_mm = strtof(cmd->tokens[base + PARAM_1_OFFSET], NULL);
+    p.max_motor_rpm = strtof(cmd->tokens[base + PARAM_2_OFFSET], NULL);
+    p.encoder_events_per_revolution = strtof(cmd->tokens[base + PARAM_3_OFFSET], NULL);
+    p.motor_pinion_gear_teeth = strtof(cmd->tokens[base + PARAM_4_OFFSET], NULL);
+    p.wheel_gear_teeth = strtof(cmd->tokens[base + PARAM_5_OFFSET], NULL);
 
     save_mouse_physical_params_as_test(p);
     calculate_mouse_params(p);
@@ -286,11 +278,11 @@ void execute_set_maze_physical_test(struct command const *cmd)
         return;
     }
 
-    uint32_t base_offset = SET_COMMAND_TOKEN_COUNT;
+    uint32_t base = SET_COMMAND_TOKEN_COUNT;
 
     struct maze_physical_params p = {0};
-    p.post_size_mm = strtof(cmd->tokens[base_offset + PARAM_0_OFFSET], NULL);
-    p.wall_size_mm = strtof(cmd->tokens[base_offset + PARAM_1_OFFSET], NULL);
+    p.post_size_mm = strtof(cmd->tokens[base + PARAM_0_OFFSET], NULL);
+    p.wall_size_mm = strtof(cmd->tokens[base + PARAM_1_OFFSET], NULL);
 
     save_maze_physical_params_as_test(p);
     calculate_maze_params(p);

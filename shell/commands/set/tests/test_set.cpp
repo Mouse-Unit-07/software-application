@@ -45,6 +45,52 @@ void deinit_test_fakes(void)
     fake_root_commands[0] = {};
 }
 
+struct command make_get_command(char const *subcommand, uint32_t token_count)
+{
+    struct command cmd{{0}};
+
+    cmd.token_count = token_count;
+    cmd.tokens[0] = "set";
+    cmd.tokens[1] = subcommand;
+
+    return cmd;
+}
+
+void check_command_lookup(char const *command_name, uint32_t token_count)
+{
+    struct command cmd{make_get_command(command_name, token_count)};
+
+    struct command_node const *node = 
+        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+
+    CHECK(node != nullptr);
+    STRCMP_EQUAL(command_name, node->name);
+}
+
+void check_validation_success(char const *command_name, uint32_t token_count,
+                              enum validation_result (*validate)(struct command *))
+{
+    struct command cmd{make_get_command(command_name, token_count)};
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate(&cmd));
+}
+
+void check_validation_too_many_params(char const *command_name, uint32_t token_count,
+                                      enum validation_result (*validate)(struct command *))
+{
+    struct command cmd{make_get_command(command_name, token_count)};
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate(&cmd));
+}
+
+void check_validation_too_few_params(char const *command_name, uint32_t token_count,
+                                      enum validation_result (*validate)(struct command *))
+{
+    struct command cmd{make_get_command(command_name, token_count)};
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate(&cmd));
+}
+
 /*============================================================================*/
 /*                            Mock Implementations                            */
 /*============================================================================*/
@@ -175,81 +221,27 @@ TEST(SetTests, GetSetNodeReturnsValidNode)
     LONGS_EQUAL(get_set_commands_count(), node->child_count);
 }
 
-TEST(SetTests, SetCommandsAreInExpectedOrder)
+TEST(SetTests, SetCommandsAreConfiguredCorrectly)
 {
+    static const char *expected_names[] =
+    {
+        "solver-default",
+        "solver-test",
+        "mouse-physical-default",
+        "mouse-physical-test",
+        "maze-physical-default",
+        "maze-physical-test"
+    };
+
     const struct command_node *commands = get_set_commands();
 
-    STRCMP_EQUAL("solver-default", commands[0].name);
-    STRCMP_EQUAL("solver-test", commands[1].name);
-    STRCMP_EQUAL("mouse-physical-default", commands[2].name);
-    STRCMP_EQUAL("mouse-physical-test", commands[3].name);
-    STRCMP_EQUAL("maze-physical-default", commands[4].name);
-    STRCMP_EQUAL("maze-physical-test", commands[5].name);
-}
+    LONGS_EQUAL(sizeof(expected_names) / sizeof(expected_names[0]), get_set_commands_count());
 
-TEST(SetTests, GetSetCommandsCountReturnsExpectedValue)
-{
-    LONGS_EQUAL(6u, get_set_commands_count());
-}
-
-TEST(SetTests, GetSetCommandsContainsSolverDefaultNode)
-{
-    const struct command_node *commands = get_set_commands();
-
-    STRCMP_EQUAL("solver-default", commands[0].name);
-
-    CHECK(commands[0].validate != nullptr);
-    CHECK(commands[0].execute != nullptr);
-}
-
-TEST(SetTests, GetSetCommandsContainsSolverTestNode)
-{
-    const struct command_node *commands = get_set_commands();
-
-    STRCMP_EQUAL("solver-test", commands[1].name);
-
-    CHECK(commands[1].validate != nullptr);
-    CHECK(commands[1].execute != nullptr);
-}
-
-TEST(SetTests, GetSetCommandsContainsMousePhysicalDefaultNode)
-{
-    const struct command_node *commands = get_set_commands();
-
-    STRCMP_EQUAL("mouse-physical-default", commands[2].name);
-
-    CHECK(commands[2].validate != nullptr);
-    CHECK(commands[2].execute != nullptr);
-}
-
-TEST(SetTests, GetSetCommandsContainsMousePhysicalTestNode)
-{
-    const struct command_node *commands = get_set_commands();
-
-    STRCMP_EQUAL("mouse-physical-test", commands[3].name);
-
-    CHECK(commands[3].validate != nullptr);
-    CHECK(commands[3].execute != nullptr);
-}
-
-TEST(SetTests, GetSetCommandsContainsMazePhysicalDefaultNode)
-{
-    const struct command_node *commands = get_set_commands();
-
-    STRCMP_EQUAL("maze-physical-default", commands[4].name);
-
-    CHECK(commands[4].validate != nullptr);
-    CHECK(commands[4].execute != nullptr);
-}
-
-TEST(SetTests, GetSetCommandsContainsMazePhysicalTestNode)
-{
-    const struct command_node *commands = get_set_commands();
-
-    STRCMP_EQUAL("maze-physical-test", commands[5].name);
-
-    CHECK(commands[5].validate != nullptr);
-    CHECK(commands[5].execute != nullptr);
+    for (uint32_t i{0}; i < get_set_commands_count(); i++) {
+        STRCMP_EQUAL(expected_names[i], commands[i].name);
+        CHECK(commands[i].validate != nullptr);
+        CHECK(commands[i].execute != nullptr);
+    }
 }
 
 /*----------------------------------------------------------------------------*/
@@ -269,51 +261,29 @@ TEST(SetTests, FindCommandNodeReturnsSetNode)
 
 TEST(SetTests, ValidateSetReturnsTooFewParameters)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 1;
-    cmd.tokens[0] = "set";
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_set(&cmd));
+    check_validation_too_few_params("", 1, validate_set);
 }
 
 TEST(SetTests, ValidateSetReturnsSuccess)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set(&cmd));
+    check_validation_success("", 2, validate_set);
 }
 
 /*----------------------------------------------------------------------------*/
 /* set solver-default */
 TEST(SetTests, FindCommandNodeReturnsSolverDefaultNode)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-    cmd.tokens[0] = "set";
-    cmd.tokens[1] = "solver-default";
-
-    struct command_node const *node =
-        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
-
-    CHECK(node != nullptr);
-    STRCMP_EQUAL("solver-default", node->name);
+    check_command_lookup("solver-default", 2);
 }
 
 TEST(SetTests, ValidateSetSolverDefaultReturnsSuccess)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_solver_default(&cmd));
+    check_validation_success("solver-default", 2, validate_set_solver_default);
 }
 
 TEST(SetTests, ValidateSetSolverDefaultReturnsTooManyParameters)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 3;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_set_solver_default(&cmd));
+    check_validation_too_many_params("solver-default", 3, validate_set_solver_default);
 }
 
 TEST(SetTests, ExecuteSetSolverDefaultCallsFunctions)
@@ -330,24 +300,12 @@ TEST(SetTests, ExecuteSetSolverDefaultCallsFunctions)
 /* set solver-test */
 TEST(SetTests, FindCommandNodeReturnsSolverTestNode)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-    cmd.tokens[0] = "set";
-    cmd.tokens[1] = "solver-test";
-
-    struct command_node const *node =
-        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
-
-    CHECK(node != nullptr);
-    STRCMP_EQUAL("solver-test", node->name);
+    check_command_lookup("solver-test", 2);
 }
 
 TEST(SetTests, ValidateSetSolverTestReturnsSuccessForDefaultConfig)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_solver_test(&cmd));
+    check_validation_success("solver-test", 2, validate_set_solver_test);
 }
 
 TEST(SetTests, ValidateSetSolverTestReturnsSuccessForEditConfig)
@@ -365,18 +323,12 @@ TEST(SetTests, ValidateSetSolverTestReturnsSuccessForEditConfig)
 
 TEST(SetTests, ValidateSetSolverTestReturnsTooFewParameters)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 6;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_set_solver_test(&cmd));
+    check_validation_too_few_params("solver-test", 6, validate_set_solver_test);
 }
 
 TEST(SetTests, ValidateSetSolverTestReturnsTooManyParameters)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 8;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_set_solver_test(&cmd));
+    check_validation_too_many_params("solver-test", 8, validate_set_solver_test);
 }
 
 TEST(SetTests, ValidateSetSolverTestReturnsBadParameter)
@@ -444,12 +396,14 @@ TEST(SetTests, ExecuteSetSolverTestUpdatesTestConfig)
 
 /*----------------------------------------------------------------------------*/
 /* set mouse-physical-default */
+TEST(SetTests, FindCommandNodeReturnsMousePhysicalDefaultNode)
+{
+    check_command_lookup("mouse-physical-default", 2);
+}
+
 TEST(SetTests, ValidateSetMousePhysicalDefaultReturnsSuccess)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_mouse_physical_default(&cmd));
+    check_validation_success("mouse-physical-default", 2, validate_set_mouse_physical_default);
 }
 
 TEST(SetTests, ExecuteSetMousePhysicalDefaultCallsFunctions)
@@ -466,36 +420,29 @@ TEST(SetTests, ExecuteSetMousePhysicalDefaultCallsFunctions)
 
 /*----------------------------------------------------------------------------*/
 /* set mouse-physical-test */
+TEST(SetTests, FindCommandNodeReturnsMousePhysicalTestNode)
+{
+    check_command_lookup("mouse-physical-test", 2);
+}
+
 TEST(SetTests, ValidateSetMousePhysicalTestReturnsSuccessForStoredConfig)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_mouse_physical_test(&cmd));
+    check_validation_success("mouse-physical-test", 2, validate_set_mouse_physical_test);
 }
 
 TEST(SetTests, ValidateSetMousePhysicalTestReturnsSuccessForEditConfig)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 8;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_mouse_physical_test(&cmd));
+    check_validation_success("mouse-physical-test", 8, validate_set_mouse_physical_test);
 }
 
 TEST(SetTests, ValidateSetMousePhysicalTestReturnsTooFewParameters)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 7;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_set_mouse_physical_test(&cmd));
+    check_validation_too_few_params("mouse-physical-test", 6, validate_set_mouse_physical_test);
 }
 
 TEST(SetTests, ValidateSetMousePhysicalTestReturnsTooManyParameters)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 9;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_set_mouse_physical_test(&cmd));
+    check_validation_too_many_params("mouse-physical-test", 9, validate_set_mouse_physical_test);
 }
 
 TEST(SetTests, ExecuteSetMousePhysicalTestUsesStoredConfig)
@@ -535,12 +482,19 @@ TEST(SetTests, ExecuteSetMousePhysicalTestUpdatesConfig)
 
 /*----------------------------------------------------------------------------*/
 /* set maze-physical-default */
+TEST(SetTests, FindCommandNodeReturnsMazePhysicalDefaultNode)
+{
+    check_command_lookup("maze-physical-default", 2);
+}
+
 TEST(SetTests, ValidateSetMazePhysicalDefaultReturnsSuccess)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 2;
+    check_validation_success("maze-physical-default", 2, validate_set_maze_physical_default);
+}
 
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_maze_physical_default(&cmd));
+TEST(SetTests, ValidateSetMazePhysicalDefaultReturnsTooManyParameters)
+{
+    check_validation_too_many_params("maze-physical-default", 3, validate_set_maze_physical_default);
 }
 
 TEST(SetTests, ExecuteSetMazePhysicalDefaultCallsFunctions)
@@ -558,36 +512,29 @@ TEST(SetTests, ExecuteSetMazePhysicalDefaultCallsFunctions)
 
 /*----------------------------------------------------------------------------*/
 /* set maze-physical-test */
+TEST(SetTests, FindCommandNodeReturnsMazePhysicalTestNode)
+{
+    check_command_lookup("maze-physical-test", 2);
+}
+
 TEST(SetTests, ValidateSetMazePhysicalTestReturnsSuccessForStoredConfig)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_maze_physical_test(&cmd));
+    check_validation_success("maze-physical-test", 2, validate_set_maze_physical_test);
 }
 
 TEST(SetTests, ValidateSetMazePhysicalTestReturnsSuccessForEditConfig)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 4;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_maze_physical_test(&cmd));
+    check_validation_success("maze-physical-test", 4, validate_set_maze_physical_test);
 }
 
 TEST(SetTests, ValidateSetMazePhysicalTestReturnsTooFewParameters)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 3;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_set_maze_physical_test(&cmd));
+    check_validation_too_few_params("mouse-physical-test", 3, validate_set_maze_physical_test);
 }
 
 TEST(SetTests, ValidateSetMazePhysicalTestReturnsTooManyParameters)
 {
-    struct command cmd{{0}};
-    cmd.token_count = 5;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_set_maze_physical_test(&cmd));
+    check_validation_too_many_params("maze-physical-test", 5, validate_set_maze_physical_test);
 }
 
 TEST(SetTests, ExecuteSetMazePhysicalTestUsesStoredConfig)
