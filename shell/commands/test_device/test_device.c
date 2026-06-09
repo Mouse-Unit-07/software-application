@@ -8,19 +8,22 @@
 /*----------------------------------------------------------------------------*/
 /*                               Include Files                                */
 /*----------------------------------------------------------------------------*/
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "device_self_tests.h"
+#include "navigation.h"
 #include "command.h"
 #include "test_device.h"
 
 /*----------------------------------------------------------------------------*/
 /*                         Private Function Prototypes                        */
 /*----------------------------------------------------------------------------*/
-/* none */
+static void print_move_forward_statistics(struct move_forward_statistics stats);
+static void print_rotate_statistics(struct rotate_statistics stats);
 
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
@@ -30,6 +33,7 @@ enum
     TEST_COMMAND_TOKEN_COUNT = 2,
     TEST_IR_COMMAND_TOKEN_COUNT = 3,
     TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT = 3,
+    TEST_NAVIGATE_COMMAND_TOKEN_COUNT = 3,
 };
 
 enum
@@ -94,6 +98,52 @@ static const struct command_node test_wheel_encoder_commands[] =
     }
 };
 
+static const struct command_node test_navigate_commands[] =
+{
+    {
+        .name = "move-forward",
+        .help = "Execute one-cell move forward",
+        .validate = validate_test_navigate_move_forward,
+        .execute = execute_test_navigate_move_forward
+    },
+    {
+        .name = "rotate-clockwise-90",
+        .help = "Execute clockwise 90 degree rotation",
+        .validate = validate_test_navigate_rotate_clockwise_90,
+        .execute = execute_test_navigate_rotate_clockwise_90
+    },
+    {
+        .name = "rotate-counterclockwise-90",
+        .help = "Execute counter-clockwise 90 degree rotation",
+        .validate = validate_test_navigate_rotate_counterclockwise_90,
+        .execute = execute_test_navigate_rotate_counterclockwise_90
+    },
+    {
+        .name = "rotate-180",
+        .help = "Execute 180 degree rotation",
+        .validate = validate_test_navigate_rotate_180,
+        .execute = execute_test_navigate_rotate_180
+    },
+    {
+        .name = "left-wall-presence",
+        .help = "Check left wall presence",
+        .validate = validate_test_navigate_left_wall_presence,
+        .execute = execute_test_navigate_left_wall_presence
+    },
+    {
+        .name = "right-wall-presence",
+        .help = "Check right wall presence",
+        .validate = validate_test_navigate_right_wall_presence,
+        .execute = execute_test_navigate_right_wall_presence
+    },
+    {
+        .name = "front-wall-presence",
+        .help = "Check front wall presence",
+        .validate = validate_test_navigate_front_wall_presence,
+        .execute = execute_test_navigate_front_wall_presence
+    }
+};
+
 static const struct command_node test_commands[] =
 {
     {
@@ -148,6 +198,14 @@ static const struct command_node test_commands[] =
         .validate = validate_test_vacuum,
         .execute = execute_test_vacuum
     },
+    {
+        .name = "navigate",
+        .help = "Run navigation tests",
+        .validate = validate_test_navigate,
+        .execute = NULL,
+        .children = test_navigate_commands,
+        .child_count = sizeof(test_navigate_commands) / sizeof(test_navigate_commands[0])
+    }
 };
 
 static const struct command_node test_node =
@@ -468,6 +526,143 @@ void execute_test_vacuum(struct command const *cmd)
 }
 
 /*----------------------------------------------------------------------------*/
+/* test navigate */
+enum validation_result validate_test_navigate(struct command *cmd)
+{
+    if (cmd->token_count == TEST_COMMAND_TOKEN_COUNT) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+/*----------------------------------------------------------------------------*/
+/* test navigate move forward */
+enum validation_result validate_test_navigate_move_forward(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_NAVIGATE_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_navigate_move_forward(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("running move-forward...\r\n");
+    move_forward();
+    print_move_forward_statistics(get_move_forward_statistics());
+    printf("ending move-forward...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test navigate rotate clockwise 90 */
+enum validation_result validate_test_navigate_rotate_clockwise_90(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_NAVIGATE_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_navigate_rotate_clockwise_90(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("running rotate-clockwise-90...\r\n");
+    rotate_clockwise_90_deg();
+    print_rotate_statistics(get_rotate_statistics());
+    printf("ending rotate-clockwise-90...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test navigate rotate counterclockwise 90 */
+enum validation_result validate_test_navigate_rotate_counterclockwise_90(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_NAVIGATE_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_navigate_rotate_counterclockwise_90(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("running rotate-counterclockwise-90...\r\n");
+    rotate_counter_clockwise_90_deg();
+    print_rotate_statistics(get_rotate_statistics());
+    printf("ending rotate-counterclockwise-90...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test navigate rotate 180 */
+enum validation_result validate_test_navigate_rotate_180(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_NAVIGATE_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_navigate_rotate_180(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("running rotate-180...\r\n");
+    rotate_180_deg();
+    print_rotate_statistics(get_rotate_statistics());
+    printf("ending rotate-180...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test navigate left-wall presence */
+enum validation_result validate_test_navigate_left_wall_presence(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_NAVIGATE_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_navigate_left_wall_presence(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("left_wall_present=%s\r\n", is_left_wall_present() ? "true" : "false");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test navigate right-wall presence*/
+enum validation_result validate_test_navigate_right_wall_presence(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_NAVIGATE_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_navigate_right_wall_presence(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("right_wall_present=%s\r\n", is_right_wall_present() ? "true" : "false");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test navigate front-wall presence */
+enum validation_result validate_test_navigate_front_wall_presence(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_NAVIGATE_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_navigate_front_wall_presence(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("front_wall_present=%s\r\n", is_front_wall_present() ? "true" : "false");
+}
+
+/*----------------------------------------------------------------------------*/
 /*                        Private Function Definitions                        */
 /*----------------------------------------------------------------------------*/
-/* none */
+static void print_move_forward_statistics(struct move_forward_statistics stats)
+{
+    printf("control_loop_iterations=%" PRIu32 "\r\n", stats.control_loop_iterations);
+    printf("final_encoder_1_ticks=%" PRId32 "\r\n", stats.final_encoder_1_ticks);
+    printf("final_encoder_2_ticks=%" PRId32 "\r\n", stats.final_encoder_2_ticks);
+    printf("left_wall_present=%s\r\n", stats.left_wall_present ? "true" : "false");
+    printf("right_wall_present=%s\r\n", stats.right_wall_present ? "true" : "false");
+    printf("timeout_occurred=%s\r\n", stats.timeout_occurred ? "true" : "false");
+}
+
+static void print_rotate_statistics(struct rotate_statistics stats)
+{
+    printf("control_loop_iterations=%" PRIu32 "\r\n", stats.control_loop_iterations);
+    printf("final_encoder_1_ticks=%" PRId32 "\r\n", stats.final_encoder_1_ticks);
+    printf("final_encoder_2_ticks=%" PRId32 "\r\n", stats.final_encoder_2_ticks);
+    printf("timeout_occurred=%s\r\n", stats.timeout_occurred ? "true" : "false");
+}

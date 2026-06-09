@@ -58,4 +58,28 @@ void execute_test_wheel_encoder_deceleration(struct command const *cmd);
 enum validation_result validate_test_vacuum(struct command *cmd);
 void execute_test_vacuum(struct command const *cmd);
 
+/* navigation tests */
+enum validation_result validate_test_navigate(struct command *cmd);
+
+enum validation_result validate_test_navigate_move_forward(struct command *cmd);
+void execute_test_navigate_move_forward(struct command const *cmd);
+
+enum validation_result validate_test_navigate_rotate_clockwise_90(struct command *cmd);
+void execute_test_navigate_rotate_clockwise_90(struct command const *cmd);
+
+enum validation_result validate_test_navigate_rotate_counterclockwise_90(struct command *cmd);
+void execute_test_navigate_rotate_counterclockwise_90(struct command const *cmd);
+
+enum validation_result validate_test_navigate_rotate_180(struct command *cmd);
+void execute_test_navigate_rotate_180(struct command const *cmd);
+
+enum validation_result validate_test_navigate_left_wall_presence(struct command *cmd);
+void execute_test_navigate_left_wall_presence(struct command const *cmd);
+
+enum validation_result validate_test_navigate_right_wall_presence(struct command *cmd);
+void execute_test_navigate_right_wall_presence(struct command const *cmd);
+
+enum validation_result validate_test_navigate_front_wall_presence(struct command *cmd);
+void execute_test_navigate_front_wall_presence(struct command const *cmd);
+
 #endif /* TEST_DEVICE_H_ */
