@@ -16,6 +16,8 @@
 #include "initialization.h"
 #include "navigation.h"
 #include "user_interface.h"
+#include "maze_solver_common.h"
+#include "configuration.h"
 #include "startup.h"
 
 /*----------------------------------------------------------------------------*/
@@ -39,10 +41,22 @@ void startup(void)
     init_device_self_tests();
     init_user_interface();
     init_navigation();
+    calculate_mouse_params(get_saved_default_mouse_physical_params());
+    calculate_maze_params(get_saved_default_maze_physical_params());
+    calculate_navigation_params();
+
+    init_configuration();
+
+    init_maze_solver_common();
+    set_maze_solver_config(get_saved_default_maze_solver_config());
 }
 
 void shutdown(void)
 {
+    deinit_maze_solver_common();
+
+    deinit_configuration();
+
     deinit_navigation();
     deinit_user_interface();
     deinit_device_self_tests();

@@ -1,11 +1,11 @@
 /*-------------------------------- FILE INFO ---------------------------------*/
-/* Filename           : shell.h                                               */
+/* Filename           : solve.h                                               */
 /*                                                                            */
-/* Interface for micromouse shell library                                     */
+/* Interface for micromouse solve library                                     */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
-#ifndef SHELL_H_
-#define SHELL_H_
+#ifndef SOLVE_H_
+#define SOLVE_H_
 
 /*----------------------------------------------------------------------------*/
 /*                             Public Definitions                             */
@@ -15,6 +15,16 @@
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Prototypes                         */
 /*----------------------------------------------------------------------------*/
+const struct command_node *get_solve_node(void);
+const struct command_node *get_solve_commands(void);
+uint32_t get_solve_commands_count(void);
 
+enum validation_result validate_solve(struct command *cmd);
 
-#endif /* SHELL_H_ */
+enum validation_result validate_solve_wallfollower(struct command *cmd);
+void execute_solve_wallfollower(struct command const *cmd);
+
+enum validation_result validate_solve_floodfill(struct command *cmd);
+void execute_solve_floodfill(struct command const *cmd);
+
+#endif /* SOLVE_H_ */

@@ -13,6 +13,8 @@ extern "C"
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "maze_solver_common.h"
+#include "navigation.h"
 #include "startup.h"
 
 }
@@ -91,6 +93,76 @@ void deinit_navigation(void)
     mock().actualCall("deinit_navigation");
 }
 
+void init_configuration(void)
+{
+    mock().actualCall("init_configuration");
+}
+
+void deinit_configuration(void)
+{
+    mock().actualCall("deinit_configuration");
+}
+
+void init_maze_solver_common(void)
+{
+    mock().actualCall("init_maze_solver_common");
+}
+
+void deinit_maze_solver_common(void)
+{
+    mock().actualCall("deinit_maze_solver_common");
+}
+
+struct maze_solver_config get_saved_default_maze_solver_config(void)
+{
+    mock().actualCall("get_saved_default_maze_solver_config");
+
+    struct maze_solver_config cfg{};
+    return cfg;
+}
+
+void set_maze_solver_config(struct maze_solver_config cfg)
+{
+    (void)cfg;
+
+    mock().actualCall("set_maze_solver_config");
+}
+
+struct mouse_physical_params get_saved_default_mouse_physical_params(void)
+{
+    mock().actualCall("get_saved_default_mouse_physical_params");
+
+    struct mouse_physical_params cfg{};
+    return cfg;
+}
+
+struct maze_physical_params get_saved_default_maze_physical_params(void)
+{
+    mock().actualCall("get_saved_default_maze_physical_params");
+
+    struct maze_physical_params cfg{};
+    return cfg;
+}
+
+void calculate_mouse_params(struct mouse_physical_params p)
+{
+    (void)p;
+
+    mock().actualCall("calculate_mouse_params");
+}
+
+void calculate_maze_params(struct maze_physical_params p)
+{
+    (void)p;
+
+    mock().actualCall("calculate_maze_params");
+}
+
+void calculate_navigation_params(void)
+{
+    mock().actualCall("calculate_navigation_params");
+}
+
 }
 
 /*============================================================================*/
@@ -121,12 +193,27 @@ TEST(StartupTests, StartupCallsFunctions)
     mock().expectOneCall("init_device_self_tests");
     mock().expectOneCall("init_user_interface");
     mock().expectOneCall("init_navigation");
+    mock().expectOneCall("get_saved_default_mouse_physical_params");
+    mock().expectOneCall("calculate_mouse_params");
+    mock().expectOneCall("get_saved_default_maze_physical_params");
+    mock().expectOneCall("calculate_maze_params");
+    mock().expectOneCall("calculate_navigation_params");
+
+    mock().expectOneCall("init_configuration");
+
+    mock().expectOneCall("init_maze_solver_common");
+    mock().expectOneCall("get_saved_default_maze_solver_config");
+    mock().expectOneCall("set_maze_solver_config");
 
     startup();
 }
 
 TEST(StartupTests, ShutdownCallsFunctions)
 {
+    mock().expectOneCall("deinit_maze_solver_common");
+
+    mock().expectOneCall("deinit_configuration");
+
     mock().expectOneCall("deinit_navigation");
     mock().expectOneCall("deinit_user_interface");
     mock().expectOneCall("deinit_device_self_tests");
