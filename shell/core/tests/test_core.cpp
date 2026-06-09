@@ -303,7 +303,7 @@ TEST(ShellTests, ParseTabs)
 
 TEST(ShellTests, ParseStopsAtMaxParameterCount)
 {
-    strcpy(get_shell_buffer(), "cmd 1 2 3 4 5 6 7 8 9");
+    strcpy(get_shell_buffer(), "cmd 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16");
 
     struct command cmd{parse_cli_buffer_contents()};
 

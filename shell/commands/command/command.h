@@ -13,7 +13,7 @@
 enum
 {
     MAX_COMMAND_NAME_SIZE = 32,
-    MAX_PARAMETER_COUNT = 8
+    MAX_PARAMETER_COUNT = 16
 };
 
 struct command {
@@ -52,7 +52,12 @@ enum
     PARAM_2_OFFSET,
     PARAM_3_OFFSET,
     PARAM_4_OFFSET,
-    PARAM_5_OFFSET
+    PARAM_5_OFFSET,
+    PARAM_6_OFFSET,
+    PARAM_7_OFFSET,
+    PARAM_8_OFFSET,
+    PARAM_9_OFFSET,
+    PARAM_10_OFFSET
 };
 
 enum
