@@ -83,6 +83,44 @@ void check_validation_too_many_params(char const *command_name, uint32_t token_c
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate(&cmd));
 }
 
+struct get_command_test_case {
+    const char *name;
+    enum validation_result (*validate)(struct command *);
+};
+
+static const get_command_test_case get_commands[] = {
+    {"solver-default", validate_get_solver_default},
+    {"solver-test", validate_get_solver_test},
+    {"solver-current", validate_get_solver_current},
+    {"mouse-physical-default", validate_get_mouse_physical_default},
+    {"mouse-physical-test", validate_get_mouse_physical_test},
+    {"mouse-physical-current", validate_get_mouse_physical_current},
+    {"mouse-calculated", validate_get_mouse_calculated},
+    {"maze-physical-default", validate_get_maze_physical_default},
+    {"maze-physical-test", validate_get_maze_physical_test},
+    {"maze-physical-current", validate_get_maze_physical_current},
+    {"maze-calculated", validate_get_maze_calculated},
+    {"navigation", validate_get_navigation},
+    {"move-forward-no-wall-default", validate_get_move_forward_no_wall_default},
+    {"move-forward-no-wall-test", validate_get_move_forward_no_wall_test},
+    {"move-forward-no-wall-current", validate_get_move_forward_no_wall_current},
+    {"move-forward-one-wall-default", validate_get_move_forward_one_wall_default},
+    {"move-forward-one-wall-test", validate_get_move_forward_one_wall_test},
+    {"move-forward-one-wall-current", validate_get_move_forward_one_wall_current},
+    {"move-forward-both-wall-default", validate_get_move_forward_both_wall_default},
+    {"move-forward-both-wall-test", validate_get_move_forward_both_wall_test},
+    {"move-forward-both-wall-current", validate_get_move_forward_both_wall_current},
+    {"rotate-default", validate_get_rotate_default},
+    {"rotate-test", validate_get_rotate_test},
+    {"rotate-current", validate_get_rotate_current},
+    {"front-wall-default", validate_get_front_wall_default},
+    {"front-wall-test", validate_get_front_wall_test},
+    {"front-wall-current", validate_get_front_wall_current},
+    {"side-wall-default", validate_get_side_wall_default},
+    {"side-wall-test", validate_get_side_wall_test},
+    {"side-wall-current", validate_get_side_wall_current},
+    {"side-wall-calculated", validate_get_side_wall_calculated}};
+
 /*============================================================================*/
 /*                            Mock Implementations                            */
 /*============================================================================*/
@@ -343,49 +381,35 @@ TEST(GetTests, GetGetNodeReturnsExpectedNode)
 
 TEST(GetTests, GetCommandsAreConfiguredCorrectly)
 {
-    static const char *expected_names[] =
-    {
-        "solver-default",
-        "solver-test",
-        "solver-current",
-        "mouse-physical-default",
-        "mouse-physical-test",
-        "mouse-physical-current",
-        "mouse-calculated",
-        "maze-physical-default",
-        "maze-physical-test",
-        "maze-physical-current",
-        "maze-calculated",
-        "navigation",
-        "move-forward-no-wall-default",
-        "move-forward-no-wall-test",
-        "move-forward-no-wall-current",
-        "move-forward-one-wall-default",
-        "move-forward-one-wall-test",
-        "move-forward-one-wall-current",
-        "move-forward-both-wall-default",
-        "move-forward-both-wall-test",
-        "move-forward-both-wall-current",
-        "rotate-default",
-        "rotate-test",
-        "rotate-current",
-        "front-wall-default",
-        "front-wall-test",
-        "front-wall-current",
-        "side-wall-default",
-        "side-wall-test",
-        "side-wall-current",
-        "side-wall-calculated",
-    };
-
     const struct command_node *commands = get_get_commands();
 
-    LONGS_EQUAL(sizeof(expected_names) / sizeof(expected_names[0]), get_get_commands_count());
+    LONGS_EQUAL(sizeof(get_commands) / sizeof(get_commands[0]), get_get_commands_count());
 
     for (uint32_t i{0}; i < get_get_commands_count(); i++) {
-        STRCMP_EQUAL(expected_names[i], commands[i].name);
-        CHECK(commands[i].validate != nullptr);
+        STRCMP_EQUAL(get_commands[i].name, commands[i].name);
+        POINTERS_EQUAL(get_commands[i].validate, commands[i].validate);
         CHECK(commands[i].execute != nullptr);
+    }
+}
+
+TEST(GetTests, FindCommandNodeReturnsExpectedNode)
+{
+    for (auto const &test : get_commands) {
+        check_command_lookup(test.name, 2);
+    }
+}
+
+TEST(GetTests, ValidateCommandsReturnSuccess)
+{
+    for (auto const &test : get_commands) {
+        check_validation_success(test.name, 2, test.validate);
+    }
+}
+
+TEST(GetTests, ValidateCommandsReturnTooManyParameters)
+{
+    for (auto const &test : get_commands) {
+        check_validation_too_many_params(test.name, 3, test.validate);
     }
 }
 
@@ -416,21 +440,6 @@ TEST(GetTests, ValidateGetReturnsTooFewParameters)
 
 /*----------------------------------------------------------------------------*/
 /* get solver-default */
-TEST(GetTests, FindCommandNodeReturnsGetSolverDefaultNode)
-{
-    check_command_lookup("solver-default", 2);
-}
-
-TEST(GetTests, ValidateGetSolverDefaultReturnsSuccess)
-{
-    check_validation_success("solver-default", 2, validate_get_solver_default);
-}
-
-TEST(GetTests, ValidateGetSolverDefaultReturnsTooManyParameters)
-{
-    check_validation_too_many_params("solver-default", 3, validate_get_solver_default);
-}
-
 TEST(GetTests, ExecuteGetSolverDefaultRuns)
 {
     struct command cmd{{0}};
@@ -440,21 +449,6 @@ TEST(GetTests, ExecuteGetSolverDefaultRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get solver-test */
-TEST(GetTests, FindCommandNodeReturnsGetSolverTestNode)
-{
-    check_command_lookup("solver-test", 2);
-}
-
-TEST(GetTests, ValidateGetSolverTestReturnsSuccess)
-{
-    check_validation_success("solver-test", 2, validate_get_solver_test);
-}
-
-TEST(GetTests, ValidateGetSolverTestReturnsTooManyParameters)
-{
-    check_validation_too_many_params("solver-test", 3, validate_get_solver_test);
-}
-
 TEST(GetTests, ExecuteGetSolverTestRuns)
 {
     struct command cmd{{0}};
@@ -464,21 +458,6 @@ TEST(GetTests, ExecuteGetSolverTestRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get solver-current */
-TEST(GetTests, FindCommandNodeReturnsGetSolverCurrentNode)
-{
-    check_command_lookup("solver-current", 2);
-}
-
-TEST(GetTests, ValidateGetSolverCurrentReturnsSuccess)
-{
-    check_validation_success("solver-current", 2, validate_get_solver_current);
-}
-
-TEST(GetTests, ValidateGetSolverCurrentReturnsTooManyParameters)
-{
-    check_validation_too_many_params("solver-current", 3, validate_get_solver_current);
-}
-
 TEST(GetTests, ExecuteGetSolverCurrentRuns)
 {
     struct command cmd{{0}};
@@ -488,21 +467,6 @@ TEST(GetTests, ExecuteGetSolverCurrentRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get mouse-physical-default */
-TEST(GetTests, FindCommandNodeReturnsGetMousePhysicalDefaultNode)
-{
-    check_command_lookup("mouse-physical-default", 2);
-}
-
-TEST(GetTests, ValidateGetMousePhysicalDefaultReturnsSuccess)
-{
-    check_validation_success("mouse-physical-default", 2, validate_get_mouse_physical_default);
-}
-
-TEST(GetTests, ValidateGetMousePhysicalDefaultReturnsTooManyParameters)
-{
-    check_validation_too_many_params("mouse-physical-default", 3, validate_get_mouse_physical_default);
-}
-
 TEST(GetTests, ExecuteGetMousePhysicalDefaultRuns)
 {
     struct command cmd{{0}};
@@ -512,21 +476,6 @@ TEST(GetTests, ExecuteGetMousePhysicalDefaultRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get mouse-physical-test */
-TEST(GetTests, FindCommandNodeReturnsGetMousePhysicalTestNode)
-{
-    check_command_lookup("mouse-physical-test", 2);
-}
-
-TEST(GetTests, ValidateGetMousePhysicalDefaultTestReturnsSuccess)
-{
-    check_validation_success("mouse-physical-test", 2, validate_get_mouse_physical_test);
-}
-
-TEST(GetTests, ValidateGetMousePhysicalDefaultTestReturnsTooManyParameters)
-{
-    check_validation_too_many_params("mouse-physical-test", 3, validate_get_mouse_physical_test);
-}
-
 TEST(GetTests, ExecuteGetMousePhysicalDefaultTestRuns)
 {
     struct command cmd{{0}};
@@ -536,21 +485,6 @@ TEST(GetTests, ExecuteGetMousePhysicalDefaultTestRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get mouse-physical-current */
-TEST(GetTests, FindCommandNodeReturnsGetMousePhysicalCurrentNode)
-{
-    check_command_lookup("mouse-physical-current", 2);
-}
-
-TEST(GetTests, ValidateGetMousePhysicalDefaultCurrentReturnsSuccess)
-{
-    check_validation_success("mouse-physical-current", 2, validate_get_mouse_physical_current);
-}
-
-TEST(GetTests, ValidateGetMousePhysicalDefaultCurrentReturnsTooManyParameters)
-{
-    check_validation_too_many_params("mouse-physical-current", 3, validate_get_mouse_physical_current);
-}
-
 TEST(GetTests, ExecuteGetMousePhysicalDefaultCurrentRuns)
 {
     struct command cmd{{0}};
@@ -560,21 +494,6 @@ TEST(GetTests, ExecuteGetMousePhysicalDefaultCurrentRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get mouse-calculated */
-TEST(GetTests, FindCommandNodeReturnsGetMouseCalculatedNode)
-{
-    check_command_lookup("mouse-calculated", 2);
-}
-
-TEST(GetTests, ValidateGetMouseCalculatedReturnsSuccess)
-{
-    check_validation_success("mouse-calculated", 2, validate_get_mouse_calculated);
-}
-
-TEST(GetTests, ValidateGetMouseCalculatedReturnsTooManyParameters)
-{
-    check_validation_too_many_params("mouse-calculated", 3, validate_get_mouse_calculated);
-}
-
 TEST(GetTests, ExecuteGetMouseCalculatedRuns)
 {
     struct command cmd{{0}};
@@ -584,21 +503,6 @@ TEST(GetTests, ExecuteGetMouseCalculatedRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get maze-physical-default */
-TEST(GetTests, FindCommandNodeReturnsGetMazePhysicalDefaultNode)
-{
-    check_command_lookup("maze-physical-default", 2);
-}
-
-TEST(GetTests, ValidateGetMazePhysicalDefaultReturnsSuccess)
-{
-    check_validation_success("maze-physical-default", 2, validate_get_maze_physical_default);
-}
-
-TEST(GetTests, ValidateGetMazePhysicalDefaultReturnsTooManyParameters)
-{
-    check_validation_too_many_params("maze-physical-default", 3, validate_get_maze_physical_default);
-}
-
 TEST(GetTests, ExecuteGetMazePhysicalDefaultRuns)
 {
     struct command cmd{{0}};
@@ -608,21 +512,6 @@ TEST(GetTests, ExecuteGetMazePhysicalDefaultRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get maze-physical-test */
-TEST(GetTests, FindCommandNodeReturnsGetMazePhysicalTestNode)
-{
-    check_command_lookup("maze-physical-test", 2);
-}
-
-TEST(GetTests, ValidateGetMazePhysicalTestReturnsSuccess)
-{
-    check_validation_success("maze-physical-test", 2, validate_get_maze_physical_test);
-}
-
-TEST(GetTests, ValidateGetMazePhysicalTestReturnsTooManyParameters)
-{
-    check_validation_too_many_params("maze-physical-test", 3, validate_get_maze_physical_test);
-}
-
 TEST(GetTests, ExecuteGetMazePhysicalTestRuns)
 {
     struct command cmd{{0}};
@@ -632,21 +521,6 @@ TEST(GetTests, ExecuteGetMazePhysicalTestRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get maze-physical-current */
-TEST(GetTests, FindCommandNodeReturnsGetMazePhysicalCurrentNode)
-{
-    check_command_lookup("maze-physical-current", 2);
-}
-
-TEST(GetTests, ValidateGetMazePhysicalCurrentReturnsSuccess)
-{
-    check_validation_success("maze-physical-current", 2, validate_get_maze_physical_current);
-}
-
-TEST(GetTests, ValidateGetMazePhysicalCurrentReturnsTooManyParameters)
-{
-    check_validation_too_many_params("maze-physical-current", 3, validate_get_maze_physical_current);
-}
-
 TEST(GetTests, ExecuteGetMazePhysicalCurrentRuns)
 {
     struct command cmd{{0}};
@@ -656,21 +530,6 @@ TEST(GetTests, ExecuteGetMazePhysicalCurrentRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get maze-calculated */
-TEST(GetTests, FindCommandNodeReturnsGetMazeCalculatedNode)
-{
-    check_command_lookup("maze-calculated", 2);
-}
-
-TEST(GetTests, ValidateGetMazeCalculatedReturnsSuccess)
-{
-    check_validation_success("maze-calculated", 2, validate_get_maze_calculated);
-}
-
-TEST(GetTests, ValidateGetMazeCalculatedReturnsTooManyParameters)
-{
-    check_validation_too_many_params("maze-calculated", 3, validate_get_maze_calculated);
-}
-
 TEST(GetTests, ExecuteGetMazeCalculatedRuns)
 {
     struct command cmd{{0}};
@@ -680,21 +539,6 @@ TEST(GetTests, ExecuteGetMazeCalculatedRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get navigation */
-TEST(GetTests, FindCommandNodeReturnsGetNavigationNode)
-{
-    check_command_lookup("navigation", 2);
-}
-
-TEST(GetTests, ValidateGetNavigationReturnsSuccess)
-{
-    check_validation_success("navigation", 2, validate_get_navigation);
-}
-
-TEST(GetTests, ValidateGetNavigationReturnsTooManyParameters)
-{
-    check_validation_too_many_params("navigation", 3, validate_get_navigation);
-}
-
 TEST(GetTests, ExecuteGetNavigationRuns)
 {
     struct command cmd{{0}};
@@ -704,21 +548,6 @@ TEST(GetTests, ExecuteGetNavigationRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get move-forward-no-wall-default */
-TEST(GetTests, FindCommandNodeReturnsMoveForwardNoWallDefaultNode)
-{
-    check_command_lookup("move-forward-no-wall-default", 2);
-}
-
-TEST(GetTests, ValidateMoveForwardNoWallDefaultReturnsSuccess)
-{
-    check_validation_success("move-forward-no-wall-default", 2, validate_get_move_forward_no_wall_default);
-}
-
-TEST(GetTests, ValidateMoveForwardNoWallDefaultReturnsTooManyParameters)
-{
-    check_validation_too_many_params("move-forward-no-wall-default", 3, validate_get_move_forward_no_wall_default);
-}
-
 TEST(GetTests, ExecuteMoveForwardNoWallDefaultRuns)
 {
     struct command cmd{{0}};
@@ -728,21 +557,6 @@ TEST(GetTests, ExecuteMoveForwardNoWallDefaultRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get move-forward-no-wall-test */
-TEST(GetTests, FindCommandNodeReturnsMoveForwardNoWallTestNode)
-{
-    check_command_lookup("move-forward-no-wall-test", 2);
-}
-
-TEST(GetTests, ValidateMoveForwardNoWallTestReturnsSuccess)
-{
-    check_validation_success("move-forward-no-wall-test", 2, validate_get_move_forward_no_wall_test);
-}
-
-TEST(GetTests, ValidateMoveForwardNoWallTestReturnsTooManyParameters)
-{
-    check_validation_too_many_params("move-forward-no-wall-test", 3, validate_get_move_forward_no_wall_test);
-}
-
 TEST(GetTests, ExecuteMoveForwardNoWallTestRuns)
 {
     struct command cmd{{0}};
@@ -752,21 +566,6 @@ TEST(GetTests, ExecuteMoveForwardNoWallTestRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get move-forward-no-wall-current */
-TEST(GetTests, FindCommandNodeReturnsMoveForwardNoWallCurrentNode)
-{
-    check_command_lookup("move-forward-no-wall-current", 2);
-}
-
-TEST(GetTests, ValidateMoveForwardNoWallCurrentReturnsSuccess)
-{
-    check_validation_success("move-forward-no-wall-current", 2, validate_get_move_forward_no_wall_current);
-}
-
-TEST(GetTests, ValidateMoveForwardNoWallCurrentReturnsTooManyParameters)
-{
-    check_validation_too_many_params("move-forward-no-wall-current", 3, validate_get_move_forward_no_wall_current);
-}
-
 TEST(GetTests, ExecuteMoveForwardNoWallCurrentRuns)
 {
     struct command cmd{{0}};
@@ -776,21 +575,6 @@ TEST(GetTests, ExecuteMoveForwardNoWallCurrentRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get move-forward-one-wall-default */
-TEST(GetTests, FindCommandNodeReturnsMoveForwardOneWallDefaultNode)
-{
-    check_command_lookup("move-forward-one-wall-default", 2);
-}
-
-TEST(GetTests, ValidateMoveForwardOneWallDefaultReturnsSuccess)
-{
-    check_validation_success("move-forward-one-wall-default", 2, validate_get_move_forward_one_wall_default);
-}
-
-TEST(GetTests, ValidateMoveForwardOneWallDefaultReturnsTooManyParameters)
-{
-    check_validation_too_many_params("move-forward-one-wall-default", 3, validate_get_move_forward_one_wall_default);
-}
-
 TEST(GetTests, ExecuteMoveForwardOneWallDefaultRuns)
 {
     struct command cmd{{0}};
@@ -800,21 +584,6 @@ TEST(GetTests, ExecuteMoveForwardOneWallDefaultRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get move-forward-one-wall-test */
-TEST(GetTests, FindCommandNodeReturnsMoveForwardOneWallTestNode)
-{
-    check_command_lookup("move-forward-one-wall-test", 2);
-}
-
-TEST(GetTests, ValidateMoveForwardOneWallTestReturnsSuccess)
-{
-    check_validation_success("move-forward-one-wall-test", 2, validate_get_move_forward_one_wall_test);
-}
-
-TEST(GetTests, ValidateMoveForwardOneWallTestReturnsTooManyParameters)
-{
-    check_validation_too_many_params("move-forward-one-wall-test", 3, validate_get_move_forward_one_wall_test);
-}
-
 TEST(GetTests, ExecuteMoveForwardOneWallTestRuns)
 {
     struct command cmd{{0}};
@@ -824,21 +593,6 @@ TEST(GetTests, ExecuteMoveForwardOneWallTestRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get move-forward-one-wall-current */
-TEST(GetTests, FindCommandNodeReturnsMoveForwardOneWallCurrentNode)
-{
-    check_command_lookup("move-forward-one-wall-current", 2);
-}
-
-TEST(GetTests, ValidateMoveForwardOneWallCurrentReturnsSuccess)
-{
-    check_validation_success("move-forward-one-wall-current", 2, validate_get_move_forward_one_wall_current);
-}
-
-TEST(GetTests, ValidateMoveForwardOneWallCurrentReturnsTooManyParameters)
-{
-    check_validation_too_many_params("move-forward-one-wall-current", 3, validate_get_move_forward_one_wall_current);
-}
-
 TEST(GetTests, ExecuteMoveForwardOneWallCurrentRuns)
 {
     struct command cmd{{0}};
@@ -848,21 +602,6 @@ TEST(GetTests, ExecuteMoveForwardOneWallCurrentRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get move-forward-both-wall-default */
-TEST(GetTests, FindCommandNodeReturnsMoveForwardBothWallDefaultNode)
-{
-    check_command_lookup("move-forward-both-wall-default", 2);
-}
-
-TEST(GetTests, ValidateMoveForwardBothWallDefaultReturnsSuccess)
-{
-    check_validation_success("move-forward-both-wall-default", 2, validate_get_move_forward_both_wall_default);
-}
-
-TEST(GetTests, ValidateMoveForwardBothWallDefaultReturnsTooManyParameters)
-{
-    check_validation_too_many_params("move-forward-both-wall-default", 3, validate_get_move_forward_both_wall_default);
-}
-
 TEST(GetTests, ExecuteMoveForwardBothWallDefaultRuns)
 {
     struct command cmd{{0}};
@@ -872,21 +611,6 @@ TEST(GetTests, ExecuteMoveForwardBothWallDefaultRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get move-forward-both-wall-test */
-TEST(GetTests, FindCommandNodeReturnsMoveForwardBothWallTestNode)
-{
-    check_command_lookup("move-forward-both-wall-test", 2);
-}
-
-TEST(GetTests, ValidateMoveForwardBothWallTestReturnsSuccess)
-{
-    check_validation_success("move-forward-both-wall-test", 2, validate_get_move_forward_both_wall_test);
-}
-
-TEST(GetTests, ValidateMoveForwardBothWallTestReturnsTooManyParameters)
-{
-    check_validation_too_many_params("move-forward-both-wall-test", 3, validate_get_move_forward_both_wall_test);
-}
-
 TEST(GetTests, ExecuteMoveForwardBothWallTestRuns)
 {
     struct command cmd{{0}};
@@ -896,21 +620,6 @@ TEST(GetTests, ExecuteMoveForwardBothWallTestRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get move-forward-both-wall-current */
-TEST(GetTests, FindCommandNodeReturnsMoveForwardBothWallCurrentNode)
-{
-    check_command_lookup("move-forward-both-wall-current", 2);
-}
-
-TEST(GetTests, ValidateMoveForwardBothWallCurrentReturnsSuccess)
-{
-    check_validation_success("move-forward-both-wall-current", 2, validate_get_move_forward_both_wall_current);
-}
-
-TEST(GetTests, ValidateMoveForwardBothWallCurrentReturnsTooManyParameters)
-{
-    check_validation_too_many_params("move-forward-both-wall-current", 3, validate_get_move_forward_both_wall_current);
-}
-
 TEST(GetTests, ExecuteMoveForwardBothWallCurrentRuns)
 {
     struct command cmd{{0}};
@@ -920,21 +629,6 @@ TEST(GetTests, ExecuteMoveForwardBothWallCurrentRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get rotate-default */
-TEST(GetTests, FindCommandNodeReturnsRotateDefaultNode)
-{
-    check_command_lookup("rotate-default", 2);
-}
-
-TEST(GetTests, ValidateRotateDefaultReturnsSuccess)
-{
-    check_validation_success("rotate-default", 2, validate_get_rotate_default);
-}
-
-TEST(GetTests, ValidateRotateDefaultReturnsTooManyParameters)
-{
-    check_validation_too_many_params("rotate-default", 3, validate_get_rotate_default);
-}
-
 TEST(GetTests, ExecuteRotateDefaultRuns)
 {
     struct command cmd{{0}};
@@ -944,21 +638,6 @@ TEST(GetTests, ExecuteRotateDefaultRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get rotate-test */
-TEST(GetTests, FindCommandNodeReturnsRotateTestNode)
-{
-    check_command_lookup("rotate-test", 2);
-}
-
-TEST(GetTests, ValidateRotateTestReturnsSuccess)
-{
-    check_validation_success("rotate-test", 2, validate_get_rotate_test);
-}
-
-TEST(GetTests, ValidateRotateTestReturnsTooManyParameters)
-{
-    check_validation_too_many_params("rotate-test", 3, validate_get_rotate_test);
-}
-
 TEST(GetTests, ExecuteRotateTestRuns)
 {
     struct command cmd{{0}};
@@ -968,21 +647,6 @@ TEST(GetTests, ExecuteRotateTestRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get rotate-current */
-TEST(GetTests, FindCommandNodeReturnsRotateCurrentNode)
-{
-    check_command_lookup("rotate-current", 2);
-}
-
-TEST(GetTests, ValidateRotateCurrentReturnsSuccess)
-{
-    check_validation_success("rotate-current", 2, validate_get_rotate_current);
-}
-
-TEST(GetTests, ValidateRotateCurrentReturnsTooManyParameters)
-{
-    check_validation_too_many_params("rotate-current", 3, validate_get_rotate_current);
-}
-
 TEST(GetTests, ExecuteRotateCurrentRuns)
 {
     struct command cmd{{0}};
@@ -992,21 +656,6 @@ TEST(GetTests, ExecuteRotateCurrentRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get front-wall-default */
-TEST(GetTests, FindCommandNodeReturnsFrontWallDefaultNode)
-{
-    check_command_lookup("front-wall-default", 2);
-}
-
-TEST(GetTests, ValidateFrontWallDefaultReturnsSuccess)
-{
-    check_validation_success("front-wall-default", 2, validate_get_front_wall_default);
-}
-
-TEST(GetTests, ValidateFrontWallDefaultReturnsTooManyParameters)
-{
-    check_validation_too_many_params("front-wall-default", 3, validate_get_front_wall_default);
-}
-
 TEST(GetTests, ExecuteFrontWallDefaultRuns)
 {
     struct command cmd{{0}};
@@ -1016,21 +665,6 @@ TEST(GetTests, ExecuteFrontWallDefaultRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get front-wall-test */
-TEST(GetTests, FindCommandNodeReturnsFrontWallTestNode)
-{
-    check_command_lookup("front-wall-test", 2);
-}
-
-TEST(GetTests, ValidateFrontWallTestReturnsSuccess)
-{
-    check_validation_success("front-wall-test", 2, validate_get_front_wall_test);
-}
-
-TEST(GetTests, ValidateFrontWallTestReturnsTooManyParameters)
-{
-    check_validation_too_many_params("front-wall-test", 3, validate_get_front_wall_test);
-}
-
 TEST(GetTests, ExecuteFrontWallTestRuns)
 {
     struct command cmd{{0}};
@@ -1040,21 +674,6 @@ TEST(GetTests, ExecuteFrontWallTestRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get front-wall-current */
-TEST(GetTests, FindCommandNodeReturnsFrontWallCurrentNode)
-{
-    check_command_lookup("front-wall-current", 2);
-}
-
-TEST(GetTests, ValidateFrontWallCurrentReturnsSuccess)
-{
-    check_validation_success("front-wall-current", 2, validate_get_front_wall_current);
-}
-
-TEST(GetTests, ValidateFrontWallCurrentReturnsTooManyParameters)
-{
-    check_validation_too_many_params("front-wall-current", 3, validate_get_front_wall_current);
-}
-
 TEST(GetTests, ExecuteFrontWallCurrentRuns)
 {
     struct command cmd{{0}};
@@ -1064,21 +683,6 @@ TEST(GetTests, ExecuteFrontWallCurrentRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get side-wall-default */
-TEST(GetTests, FindCommandNodeReturnsSideWallDefaultNode)
-{
-    check_command_lookup("side-wall-default", 2);
-}
-
-TEST(GetTests, ValidateSideWallDefaultReturnsSuccess)
-{
-    check_validation_success("side-wall-default", 2, validate_get_side_wall_default);
-}
-
-TEST(GetTests, ValidateSideWallDefaultReturnsTooManyParameters)
-{
-    check_validation_too_many_params("side-wall-default", 3, validate_get_side_wall_default);
-}
-
 TEST(GetTests, ExecuteSideWallDefaultRuns)
 {
     struct command cmd{{0}};
@@ -1088,21 +692,6 @@ TEST(GetTests, ExecuteSideWallDefaultRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get side-wall-test */
-TEST(GetTests, FindCommandNodeReturnsSideWallTestNode)
-{
-    check_command_lookup("side-wall-test", 2);
-}
-
-TEST(GetTests, ValidateSideWallTestReturnsSuccess)
-{
-    check_validation_success("side-wall-test", 2, validate_get_side_wall_test);
-}
-
-TEST(GetTests, ValidateSideWallTestReturnsTooManyParameters)
-{
-    check_validation_too_many_params("side-wall-test", 3, validate_get_side_wall_test);
-}
-
 TEST(GetTests, ExecuteSideWallTestRuns)
 {
     struct command cmd{{0}};
@@ -1112,21 +701,6 @@ TEST(GetTests, ExecuteSideWallTestRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get side-wall-current */
-TEST(GetTests, FindCommandNodeReturnsSideWallCurrentNode)
-{
-    check_command_lookup("side-wall-current", 2);
-}
-
-TEST(GetTests, ValidateSideWallCurrentReturnsSuccess)
-{
-    check_validation_success("side-wall-current", 2, validate_get_side_wall_current);
-}
-
-TEST(GetTests, ValidateSideWallCurrentReturnsTooManyParameters)
-{
-    check_validation_too_many_params("side-wall-current", 3, validate_get_side_wall_current);
-}
-
 TEST(GetTests, ExecuteSideWallCurrentRuns)
 {
     struct command cmd{{0}};
@@ -1136,21 +710,6 @@ TEST(GetTests, ExecuteSideWallCurrentRuns)
 
 /*----------------------------------------------------------------------------*/
 /* get side-wall-calculated */
-TEST(GetTests, FindCommandNodeReturnsSideWallCalculatedNode)
-{
-    check_command_lookup("side-wall-calculated", 2);
-}
-
-TEST(GetTests, ValidateSideWallCalculatedReturnsSuccess)
-{
-    check_validation_success("side-wall-calculated", 2, validate_get_side_wall_calculated);
-}
-
-TEST(GetTests, ValidateSideWallCalculatedReturnsTooManyParameters)
-{
-    check_validation_too_many_params("side-wall-calculated", 3, validate_get_side_wall_calculated);
-}
-
 TEST(GetTests, ExecuteSideWallCalculatedRuns)
 {
     struct command cmd{{0}};
