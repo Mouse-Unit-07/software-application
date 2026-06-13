@@ -9,6 +9,7 @@
 /*                               Include Files                                */
 /*----------------------------------------------------------------------------*/
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include "command.h"
 
@@ -63,6 +64,13 @@ struct command_match find_command_node(struct command const *cmd,
     }
 
     return match;
+}
+
+void print_command_help(struct command_node const *commands, uint32_t count)
+{
+    for (uint32_t i = 0u; i < count; i++) {
+        printf("%-32s %s\r\n", commands[i].name, commands[i].help);
+    }
 }
 
 /*----------------------------------------------------------------------------*/

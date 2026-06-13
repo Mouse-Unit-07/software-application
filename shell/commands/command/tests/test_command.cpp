@@ -164,3 +164,25 @@ TEST(CommandTests, FindCommandNodeReturnsLastValidMatch)
     POINTERS_EQUAL(&children[0], match.node);
     LONGS_EQUAL(2u, match.depth);
 }
+
+TEST(CommandTests, PrintCommandHelpRunsForSingleCommand)
+{
+    print_command_help(roots, 1);
+}
+
+TEST(CommandTests, PrintCommandHelpRunsForMultipleCommands)
+{
+    struct command_node const commands[] =
+    {
+        {
+            .name = "cmd1",
+            .help = "help1"
+        },
+        {
+            .name = "cmd2",
+            .help = "help2"
+        }
+    };
+
+    print_command_help(commands, 2);
+}

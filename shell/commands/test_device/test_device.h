@@ -20,23 +20,31 @@ const struct command_node *get_test_commands(void);
 uint32_t get_test_commands_count(void);
 
 enum validation_result validate_test(struct command *cmd);
+void execute_test(struct command const *cmd);
 
+/* test processor */
 enum validation_result validate_test_processor(struct command *cmd);
 void execute_test_processor(struct command const *cmd);
 
+/* test battery */
 enum validation_result validate_test_battery(struct command *cmd);
 void execute_test_battery(struct command const *cmd);
 
+/* test enabler */
 enum validation_result validate_test_enabler(struct command *cmd);
 void execute_test_enabler(struct command const *cmd);
 
+/* test led */
 enum validation_result validate_test_led(struct command *cmd);
 void execute_test_led(struct command const *cmd);
 
+/* test pushbutton */
 enum validation_result validate_test_pushbutton(struct command *cmd);
 void execute_test_pushbutton(struct command const *cmd);
 
+/* test IR */
 enum validation_result validate_test_ir(struct command *cmd);
+void execute_test_ir(struct command const *cmd);
 
 enum validation_result validate_test_ir_distance(struct command *cmd);
 void execute_test_ir_distance(struct command const *cmd);
@@ -47,7 +55,9 @@ void execute_test_ir_free(struct command const *cmd);
 enum validation_result validate_test_ir_speed(struct command *cmd);
 void execute_test_ir_speed(struct command const *cmd);
 
+/* test wheel encoder */
 enum validation_result validate_test_wheel_encoder(struct command *cmd);
+void execute_test_wheel_encoder(struct command const *cmd);
 
 enum validation_result validate_test_wheel_encoder_target(struct command *cmd);
 void execute_test_wheel_encoder_target(struct command const *cmd);
@@ -55,11 +65,13 @@ void execute_test_wheel_encoder_target(struct command const *cmd);
 enum validation_result validate_test_wheel_encoder_deceleration(struct command *cmd);
 void execute_test_wheel_encoder_deceleration(struct command const *cmd);
 
+/* test vacuum */
 enum validation_result validate_test_vacuum(struct command *cmd);
 void execute_test_vacuum(struct command const *cmd);
 
-/* navigation tests */
+/* test navigation */
 enum validation_result validate_test_navigate(struct command *cmd);
+void execute_test_navigate(struct command const *cmd);
 
 enum validation_result validate_test_navigate_move_forward(struct command *cmd);
 void execute_test_navigate_move_forward(struct command const *cmd);

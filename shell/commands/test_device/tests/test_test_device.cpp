@@ -35,7 +35,7 @@ void init_test_fakes(void)
     fake_root_commands[0].name = "test";
     fake_root_commands[0].help = "Run device self-tests";
     fake_root_commands[0].validate = validate_test;
-    fake_root_commands[0].execute = NULL;
+    fake_root_commands[0].execute = execute_test;
     fake_root_commands[0].children = get_test_commands();
     fake_root_commands[0].child_count = get_test_commands_count();
 }
@@ -99,8 +99,11 @@ static const test_command_case simple_commands[] = {
     {"battery", validate_test_battery},
     {"enabler", validate_test_enabler},
     {"led", validate_test_led},
+    {"ir", validate_test_ir},
+    {"wheel-encoder", validate_test_wheel_encoder},
     {"pushbutton", validate_test_pushbutton},
-    {"vacuum", validate_test_vacuum}};
+    {"vacuum", validate_test_vacuum},
+    {"navigate", validate_test_navigate}};
 
 struct structured_command_case {
     const char *parent;
@@ -296,7 +299,8 @@ TEST(CommandsTests, GetTestNodeReturnsValidNode)
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("test", node->name);
-    CHECK(node->validate != nullptr);
+    POINTERS_EQUAL(validate_test, node->validate);
+    POINTERS_EQUAL(execute_test, node->execute);
     POINTERS_EQUAL(get_test_commands(), node->children);
     LONGS_EQUAL(get_test_commands_count(), node->child_count);
 }
@@ -373,20 +377,23 @@ TEST(CommandsTests, FindCommandNodeReturnsTestNode)
 TEST(CommandsTests, ValidateTestReturnsSuccess)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
-    cmd.tokens[0] = "test";
-    cmd.tokens[1] = "processor";
 
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_test(&cmd));
 }
 
-TEST(CommandsTests, ValidateTestReturnsTooFewParameters)
+TEST(CommandsTests, ValidateTestReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
-    cmd.tokens[0] = "test";
+    cmd.token_count = 2;
 
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test(&cmd));
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_test(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestRunsWithoutCrash)
+{
+    struct command cmd{{0}};
+
+    execute_test(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -458,16 +465,6 @@ TEST(CommandsTests, ExecuteTestPushbuttonCallsFunctions)
 
 /*----------------------------------------------------------------------------*/
 /* test ir */
-TEST(CommandsTests, ValidateTestIrReturnsTooFewParameters)
-{
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-    cmd.tokens[0] = "test";
-    cmd.tokens[1] = "ir";
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_ir(&cmd));
-}
-
 TEST(CommandsTests, TestIrCommandMatchDepthIsTwo)
 {
     struct command cmd{{0}};
@@ -606,16 +603,6 @@ TEST(CommandsTests, ExecuteTestIrSpeedCallsFunctions)
 
 /*----------------------------------------------------------------------------*/
 /* test wheel-encoder */
-TEST(CommandsTests, ValidateTestWheelEncoderReturnsTooFewParameters)
-{
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-    cmd.tokens[0] = "test";
-    cmd.tokens[1] = "wheel-encoder";
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_wheel_encoder(&cmd));
-}
-
 TEST(CommandsTests, TestWheelEncoderCommandMatchDepthIsTwo)
 {
     struct command cmd{{0}};
@@ -780,16 +767,6 @@ TEST(CommandsTests, NavigateCommandsAreInExpectedOrder)
     STRCMP_EQUAL("left-wall-presence", commands[4].name);
     STRCMP_EQUAL("right-wall-presence", commands[5].name);
     STRCMP_EQUAL("front-wall-presence", commands[6].name);
-}
-
-TEST(CommandsTests, ValidateTestNavigateReturnsTooFewParameters)
-{
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-    cmd.tokens[0] = "test";
-    cmd.tokens[1] = "navigate";
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_navigate(&cmd));
 }
 
 TEST(CommandsTests, TestNavigateCommandMatchDepthIsTwo)

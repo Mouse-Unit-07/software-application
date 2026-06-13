@@ -25,7 +25,7 @@
 /*----------------------------------------------------------------------------*/
 /*                         Private Function Prototypes                        */
 /*----------------------------------------------------------------------------*/
-static void print_help(struct command_node const *nodes, uint32_t count);
+/* none */
 
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
@@ -123,7 +123,8 @@ void execute_help(struct command const *cmd)
 {
     (void)cmd; /* unused due to no parameters */
 
-    print_help(root_commands, root_commands_count);
+    printf("root commands:\r\n");
+    print_command_help(root_commands, root_commands_count);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -173,9 +174,4 @@ void execute_time(struct command const *cmd)
 /*----------------------------------------------------------------------------*/
 /*                        Private Function Definitions                        */
 /*----------------------------------------------------------------------------*/
-static void print_help(struct command_node const *nodes, uint32_t count)
-{
-    for (uint32_t i = 0u; i < count; i++) {
-        printf("%-24s %s\r\n", nodes[i].name, nodes[i].help);
-    }
-}
+/* none */

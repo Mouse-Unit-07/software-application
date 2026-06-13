@@ -20,6 +20,7 @@ const struct command_node *get_solve_commands(void);
 uint32_t get_solve_commands_count(void);
 
 enum validation_result validate_solve(struct command *cmd);
+void execute_solve(struct command const *cmd);
 
 enum validation_result validate_solve_wallfollower(struct command *cmd);
 void execute_solve_wallfollower(struct command const *cmd);

@@ -237,6 +237,7 @@ static const struct command_node get_node =
     .name = "get",
     .help = "Read configuration values",
     .validate = validate_get,
+    .execute = execute_get,
     .children = get_commands,
     .child_count = sizeof(get_commands) / sizeof(get_commands[0])
 };
@@ -263,11 +264,17 @@ uint32_t get_get_commands_count(void)
 /* get */
 enum validation_result validate_get(struct command *cmd)
 {
-    if (cmd->token_count == ROOT_COMMAND_TOKEN_COUNT) {
-        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
-    }
+    (void)cmd;
 
-    return COMMAND_VALIDATION_SUCCESS;
+    return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("get command parameters:\r\n");
+    print_command_help(get_commands, get_get_commands_count());
 }
 
 /*----------------------------------------------------------------------------*/

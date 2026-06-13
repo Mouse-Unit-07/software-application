@@ -36,7 +36,7 @@ void init_test_fakes(void)
     fake_root_commands[0].name = "solve";
     fake_root_commands[0].help = "Run maze solving algorithms";
     fake_root_commands[0].validate = validate_solve;
-    fake_root_commands[0].execute = NULL;
+    fake_root_commands[0].execute = execute_solve;
     fake_root_commands[0].children = get_solve_commands();
     fake_root_commands[0].child_count = get_solve_commands_count();
 }
@@ -70,7 +70,7 @@ void run_partial_flood_fill(bool enable_print)
 /*============================================================================*/
 /*                                 Test Group                                 */
 /*============================================================================*/
-TEST_GROUP(CommandsTests)
+TEST_GROUP(SolveTests)
 {
     void setup() override
     {
@@ -89,24 +89,24 @@ TEST_GROUP(CommandsTests)
 /*============================================================================*/
 /*                                    Tests                                   */
 /*============================================================================*/
-TEST(CommandsTests, GetSolveNodeReturnsValidNode)
+TEST(SolveTests, GetSolveNodeReturnsValidNode)
 {
     const struct command_node *node = get_solve_node();
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("solve", node->name);
-    CHECK(node->validate != nullptr);
-    CHECK(node->execute == nullptr);
+    POINTERS_EQUAL(validate_solve, node->validate);
+    POINTERS_EQUAL(execute_solve, node->execute);
     POINTERS_EQUAL(get_solve_commands(), node->children);
     LONGS_EQUAL(get_solve_commands_count(), node->child_count);
 }
 
-TEST(CommandsTests, GetSolveCommandsCountReturnsExpectedValue)
+TEST(SolveTests, GetSolveCommandsCountReturnsExpectedValue)
 {
     LONGS_EQUAL(2u, get_solve_commands_count());
 }
 
-TEST(CommandsTests, SolveCommandsAreInExpectedOrder)
+TEST(SolveTests, SolveCommandsAreInExpectedOrder)
 {
     const struct command_node *commands = get_solve_commands();
 
@@ -114,7 +114,7 @@ TEST(CommandsTests, SolveCommandsAreInExpectedOrder)
     STRCMP_EQUAL("floodfill", commands[1].name);
 }
 
-TEST(CommandsTests, GetSolveCommandsContainsWallFollowerNode)
+TEST(SolveTests, GetSolveCommandsContainsWallFollowerNode)
 {
     const struct command_node *commands = get_solve_commands();
 
@@ -124,7 +124,7 @@ TEST(CommandsTests, GetSolveCommandsContainsWallFollowerNode)
     CHECK(commands[0].execute != nullptr);
 }
 
-TEST(CommandsTests, GetSolveCommandsContainsFloodFillNode)
+TEST(SolveTests, GetSolveCommandsContainsFloodFillNode)
 {
     const struct command_node *commands = get_solve_commands();
 
@@ -136,7 +136,7 @@ TEST(CommandsTests, GetSolveCommandsContainsFloodFillNode)
 
 /*----------------------------------------------------------------------------*/
 /* solve */
-TEST(CommandsTests, SolveCommandContainsTwoSubcommands)
+TEST(SolveTests, SolveCommandContainsTwoSubcommands)
 {
     struct command cmd{{0}};
     cmd.token_count = 1;
@@ -149,7 +149,7 @@ TEST(CommandsTests, SolveCommandContainsTwoSubcommands)
     LONGS_EQUAL(2u, node->child_count);
 }
 
-TEST(CommandsTests, FindCommandNodeReturnsSolveNode)
+TEST(SolveTests, FindCommandNodeReturnsSolveNode)
 {
     struct command cmd{{0}};
     cmd.token_count = 1;
@@ -162,26 +162,31 @@ TEST(CommandsTests, FindCommandNodeReturnsSolveNode)
     STRCMP_EQUAL("solve", node->name);
 }
 
-TEST(CommandsTests, ValidateSolveReturnsSuccess)
+TEST(SolveTests, ValidateSolveReturnsSuccess)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
 
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve(&cmd));
 }
 
-TEST(CommandsTests, ValidateSolveReturnsTooFewParameters)
+TEST(SolveTests, ValidateSolveReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
-    cmd.tokens[0] = "solve";
+    cmd.token_count = 2;
 
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_solve(&cmd));
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_solve(&cmd));
+}
+
+TEST(SolveTests, ExecuteSolveRunsWithoutCrash)
+{
+    struct command cmd{{0}};
+
+    execute_solve(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/
 /* solve wallfollower */
-TEST(CommandsTests, FindCommandNodeReturnsWallFollowerNode)
+TEST(SolveTests, FindCommandNodeReturnsWallFollowerNode)
 {
     struct command cmd{{0}};
     cmd.token_count = 2;
@@ -196,7 +201,7 @@ TEST(CommandsTests, FindCommandNodeReturnsWallFollowerNode)
     STRCMP_EQUAL("wallfollower", node->name);
 }
 
-TEST(CommandsTests, WallFollowerCommandMatchDepthIsTwo)
+TEST(SolveTests, WallFollowerCommandMatchDepthIsTwo)
 {
     struct command cmd{{0}};
     cmd.token_count = 2;
@@ -210,7 +215,7 @@ TEST(CommandsTests, WallFollowerCommandMatchDepthIsTwo)
     LONGS_EQUAL(2u, match.depth);
 }
 
-TEST(CommandsTests, ValidateSolveWallFollowerLeftReturnsSuccess)
+TEST(SolveTests, ValidateSolveWallFollowerLeftReturnsSuccess)
 {
     struct command cmd{{0}};
 
@@ -223,7 +228,7 @@ TEST(CommandsTests, ValidateSolveWallFollowerLeftReturnsSuccess)
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve_wallfollower(&cmd));
 }
 
-TEST(CommandsTests, ValidateSolveWallFollowerRightEnableReturnsSuccess)
+TEST(SolveTests, ValidateSolveWallFollowerRightEnableReturnsSuccess)
 {
     struct command cmd{{0}};
     cmd.token_count = 4;
@@ -235,7 +240,7 @@ TEST(CommandsTests, ValidateSolveWallFollowerRightEnableReturnsSuccess)
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve_wallfollower(&cmd));
 }
 
-TEST(CommandsTests, ValidateSolveWallFollowerReturnsTooFewParameters)
+TEST(SolveTests, ValidateSolveWallFollowerReturnsTooFewParameters)
 {
     struct command cmd{{0}};
     cmd.token_count = 2;
@@ -243,7 +248,7 @@ TEST(CommandsTests, ValidateSolveWallFollowerReturnsTooFewParameters)
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_solve_wallfollower(&cmd));
 }
 
-TEST(CommandsTests, ValidateSolveWallFollowerReturnsTooManyParameters)
+TEST(SolveTests, ValidateSolveWallFollowerReturnsTooManyParameters)
 {
     struct command cmd{{0}};
     cmd.token_count = 5;
@@ -251,7 +256,7 @@ TEST(CommandsTests, ValidateSolveWallFollowerReturnsTooManyParameters)
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_solve_wallfollower(&cmd));
 }
 
-TEST(CommandsTests, ValidateSolveWallFollowerRejectsBadMode)
+TEST(SolveTests, ValidateSolveWallFollowerRejectsBadMode)
 {
     struct command cmd{{0}};
     cmd.token_count = 3;
@@ -262,7 +267,7 @@ TEST(CommandsTests, ValidateSolveWallFollowerRejectsBadMode)
     LONGS_EQUAL(2u, cmd.bad_parameter_index);
 }
 
-TEST(CommandsTests, ValidateSolveWallFollowerRejectsBadPrintOption)
+TEST(SolveTests, ValidateSolveWallFollowerRejectsBadPrintOption)
 {
     struct command cmd{{0}};
     cmd.token_count = 4;
@@ -274,7 +279,7 @@ TEST(CommandsTests, ValidateSolveWallFollowerRejectsBadPrintOption)
     LONGS_EQUAL(3u, cmd.bad_parameter_index);
 }
 
-TEST(CommandsTests, ExecuteSolveWallFollowerLeft)
+TEST(SolveTests, ExecuteSolveWallFollowerLeft)
 {
     struct command cmd{{0}};
     cmd.token_count = 3;
@@ -287,7 +292,7 @@ TEST(CommandsTests, ExecuteSolveWallFollowerLeft)
     execute_solve_wallfollower(&cmd);
 }
 
-TEST(CommandsTests, ExecuteSolveWallFollowerRightEnable)
+TEST(SolveTests, ExecuteSolveWallFollowerRightEnable)
 {
     struct command cmd{{0}};
     cmd.token_count = 4;
@@ -303,7 +308,7 @@ TEST(CommandsTests, ExecuteSolveWallFollowerRightEnable)
 
 /*----------------------------------------------------------------------------*/
 /* solve floodfill */
-TEST(CommandsTests, FindCommandNodeReturnsFloodFillNode)
+TEST(SolveTests, FindCommandNodeReturnsFloodFillNode)
 {
     struct command cmd{{0}};
     cmd.token_count = 2;
@@ -317,7 +322,7 @@ TEST(CommandsTests, FindCommandNodeReturnsFloodFillNode)
     STRCMP_EQUAL("floodfill", node->name);
 }
 
-TEST(CommandsTests, ValidateSolveFloodFillReturnsSuccess)
+TEST(SolveTests, ValidateSolveFloodFillReturnsSuccess)
 {
     struct command cmd{{0}};
     cmd.token_count = 2;
@@ -325,7 +330,7 @@ TEST(CommandsTests, ValidateSolveFloodFillReturnsSuccess)
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve_floodfill(&cmd));
 }
 
-TEST(CommandsTests, ValidateSolveFloodFillEnableReturnsSuccess)
+TEST(SolveTests, ValidateSolveFloodFillEnableReturnsSuccess)
 {
     struct command cmd{{0}};
     cmd.token_count = 3;
@@ -334,7 +339,7 @@ TEST(CommandsTests, ValidateSolveFloodFillEnableReturnsSuccess)
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve_floodfill(&cmd));
 }
 
-TEST(CommandsTests, ValidateSolveFloodFillReturnsTooManyParameters)
+TEST(SolveTests, ValidateSolveFloodFillReturnsTooManyParameters)
 {
     struct command cmd{{0}};
     cmd.token_count = 4;
@@ -342,7 +347,7 @@ TEST(CommandsTests, ValidateSolveFloodFillReturnsTooManyParameters)
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_solve_floodfill(&cmd));
 }
 
-TEST(CommandsTests, ValidateSolveFloodFillRejectsBadParameter)
+TEST(SolveTests, ValidateSolveFloodFillRejectsBadParameter)
 {
     struct command cmd{{0}};
     cmd.token_count = 3;
@@ -353,7 +358,7 @@ TEST(CommandsTests, ValidateSolveFloodFillRejectsBadParameter)
     LONGS_EQUAL(2u, cmd.bad_parameter_index);
 }
 
-TEST(CommandsTests, ExecuteSolveFloodFillWithoutPrint)
+TEST(SolveTests, ExecuteSolveFloodFillWithoutPrint)
 {
     struct command cmd{{0}};
     cmd.token_count = 2;
@@ -364,7 +369,7 @@ TEST(CommandsTests, ExecuteSolveFloodFillWithoutPrint)
     execute_solve_floodfill(&cmd);
 }
 
-TEST(CommandsTests, ExecuteSolveFloodFillWithPrint)
+TEST(SolveTests, ExecuteSolveFloodFillWithPrint)
 {
     struct command cmd{{0}};
     cmd.token_count = 3;

@@ -10,6 +10,7 @@
 /*----------------------------------------------------------------------------*/
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "navigation.h"
@@ -167,6 +168,7 @@ static const struct command_node set_node =
     .name = "set",
     .help = "Select configuration values to use w/ or w/o new values for test configs",
     .validate = validate_set,
+    .execute = execute_set,
     .children = set_commands,
     .child_count = sizeof(set_commands) / sizeof(set_commands[0])
 };
@@ -193,11 +195,17 @@ uint32_t get_set_commands_count(void)
 /* set */
 enum validation_result validate_set(struct command *cmd)
 {
-    if (cmd->token_count == ROOT_COMMAND_TOKEN_COUNT) {
-        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
-    }
+    (void)cmd;
 
-    return COMMAND_VALIDATION_SUCCESS;
+    return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
+}
+
+void execute_set(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("set command parameters:\r\n");
+    print_command_help(set_commands, get_set_commands_count());
 }
 
 /*----------------------------------------------------------------------------*/

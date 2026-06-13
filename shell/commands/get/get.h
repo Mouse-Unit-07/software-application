@@ -20,6 +20,7 @@ const struct command_node *get_get_commands(void);
 uint32_t get_get_commands_count(void);
 
 enum validation_result validate_get(struct command *cmd);
+void execute_get(struct command const *cmd);
 
 enum validation_result validate_get_solver_default(struct command *cmd);
 void execute_get_solver_default(struct command const *cmd);

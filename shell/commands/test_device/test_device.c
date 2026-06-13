@@ -180,7 +180,7 @@ static const struct command_node test_commands[] =
         .name = "ir",
         .help = "Run IR sensor tests",
         .validate = validate_test_ir,
-        .execute = NULL,
+        .execute = execute_test_ir,
         .children = test_ir_commands,
         .child_count = sizeof(test_ir_commands) / sizeof(test_ir_commands[0])
     },
@@ -188,7 +188,7 @@ static const struct command_node test_commands[] =
         .name = "wheel-encoder",
         .help = "Run wheel motor and encoder tests",
         .validate = validate_test_wheel_encoder,
-        .execute = NULL,
+        .execute = execute_test_wheel_encoder,
         .children = test_wheel_encoder_commands,
         .child_count = sizeof(test_wheel_encoder_commands) / sizeof(test_wheel_encoder_commands[0])
     },
@@ -202,7 +202,7 @@ static const struct command_node test_commands[] =
         .name = "navigate",
         .help = "Run navigation tests",
         .validate = validate_test_navigate,
-        .execute = NULL,
+        .execute = execute_test_navigate,
         .children = test_navigate_commands,
         .child_count = sizeof(test_navigate_commands) / sizeof(test_navigate_commands[0])
     }
@@ -213,6 +213,7 @@ static const struct command_node test_node =
     .name = "test",
     .help = "Run device self-tests",
     .validate = validate_test,
+    .execute = execute_test,
     .children = test_commands,
     .child_count = sizeof(test_commands) / sizeof(test_commands[0])
 };
@@ -239,11 +240,17 @@ uint32_t get_test_commands_count(void)
 /* test */
 enum validation_result validate_test(struct command *cmd)
 {
-    if (cmd->token_count == ROOT_COMMAND_TOKEN_COUNT) {
-        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
-    }
+    (void)cmd;
 
-    return COMMAND_VALIDATION_SUCCESS;
+    return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("test command parameters:\r\n");
+    print_command_help(test_commands, get_test_commands_count());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -330,11 +337,15 @@ void execute_test_pushbutton(struct command const *cmd)
 /* test ir */
 enum validation_result validate_test_ir(struct command *cmd)
 {
-    if (cmd->token_count == TEST_COMMAND_TOKEN_COUNT) {
-        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
-    }
+    return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
+}
 
-    return COMMAND_VALIDATION_SUCCESS;
+void execute_test_ir(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("test ir command parameters:\r\n");
+    print_command_help(test_ir_commands, sizeof(test_ir_commands) / sizeof(test_ir_commands[0]));
 }
 
 /*----------------------------------------------------------------------------*/
@@ -432,11 +443,16 @@ void execute_test_ir_speed(struct command const *cmd)
 /* test wheel-encoder */
 enum validation_result validate_test_wheel_encoder(struct command *cmd)
 {
-    if (cmd->token_count == TEST_COMMAND_TOKEN_COUNT) {
-        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
-    }
+    return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
+}
 
-    return COMMAND_VALIDATION_SUCCESS;
+void execute_test_wheel_encoder(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("test wheel-encoder command parameters:\r\n");
+    print_command_help(test_wheel_encoder_commands, sizeof(test_wheel_encoder_commands)
+                                                        / sizeof(test_wheel_encoder_commands[0]));
 }
 
 /*----------------------------------------------------------------------------*/
@@ -529,11 +545,16 @@ void execute_test_vacuum(struct command const *cmd)
 /* test navigate */
 enum validation_result validate_test_navigate(struct command *cmd)
 {
-    if (cmd->token_count == TEST_COMMAND_TOKEN_COUNT) {
-        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
-    }
+    return validate_parameterless_command(cmd, TEST_COMMAND_TOKEN_COUNT);
+}
 
-    return COMMAND_VALIDATION_SUCCESS;
+void execute_test_navigate(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("test navigate command parameters:\r\n");
+    print_command_help(test_navigate_commands,
+                       sizeof(test_navigate_commands) / sizeof(test_navigate_commands[0]));
 }
 
 /*----------------------------------------------------------------------------*/

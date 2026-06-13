@@ -74,4 +74,6 @@ enum validation_result validate_parameterless_command(struct command const *cmd,
 struct command_match find_command_node(struct command const *cmd,
                                        struct command_node const *commands, uint32_t command_count);
 
+void print_command_help(struct command_node const *commands, uint32_t count);
+
 #endif /* COMMAND_H_ */
