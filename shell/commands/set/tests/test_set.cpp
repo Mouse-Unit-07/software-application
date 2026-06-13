@@ -35,7 +35,7 @@ void init_test_fakes(void)
     fake_root_commands[0].help =
         "Select configuration values to use w/ or w/o new values for test configs";
     fake_root_commands[0].validate = validate_set;
-    fake_root_commands[0].execute = NULL;
+    fake_root_commands[0].execute = execute_set;
     fake_root_commands[0].children = get_set_commands();
     fake_root_commands[0].child_count = get_set_commands_count();
 }
@@ -481,7 +481,8 @@ TEST(SetTests, GetSetNodeReturnsValidNode)
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("set", node->name);
-    CHECK(node->validate != nullptr);
+    POINTERS_EQUAL(validate_set, node->validate);
+    POINTERS_EQUAL(execute_set, node->execute);
     POINTERS_EQUAL(get_set_commands(), node->children);
     LONGS_EQUAL(get_set_commands_count(), node->child_count);
 }
@@ -558,14 +559,26 @@ TEST(SetTests, FindCommandNodeReturnsSetNode)
     STRCMP_EQUAL("set", node->name);
 }
 
-TEST(SetTests, ValidateSetReturnsTooFewParameters)
-{
-    check_validation_too_few_params("", 1, validate_set);
-}
-
 TEST(SetTests, ValidateSetReturnsSuccess)
 {
-    check_validation_success("", 2, validate_set);
+    struct command cmd{make_set_command("", 1)};
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set(&cmd));
+}
+
+TEST(SetTests, ValidateSetReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_set(&cmd));
+}
+
+TEST(SetTests, ExecuteSetRuns)
+{
+    struct command cmd{{0}};
+
+    execute_set(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/

@@ -20,6 +20,7 @@ const struct command_node *get_set_commands(void);
 uint32_t get_set_commands_count(void);
 
 enum validation_result validate_set(struct command *cmd);
+void execute_set(struct command const *cmd);
 
 /* maze solver */
 enum validation_result validate_set_solver_default(struct command *cmd);

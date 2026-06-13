@@ -10,6 +10,7 @@
 /*----------------------------------------------------------------------------*/
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include "maze_solver_common.h"
 #include "wall_follower.h"
@@ -42,13 +43,13 @@ static const struct command_node solve_commands[] =
 {
     {
         .name = "wallfollower",
-        .help = "Run wall follower: left|right [enable]",
+        .help = "Run wall follower; parameters: left|right [enable]",
         .validate = validate_solve_wallfollower,
         .execute = execute_solve_wallfollower
     },
     {
         .name = "floodfill",
-        .help = "Run partial flood fill [enable]",
+        .help = "Run partial flood fill; parameters: [enable]",
         .validate = validate_solve_floodfill,
         .execute = execute_solve_floodfill
     }
@@ -59,6 +60,7 @@ static const struct command_node solve_node =
     .name = "solve",
     .help = "Run maze solving algorithms",
     .validate = validate_solve,
+    .execute = execute_solve,
     .children = solve_commands,
     .child_count = sizeof(solve_commands) / sizeof(solve_commands[0])
 };
@@ -85,11 +87,17 @@ uint32_t get_solve_commands_count(void)
 /* solve */
 enum validation_result validate_solve(struct command *cmd)
 {
-    if (cmd->token_count == ROOT_COMMAND_TOKEN_COUNT) {
-        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
-    }
+    (void)cmd;
 
-    return COMMAND_VALIDATION_SUCCESS;
+    return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
+}
+
+void execute_solve(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("solve command parameters:\r\n");
+    print_command_help(get_solve_commands(), get_solve_commands_count());
 }
 
 /*----------------------------------------------------------------------------*/

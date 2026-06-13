@@ -35,7 +35,7 @@ void init_test_fakes(void)
     fake_root_commands[0].name = "get";
     fake_root_commands[0].help = "Read configuration values";
     fake_root_commands[0].validate = validate_get;
-    fake_root_commands[0].execute = NULL;
+    fake_root_commands[0].execute = execute_get;
     fake_root_commands[0].children = get_get_commands();
     fake_root_commands[0].child_count = get_get_commands_count();
 }
@@ -374,7 +374,8 @@ TEST(GetTests, GetGetNodeReturnsExpectedNode)
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("get", node->name);
-    CHECK(node->validate != nullptr);
+    POINTERS_EQUAL(validate_get, node->validate);
+    POINTERS_EQUAL(execute_get, node->execute);
     POINTERS_EQUAL(get_get_commands(), node->children);
     LONGS_EQUAL(get_get_commands_count(), node->child_count);
 }
@@ -426,16 +427,26 @@ TEST(GetTests, FindCommandNodeReturnsGetNode)
     STRCMP_EQUAL("get", node->name);
 }
 
-TEST(GetTests, ValidateGetReturnsSuccess)
-{
-    check_validation_success("", 2, validate_get);
-}
-
-TEST(GetTests, ValidateGetReturnsTooFewParameters)
+TEST(GetTests, ValidateGetWithoutParametersReturnsSuccess)
 {
     struct command cmd{make_get_command("", 1)};
 
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_get(&cmd));
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_get(&cmd));
+}
+
+TEST(GetTests, ValidateGetReturnsTooManyParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_get(&cmd));
+}
+
+TEST(GetTests, ExecuteGetRuns)
+{
+    struct command cmd{{0}};
+
+    execute_get(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/

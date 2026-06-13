@@ -10,6 +10,7 @@
 /*----------------------------------------------------------------------------*/
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "navigation.h"
@@ -54,9 +55,9 @@ static const struct command_node set_commands[] =
     },
     {
         .name = "solver-test",
-        .help = "Use test solver configuration; optionally pass: "
-            "maze_size, total_timeout_sec, move_forward_time_sec, "
-            "rotate_90_deg_time_sec, rotate_180_deg_time_sec",
+        .help = "Use test solver configuration;\r\n"
+            "\toptional parameters: maze_size, total_timeout_sec, move_forward_time_sec,\r\n"
+            "\t\trotate_90_deg_time_sec, rotate_180_deg_time_sec",
         .validate = validate_set_solver_test,
         .execute = execute_set_solver_test
     },
@@ -68,10 +69,9 @@ static const struct command_node set_commands[] =
     },
     {
         .name = "mouse-physical-test",
-        .help = "Use test mouse physical parameters; optionally pass: "
-            "wheel_diameter_mm, wheel_base_mm, max_motor_rpm, "
-            "encoder_events_per_revolution, motor_pinion_gear_teeth, "
-            "wheel_gear_teeth",
+        .help = "Use test mouse physical parameters;\r\n"
+            "\toptional parameters: wheel_diameter_mm, wheel_base_mm, max_motor_rpm,\r\n"
+            "\t\tencoder_events_per_revolution, motor_pinion_gear_teeth, wheel_gear_teeth",
         .validate = validate_set_mouse_physical_test,
         .execute = execute_set_mouse_physical_test
     },
@@ -83,8 +83,8 @@ static const struct command_node set_commands[] =
     },
     {
         .name = "maze-physical-test",
-        .help = "Use test maze physical parameters; optionally pass: "
-            "post_size_mm, wall_size_mm",
+        .help = "Use test maze physical parameters;\r\n"
+            "\toptional parameters: post_size_mm, wall_size_mm",
         .validate = validate_set_maze_physical_test,
         .execute = execute_set_maze_physical_test
     },
@@ -96,7 +96,9 @@ static const struct command_node set_commands[] =
     },
     {
         .name = "move-forward-no-wall-test",
-        .help = "Use test no-wall move-forward config",
+        .help = "Use test no-wall move-forward config;\r\n:"
+            "\toptional parameters: base_speed, min_speed, max_speed, kp_velocity,\r\n"
+            "\t\tkd_velocity, kp_angle, kd_angle, kp_ir, kd_ir, pid_scale, wall_target",
         .validate = validate_set_move_forward_no_wall_test,
         .execute = execute_set_move_forward_no_wall_test
     },
@@ -108,7 +110,9 @@ static const struct command_node set_commands[] =
     },
     {
         .name = "move-forward-one-wall-test",
-        .help = "Use test one-wall move-forward config",
+        .help = "Use test one-wall move-forward config;\r\n:"
+            "\toptional parameters: base_speed, min_speed, max_speed, kp_velocity,\r\n"
+            "\t\tkd_velocity, kp_angle, kd_angle, kp_ir, kd_ir, pid_scale, wall_target",
         .validate = validate_set_move_forward_one_wall_test,
         .execute = execute_set_move_forward_one_wall_test
     },
@@ -120,7 +124,9 @@ static const struct command_node set_commands[] =
     },
     {
         .name = "move-forward-both-wall-test",
-        .help = "Use test both-wall move-forward config",
+        .help = "Use test both-wall move-forward config;\r\n:"
+            "\toptional parameters: base_speed, min_speed, max_speed, kp_velocity,\r\n"
+            "\t\tkd_velocity, kp_angle, kd_angle, kp_ir, kd_ir, pid_scale, wall_target",
         .validate = validate_set_move_forward_both_wall_test,
         .execute = execute_set_move_forward_both_wall_test
     },
@@ -132,7 +138,9 @@ static const struct command_node set_commands[] =
     },
     {
         .name = "rotate-test",
-        .help = "Use test rotate config",
+        .help = "Use test rotate config;\r\n"
+            "\toptional parameters: base_speed, min_speed, max_speed,\r\n"
+            "\t\tkp_velocity, kd_velocity, kp_angle, kd_angle, pid_scale",
         .validate = validate_set_rotate_test,
         .execute = execute_set_rotate_test
     },
@@ -144,7 +152,8 @@ static const struct command_node set_commands[] =
     },
     {
         .name = "front-wall-test",
-        .help = "Use test front wall config",
+        .help = "Use test front wall config;\r\n"
+        "\toptional parameters: reading_threshold, num_detection_samples",
         .validate = validate_set_front_wall_test,
         .execute = execute_set_front_wall_test
     },
@@ -156,7 +165,9 @@ static const struct command_node set_commands[] =
     },
     {
         .name = "side-wall-test",
-        .help = "Use test side wall config",
+        .help = "Use test side wall config;\r\n"
+            "\toptional parameters: reading_threshold, slope_threshold,\r\n"
+            "\t\tnum_detection_samples, reading_start_offset",
         .validate = validate_set_side_wall_test,
         .execute = execute_set_side_wall_test
     },
@@ -167,6 +178,7 @@ static const struct command_node set_node =
     .name = "set",
     .help = "Select configuration values to use w/ or w/o new values for test configs",
     .validate = validate_set,
+    .execute = execute_set,
     .children = set_commands,
     .child_count = sizeof(set_commands) / sizeof(set_commands[0])
 };
@@ -193,11 +205,17 @@ uint32_t get_set_commands_count(void)
 /* set */
 enum validation_result validate_set(struct command *cmd)
 {
-    if (cmd->token_count == ROOT_COMMAND_TOKEN_COUNT) {
-        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
-    }
+    (void)cmd;
 
-    return COMMAND_VALIDATION_SUCCESS;
+    return validate_parameterless_command(cmd, ROOT_COMMAND_TOKEN_COUNT);
+}
+
+void execute_set(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("set command parameters:\r\n");
+    print_command_help(set_commands, get_set_commands_count());
 }
 
 /*----------------------------------------------------------------------------*/
