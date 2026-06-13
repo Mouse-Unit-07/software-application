@@ -43,13 +43,13 @@ static const struct command_node solve_commands[] =
 {
     {
         .name = "wallfollower",
-        .help = "Run wall follower: left|right [enable]",
+        .help = "Run wall follower; parameters: left|right [enable]",
         .validate = validate_solve_wallfollower,
         .execute = execute_solve_wallfollower
     },
     {
         .name = "floodfill",
-        .help = "Run partial flood fill [enable]",
+        .help = "Run partial flood fill; parameters: [enable]",
         .validate = validate_solve_floodfill,
         .execute = execute_solve_floodfill
     }

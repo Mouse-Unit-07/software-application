@@ -50,27 +50,23 @@ static const struct command_node test_ir_commands[] =
 {
     {
         .name = "distance",
-        .help =
-            "Run IR distance test: "
-            "start_distance_cm end_distance_cm "
-            "trials_per_distance time_per_trial_ms "
-            "setup_delay_ms",
+        .help ="Run IR distance test;\r\n"
+            "\tparameters: start_distance_cm, end_distance_cm, trials_per_distance\r\n"
+            "\t\ttime_per_trial_ms, setup_delay_ms",
         .validate = validate_test_ir_distance,
         .execute = execute_test_ir_distance
     },
     {
         .name = "free",
-        .help =
-            "Run IR free-reading test: "
-            "time_per_sensor_ms setup_delay_ms",
+        .help = "Run IR free-reading test;\r\n"
+            "\tparameters: time_per_sensor_ms, setup_delay_ms",
         .validate = validate_test_ir_free,
         .execute = execute_test_ir_free
     },
     {
         .name = "speed",
-        .help =
-            "Run IR read-speed test: "
-            "time_per_sensor_ms",
+        .help = "Run IR read-speed test;\r\n"
+            "\tparameters: time_per_sensor_ms",
         .validate = validate_test_ir_speed,
         .execute = execute_test_ir_speed
     }
@@ -80,19 +76,17 @@ static const struct command_node test_wheel_encoder_commands[] =
 {
     {
         .name = "target",
-        .help =
-            "Run wheel encoder target test: "
-            "timeout_ms drift_delay_ms encoder_target "
-            "start_speed end_speed speed_step",
+        .help = "Run wheel encoder target test;\r\n"
+            "\tparameters: timeout_ms, drift_delay_ms, encoder_target,\r\n"
+            "\t\tstart_speed, end_speed, speed_step",
         .validate = validate_test_wheel_encoder_target,
         .execute = execute_test_wheel_encoder_target
     },
     {
         .name = "deceleration",
-        .help =
-            "Run wheel encoder deceleration test: "
-            "timeout_ms drift_delay_ms encoder_target "
-            "start_speed top_speed max_accel_decel_percent",
+        .help = "Run wheel encoder deceleration test;\r\n"
+            "\tparameters: timeout_ms, drift_delay_ms, encoder_target,"
+            "\t\tstart_speed, top_speed, max_accel_decel_percent",
         .validate = validate_test_wheel_encoder_deceleration,
         .execute = execute_test_wheel_encoder_deceleration
     }
