@@ -43,13 +43,15 @@ static const struct command_node solve_commands[] =
 {
     {
         .name = "wallfollower",
-        .help = "Run wall follower; parameters: left|right [enable]",
+        .help = "Run wall follower",
+        .parameters = "(required; optional print enable): left|right; enable",
         .validate = validate_solve_wallfollower,
         .execute = execute_solve_wallfollower
     },
     {
         .name = "floodfill",
-        .help = "Run partial flood fill; parameters: [enable]",
+        .help = "Run partial flood fill",
+        .parameters = "(optional print enable): enable",
         .validate = validate_solve_floodfill,
         .execute = execute_solve_floodfill
     }
@@ -59,6 +61,7 @@ static const struct command_node solve_node =
 {
     .name = "solve",
     .help = "Run maze solving algorithms",
+    .parameters = NULL,
     .validate = validate_solve,
     .execute = execute_solve,
     .children = solve_commands,

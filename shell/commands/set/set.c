@@ -50,124 +50,133 @@ static const struct command_node set_commands[] =
     {
         .name = "solver-default",
         .help = "Use default solver configuration",
+        .parameters = NULL,
         .validate = validate_set_solver_default,
         .execute = execute_set_solver_default
     },
     {
         .name = "solver-test",
-        .help = "Use test solver configuration;\r\n"
-            "\toptional parameters: maze_size, total_timeout_sec, move_forward_time_sec,\r\n"
-            "\t\trotate_90_deg_time_sec, rotate_180_deg_time_sec",
+        .help = "Use test solver configuration",
+        .parameters = "(optional params): maze_size, total_timeout_sec, move_forward_time_sec, "
+            "rotate_90_deg_time_sec, rotate_180_deg_time_sec",
         .validate = validate_set_solver_test,
         .execute = execute_set_solver_test
     },
     {
         .name = "mouse-physical-default",
         .help = "Use default mouse physical parameters",
+        .parameters = NULL,
         .validate = validate_set_mouse_physical_default,
         .execute = execute_set_mouse_physical_default
     },
     {
         .name = "mouse-physical-test",
-        .help = "Use test mouse physical parameters;\r\n"
-            "\toptional parameters: wheel_diameter_mm, wheel_base_mm, max_motor_rpm,\r\n"
-            "\t\tencoder_events_per_revolution, motor_pinion_gear_teeth, wheel_gear_teeth",
+        .help = "Use test mouse physical parameters",
+        .parameters = "(optional params): wheel_diameter_mm, wheel_base_mm, max_motor_rpm, "
+            "encoder_events_per_revolution, motor_pinion_gear_teeth, wheel_gear_teeth",
         .validate = validate_set_mouse_physical_test,
         .execute = execute_set_mouse_physical_test
     },
     {
         .name = "maze-physical-default",
         .help = "Use default maze physical parameters",
+        .parameters = NULL,
         .validate = validate_set_maze_physical_default,
         .execute = execute_set_maze_physical_default
     },
     {
         .name = "maze-physical-test",
-        .help = "Use test maze physical parameters;\r\n"
-            "\toptional parameters: post_size_mm, wall_size_mm",
+        .help = "Use test maze physical parameters",
+        .parameters = "(optional params): post_size_mm, wall_size_mm",
         .validate = validate_set_maze_physical_test,
         .execute = execute_set_maze_physical_test
     },
     {
         .name = "move-forward-no-wall-default",
         .help = "Use default no-wall move-forward config",
+        .parameters = NULL,
         .validate = validate_set_move_forward_no_wall_default,
         .execute = execute_set_move_forward_no_wall_default
     },
     {
         .name = "move-forward-no-wall-test",
-        .help = "Use test no-wall move-forward config;\r\n:"
-            "\toptional parameters: base_speed, min_speed, max_speed, kp_velocity,\r\n"
-            "\t\tkd_velocity, kp_angle, kd_angle, kp_ir, kd_ir, pid_scale, wall_target",
+        .help = "Use test no-wall move-forward config",
+        .parameters = "(optional params): base_speed, min_speed, max_speed, kp_velocity, "
+            "kd_velocity, kp_angle, kd_angle, kp_ir, kd_ir, pid_scale, wall_target",
         .validate = validate_set_move_forward_no_wall_test,
         .execute = execute_set_move_forward_no_wall_test
     },
     {
         .name = "move-forward-one-wall-default",
         .help = "Use default one-wall move-forward config",
+        .parameters = NULL,
         .validate = validate_set_move_forward_one_wall_default,
         .execute = execute_set_move_forward_one_wall_default
     },
     {
         .name = "move-forward-one-wall-test",
-        .help = "Use test one-wall move-forward config;\r\n:"
-            "\toptional parameters: base_speed, min_speed, max_speed, kp_velocity,\r\n"
-            "\t\tkd_velocity, kp_angle, kd_angle, kp_ir, kd_ir, pid_scale, wall_target",
+        .help = "Use test one-wall move-forward config",
+        .parameters = "(optional params): base_speed, min_speed, max_speed, kp_velocity, "
+            "kd_velocity, kp_angle, kd_angle, kp_ir, kd_ir, pid_scale, wall_target",
         .validate = validate_set_move_forward_one_wall_test,
         .execute = execute_set_move_forward_one_wall_test
     },
     {
         .name = "move-forward-both-wall-default",
         .help = "Use default both-wall move-forward config",
+        .parameters = NULL,
         .validate = validate_set_move_forward_both_wall_default,
         .execute = execute_set_move_forward_both_wall_default
     },
     {
         .name = "move-forward-both-wall-test",
-        .help = "Use test both-wall move-forward config;\r\n:"
-            "\toptional parameters: base_speed, min_speed, max_speed, kp_velocity,\r\n"
-            "\t\tkd_velocity, kp_angle, kd_angle, kp_ir, kd_ir, pid_scale, wall_target",
+        .help = "Use test both-wall move-forward config",
+        .parameters = "(optional params): base_speed, min_speed, max_speed, kp_velocity, "
+            "kd_velocity, kp_angle, kd_angle, kp_ir, kd_ir, pid_scale, wall_target",
         .validate = validate_set_move_forward_both_wall_test,
         .execute = execute_set_move_forward_both_wall_test
     },
     {
         .name = "rotate-default",
         .help = "Use default rotate config",
+        .parameters = NULL,
         .validate = validate_set_rotate_default,
         .execute = execute_set_rotate_default
     },
     {
         .name = "rotate-test",
-        .help = "Use test rotate config;\r\n"
-            "\toptional parameters: base_speed, min_speed, max_speed,\r\n"
-            "\t\tkp_velocity, kd_velocity, kp_angle, kd_angle, pid_scale",
+        .help = "Use test rotate config",
+        .parameters = "(optional params): base_speed, min_speed, max_speed, "
+            "kp_velocity, kd_velocity, kp_angle, kd_angle, pid_scale",
         .validate = validate_set_rotate_test,
         .execute = execute_set_rotate_test
     },
     {
         .name = "front-wall-default",
         .help = "Use default front wall config",
+        .parameters = NULL,
         .validate = validate_set_front_wall_default,
         .execute = execute_set_front_wall_default
     },
     {
         .name = "front-wall-test",
-        .help = "Use test front wall config;\r\n"
-        "\toptional parameters: reading_threshold, num_detection_samples",
+        .help = "Use test front wall config",
+        .parameters = "(optional params): reading_threshold, num_detection_samples",
         .validate = validate_set_front_wall_test,
         .execute = execute_set_front_wall_test
     },
     {
         .name = "side-wall-default",
         .help = "Use default side wall config",
+        .parameters = NULL,
         .validate = validate_set_side_wall_default,
         .execute = execute_set_side_wall_default
     },
     {
         .name = "side-wall-test",
-        .help = "Use test side wall config;\r\n"
-            "\toptional parameters: reading_threshold, slope_threshold,\r\n"
-            "\t\tnum_detection_samples, reading_start_offset",
+        .help = "Use test side wall config",
+        .parameters = "(optional params): reading_threshold, slope_threshold, "
+            "num_detection_samples, reading_start_offset",
         .validate = validate_set_side_wall_test,
         .execute = execute_set_side_wall_test
     },
@@ -177,6 +186,7 @@ static const struct command_node set_node =
 {
     .name = "set",
     .help = "Select configuration values to use w/ or w/o new values for test configs",
+    .parameters = NULL,
     .validate = validate_set,
     .execute = execute_set,
     .children = set_commands,

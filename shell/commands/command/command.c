@@ -16,7 +16,7 @@
 /*----------------------------------------------------------------------------*/
 /*                         Private Function Prototypes                        */
 /*----------------------------------------------------------------------------*/
-/* none */
+static int get_max_command_name_length(struct command_node const *commands, uint32_t count);
 
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
@@ -68,12 +68,31 @@ struct command_match find_command_node(struct command const *cmd,
 
 void print_command_help(struct command_node const *commands, uint32_t count)
 {
-    for (uint32_t i = 0u; i < count; i++) {
-        printf("%-32s %s\r\n", commands[i].name, commands[i].help);
+    int width = get_max_command_name_length(commands, count);
+
+    for (uint32_t i = 0; i < count; i++) {
+        printf("%-*s  %s\r\n", width, commands[i].name, commands[i].help);
+
+        if (commands[i].parameters != NULL) {
+            printf("%-*s  %s\r\n", width, "", commands[i].parameters);
+        }
     }
 }
 
 /*----------------------------------------------------------------------------*/
 /*                        Private Function Definitions                        */
 /*----------------------------------------------------------------------------*/
-/* none */
+static int get_max_command_name_length(struct command_node const *commands, uint32_t count)
+{
+    int max = 0;
+
+    for (uint32_t i = 0; i < count; i++) {
+        int len = strlen(commands[i].name);
+
+        if (len > max) {
+            max = len;
+        }
+    }
+
+    return max;
+}
