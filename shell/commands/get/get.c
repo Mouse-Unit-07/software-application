@@ -10,6 +10,7 @@
 /*----------------------------------------------------------------------------*/
 #include <inttypes.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -47,186 +48,217 @@ static const struct command_node get_commands[] =
     {
         .name = "solver-default",
         .help = "Display default solver configuration",
+        .parameters = NULL,
         .validate = validate_get_solver_default,
         .execute = execute_get_solver_default
     },
     {
         .name = "solver-test",
         .help = "Display test solver configuration",
+        .parameters = NULL,
         .validate = validate_get_solver_test,
         .execute = execute_get_solver_test
     },
     {
         .name = "solver-current",
         .help = "Display current solver configuration",
+        .parameters = NULL,
         .validate = validate_get_solver_current,
         .execute = execute_get_solver_current
     },
     {
         .name = "mouse-physical-default",
         .help = "Display default mouse physical parameters",
+        .parameters = NULL,
         .validate = validate_get_mouse_physical_default,
         .execute = execute_get_mouse_physical_default
     },
     {
         .name = "mouse-physical-test",
         .help = "Display test mouse physical parameters",
+        .parameters = NULL,
         .validate = validate_get_mouse_physical_test,
         .execute = execute_get_mouse_physical_test
     },
     {
         .name = "mouse-physical-current",
         .help = "Display current mouse physical parameters",
+        .parameters = NULL,
         .validate = validate_get_mouse_physical_current,
         .execute = execute_get_mouse_physical_current
     },
     {
         .name = "mouse-calculated",
         .help = "Display mouse calculated parameters",
+        .parameters = NULL,
         .validate = validate_get_mouse_calculated,
         .execute = execute_get_mouse_calculated
     },
     {
         .name = "maze-physical-default",
         .help = "Display default maze physical parameters",
+        .parameters = NULL,
         .validate = validate_get_maze_physical_default,
         .execute = execute_get_maze_physical_default
     },
     {
         .name = "maze-physical-test",
         .help = "Display test maze physical parameters",
+        .parameters = NULL,
         .validate = validate_get_maze_physical_test,
         .execute = execute_get_maze_physical_test
     },
     {
         .name = "maze-physical-current",
         .help = "Display current maze physical parameters",
+        .parameters = NULL,
         .validate = validate_get_maze_physical_current,
         .execute = execute_get_maze_physical_current
     },
     {
         .name = "maze-calculated",
         .help = "Display maze calculated parameters",
+        .parameters = NULL,
         .validate = validate_get_maze_calculated,
         .execute = execute_get_maze_calculated
     },
     {
         .name = "navigation",
         .help = "Display navigation parameters",
+        .parameters = NULL,
         .validate = validate_get_navigation,
         .execute = execute_get_navigation
     },
     {
         .name = "move-forward-no-wall-default",
         .help = "Display default no-wall move-forward control config",
+        .parameters = NULL,
         .validate = validate_get_move_forward_no_wall_default,
         .execute = execute_get_move_forward_no_wall_default
     },
     {
         .name = "move-forward-no-wall-test",
         .help = "Display test no-wall move-forward control config",
+        .parameters = NULL,
         .validate = validate_get_move_forward_no_wall_test,
         .execute = execute_get_move_forward_no_wall_test
     },
     {
         .name = "move-forward-no-wall-current",
         .help = "Display current no-wall move-forward control config",
+        .parameters = NULL,
         .validate = validate_get_move_forward_no_wall_current,
         .execute = execute_get_move_forward_no_wall_current
     },
     {
         .name = "move-forward-one-wall-default",
         .help = "Display default one-wall move-forward control config",
+        .parameters = NULL,
         .validate = validate_get_move_forward_one_wall_default,
         .execute = execute_get_move_forward_one_wall_default
     },
     {
         .name = "move-forward-one-wall-test",
         .help = "Display test one-wall move-forward control config",
+        .parameters = NULL,
         .validate = validate_get_move_forward_one_wall_test,
         .execute = execute_get_move_forward_one_wall_test
     },
     {
         .name = "move-forward-one-wall-current",
         .help = "Display current one-wall move-forward control config",
+        .parameters = NULL,
         .validate = validate_get_move_forward_one_wall_current,
         .execute = execute_get_move_forward_one_wall_current
     },
     {
         .name = "move-forward-both-wall-default",
         .help = "Display default both-wall move-forward control config",
+        .parameters = NULL,
         .validate = validate_get_move_forward_both_wall_default,
         .execute = execute_get_move_forward_both_wall_default
     },
     {
         .name = "move-forward-both-wall-test",
         .help = "Display test both-wall move-forward control config",
+        .parameters = NULL,
         .validate = validate_get_move_forward_both_wall_test,
         .execute = execute_get_move_forward_both_wall_test
     },
     {
         .name = "move-forward-both-wall-current",
         .help = "Display current both-wall move-forward control config",
+        .parameters = NULL,
         .validate = validate_get_move_forward_both_wall_current,
         .execute = execute_get_move_forward_both_wall_current
     },
     {
         .name = "rotate-default",
         .help = "Display default rotation control config",
+        .parameters = NULL,
         .validate = validate_get_rotate_default,
         .execute = execute_get_rotate_default
     },
     {
         .name = "rotate-test",
         .help = "Display test rotation control config",
+        .parameters = NULL,
         .validate = validate_get_rotate_test,
         .execute = execute_get_rotate_test
     },
     {
         .name = "rotate-current",
         .help = "Display current rotation control config",
+        .parameters = NULL,
         .validate = validate_get_rotate_current,
         .execute = execute_get_rotate_current
     },
     {
         .name = "front-wall-default",
         .help = "Display default front-wall detection control config",
+        .parameters = NULL,
         .validate = validate_get_front_wall_default,
         .execute = execute_get_front_wall_default
     },
     {
         .name = "front-wall-test",
         .help = "Display test front-wall control config",
+        .parameters = NULL,
         .validate = validate_get_front_wall_test,
         .execute = execute_get_front_wall_test
     },
     {
         .name = "front-wall-current",
         .help = "Display current front-wall control config",
+        .parameters = NULL,
         .validate = validate_get_front_wall_current,
         .execute = execute_get_front_wall_current
     },
     {
         .name = "side-wall-default",
         .help = "Display default side-wall detection control config",
+        .parameters = NULL,
         .validate = validate_get_side_wall_default,
         .execute = execute_get_side_wall_default
     },
     {
         .name = "side-wall-test",
         .help = "Display test side-wall control config",
+        .parameters = NULL,
         .validate = validate_get_side_wall_test,
         .execute = execute_get_side_wall_test
     },
     {
         .name = "side-wall-current",
         .help = "Display current side-wall control config",
+        .parameters = NULL,
         .validate = validate_get_side_wall_current,
         .execute = execute_get_side_wall_current
     },
     {
         .name = "side-wall-calculated",
         .help = "Display side-wall calculated parameters",
+        .parameters = NULL,
         .validate = validate_get_side_wall_calculated,
         .execute = execute_get_side_wall_calculated
     },
@@ -236,6 +268,7 @@ static const struct command_node get_node =
 {
     .name = "get",
     .help = "Read configuration values",
+    .parameters = NULL,
     .validate = validate_get,
     .execute = execute_get,
     .children = get_commands,

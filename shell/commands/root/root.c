@@ -40,24 +40,28 @@ static struct command_node root_commands[MAX_ROOT_NODES] =
     {
         .name = "help",
         .help = "Display available commands",
+        .parameters = NULL,
         .validate = validate_help,
         .execute = execute_help
     },
     {
         .name = "clear",
         .help = "Clear console",
+        .parameters = NULL,
         .validate = validate_clear,
         .execute = execute_clear
     },
     {
         .name = "faults",
         .help = "Display all hardware faults",
+        .parameters = NULL,
         .validate = validate_hardware_faults,
         .execute = execute_hardware_faults
     },
     {
         .name = "time",
         .help = "Display current time",
+        .parameters = NULL,
         .validate = validate_time,
         .execute = execute_time
     }

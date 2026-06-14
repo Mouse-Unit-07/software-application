@@ -12,7 +12,6 @@
 /*----------------------------------------------------------------------------*/
 enum
 {
-    MAX_COMMAND_NAME_SIZE = 32,
     MAX_PARAMETER_COUNT = 16
 };
 
@@ -34,6 +33,7 @@ enum validation_result
 struct command_node {
     char const *name;
     char const *help;
+    char const *parameters;
     enum validation_result (*validate)(struct command *cmd);
     void (*execute)(struct command const *cmd);
     struct command_node const *children;

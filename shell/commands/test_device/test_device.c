@@ -50,23 +50,23 @@ static const struct command_node test_ir_commands[] =
 {
     {
         .name = "distance",
-        .help ="Run IR distance test;\r\n"
-            "\tparameters: start_distance_cm, end_distance_cm, trials_per_distance\r\n"
-            "\t\ttime_per_trial_ms, setup_delay_ms",
+        .help ="Run IR distance test",
+        .parameters = "(required): start_distance_cm, end_distance_cm, trials_per_distance, "
+            "time_per_trial_ms, setup_delay_ms",
         .validate = validate_test_ir_distance,
         .execute = execute_test_ir_distance
     },
     {
         .name = "free",
-        .help = "Run IR free-reading test;\r\n"
-            "\tparameters: time_per_sensor_ms, setup_delay_ms",
+        .help = "Run IR free-reading test",
+        .parameters = "(required): time_per_sensor_ms, setup_delay_ms",
         .validate = validate_test_ir_free,
         .execute = execute_test_ir_free
     },
     {
         .name = "speed",
-        .help = "Run IR read-speed test;\r\n"
-            "\tparameters: time_per_sensor_ms",
+        .help = "Run IR read-speed test",
+        .parameters = "(required): time_per_sensor_ms",
         .validate = validate_test_ir_speed,
         .execute = execute_test_ir_speed
     }
@@ -76,17 +76,17 @@ static const struct command_node test_wheel_encoder_commands[] =
 {
     {
         .name = "target",
-        .help = "Run wheel encoder target test;\r\n"
-            "\tparameters: timeout_ms, drift_delay_ms, encoder_target,\r\n"
-            "\t\tstart_speed, end_speed, speed_step",
+        .help = "Run wheel encoder target test",
+        .parameters = "(required): timeout_ms, drift_delay_ms, encoder_target, "
+            "start_speed, end_speed, speed_step",
         .validate = validate_test_wheel_encoder_target,
         .execute = execute_test_wheel_encoder_target
     },
     {
         .name = "deceleration",
-        .help = "Run wheel encoder deceleration test;\r\n"
-            "\tparameters: timeout_ms, drift_delay_ms, encoder_target,"
-            "\t\tstart_speed, top_speed, max_accel_decel_percent",
+        .help = "Run wheel encoder deceleration test",
+        .parameters = "(required): timeout_ms, drift_delay_ms, encoder_target, "
+            "start_speed, top_speed, max_accel_decel_percent",
         .validate = validate_test_wheel_encoder_deceleration,
         .execute = execute_test_wheel_encoder_deceleration
     }
@@ -97,42 +97,49 @@ static const struct command_node test_navigate_commands[] =
     {
         .name = "move-forward",
         .help = "Execute one-cell move forward",
+        .parameters = NULL,
         .validate = validate_test_navigate_move_forward,
         .execute = execute_test_navigate_move_forward
     },
     {
         .name = "rotate-clockwise-90",
         .help = "Execute clockwise 90 degree rotation",
+        .parameters = NULL,
         .validate = validate_test_navigate_rotate_clockwise_90,
         .execute = execute_test_navigate_rotate_clockwise_90
     },
     {
         .name = "rotate-counterclockwise-90",
         .help = "Execute counter-clockwise 90 degree rotation",
+        .parameters = NULL,
         .validate = validate_test_navigate_rotate_counterclockwise_90,
         .execute = execute_test_navigate_rotate_counterclockwise_90
     },
     {
         .name = "rotate-180",
         .help = "Execute 180 degree rotation",
+        .parameters = NULL,
         .validate = validate_test_navigate_rotate_180,
         .execute = execute_test_navigate_rotate_180
     },
     {
         .name = "left-wall-presence",
         .help = "Check left wall presence",
+        .parameters = NULL,
         .validate = validate_test_navigate_left_wall_presence,
         .execute = execute_test_navigate_left_wall_presence
     },
     {
         .name = "right-wall-presence",
         .help = "Check right wall presence",
+        .parameters = NULL,
         .validate = validate_test_navigate_right_wall_presence,
         .execute = execute_test_navigate_right_wall_presence
     },
     {
         .name = "front-wall-presence",
         .help = "Check front wall presence",
+        .parameters = NULL,
         .validate = validate_test_navigate_front_wall_presence,
         .execute = execute_test_navigate_front_wall_presence
     }
@@ -143,36 +150,42 @@ static const struct command_node test_commands[] =
     {
         .name = "processor",
         .help = "Run processor self-test",
+        .parameters = NULL,
         .validate = validate_test_processor,
         .execute = execute_test_processor
     },
     {
         .name = "battery",
         .help = "Run battery comparator self-test",
+        .parameters = NULL,
         .validate = validate_test_battery,
         .execute = execute_test_battery
     },
     {
         .name = "enabler",
         .help = "Run power enabler self-test",
+        .parameters = NULL,
         .validate = validate_test_enabler,
         .execute = execute_test_enabler
     },
     {
         .name = "led",
         .help = "Run LED self-test",
+        .parameters = NULL,
         .validate = validate_test_led,
         .execute = execute_test_led
     },
     {
         .name = "pushbutton",
         .help = "Run pushbutton self-test",
+        .parameters = NULL,
         .validate = validate_test_pushbutton,
         .execute = execute_test_pushbutton
     },
     {
         .name = "ir",
         .help = "Run IR sensor tests",
+        .parameters = NULL,
         .validate = validate_test_ir,
         .execute = execute_test_ir,
         .children = test_ir_commands,
@@ -181,6 +194,7 @@ static const struct command_node test_commands[] =
     {
         .name = "wheel-encoder",
         .help = "Run wheel motor and encoder tests",
+        .parameters = NULL,
         .validate = validate_test_wheel_encoder,
         .execute = execute_test_wheel_encoder,
         .children = test_wheel_encoder_commands,
@@ -189,12 +203,14 @@ static const struct command_node test_commands[] =
     {
         .name = "vacuum",
         .help = "Run vacuum self-test",
+        .parameters = NULL,
         .validate = validate_test_vacuum,
         .execute = execute_test_vacuum
     },
     {
         .name = "navigate",
         .help = "Run navigation tests",
+        .parameters = NULL,
         .validate = validate_test_navigate,
         .execute = execute_test_navigate,
         .children = test_navigate_commands,
@@ -206,6 +222,7 @@ static const struct command_node test_node =
 {
     .name = "test",
     .help = "Run device self-tests",
+    .parameters = NULL,
     .validate = validate_test,
     .execute = execute_test,
     .children = test_commands,
