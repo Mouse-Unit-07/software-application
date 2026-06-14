@@ -69,13 +69,12 @@ struct command_match find_command_node(struct command const *cmd,
 void print_command_help(struct command_node const *commands, uint32_t count)
 {
     int width = get_max_command_name_length(commands, count);
-    width += 4u;
 
     for (uint32_t i = 0; i < count; i++) {
         printf("%-*s  %s\r\n", width, commands[i].name, commands[i].help);
 
         if (commands[i].parameters != NULL) {
-            printf("%-*s  parameters: %s\r\n", width, "", commands[i].parameters);
+            printf("%-*s  %s\r\n", width, "", commands[i].parameters);
         }
     }
 }
