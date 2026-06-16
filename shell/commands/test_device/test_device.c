@@ -43,6 +43,7 @@ enum
     IR_SPEED_PARAMETER_COUNT = 1,
 
     WHEEL_ENCODER_TARGET_PARAMETER_COUNT = 6,
+    WHEEL_ENCODER_DRIFT_PARAMETER_COUNT = 6,
     WHEEL_ENCODER_DECEL_PARAMETER_COUNT = 6
 };
 
@@ -81,6 +82,14 @@ static const struct command_node test_wheel_encoder_commands[] =
             "start_speed, end_speed, speed_step",
         .validate = validate_test_wheel_encoder_target,
         .execute = execute_test_wheel_encoder_target
+    },
+    {
+        .name = "drift",
+        .help = "Run wheel motor drift test",
+        .parameters = "(required): timeout_ms, drift_delay_ms, encoder_target, "
+            "start_speed, end_speed, speed_step",
+        .validate = validate_test_wheel_encoder_drift,
+        .execute = execute_test_wheel_encoder_drift
     },
     {
         .name = "deceleration",
@@ -499,6 +508,41 @@ void execute_test_wheel_encoder_target(struct command const *cmd)
     printf("running wheel encoder target test...\r\n");
     wheel_motor_and_encoder_test(cfg);
     printf("ending wheel encoder target test...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test wheel-encoder drift */
+enum validation_result validate_test_wheel_encoder_drift(struct command *cmd)
+{
+    uint32_t expected =
+        TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT + WHEEL_ENCODER_DRIFT_PARAMETER_COUNT;
+
+    if (cmd->token_count < expected) {
+        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+    }
+
+    if (cmd->token_count > expected) {
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_test_wheel_encoder_drift(struct command const *cmd)
+{
+    uint32_t base = TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT;
+
+    struct wheel_motor_and_encoder_test_config cfg;
+    cfg.timeout_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
+    cfg.drift_delay_ms = (uint32_t)strtoul(cmd->tokens[base + PARAM_1_OFFSET], NULL, 10);
+    cfg.encoder_target = (int32_t)strtol(cmd->tokens[base + PARAM_2_OFFSET], NULL, 10);
+    cfg.start_speed = (uint8_t)strtoul(cmd->tokens[base + PARAM_3_OFFSET], NULL, 10);
+    cfg.end_speed = (uint8_t)strtoul(cmd->tokens[base + PARAM_4_OFFSET], NULL, 10);
+    cfg.speed_step = (uint8_t)strtoul(cmd->tokens[base + PARAM_5_OFFSET], NULL, 10);
+
+    printf("running wheel encoder drift test...\r\n");
+    wheel_motor_drift_test(cfg);
+    printf("ending wheel encoder drift test...\r\n");
 }
 
 /*----------------------------------------------------------------------------*/

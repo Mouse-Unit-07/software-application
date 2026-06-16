@@ -121,6 +121,7 @@ static const structured_command_case ir_cases[] = {
 
 static const structured_command_case wheel_encoder_cases[] = {
     {"wheel-encoder", "target", validate_test_wheel_encoder_target, 9, 7, 10},
+    {"wheel-encoder", "drift", validate_test_wheel_encoder_drift, 9, 7, 10},
     {"wheel-encoder", "deceleration", validate_test_wheel_encoder_deceleration, 9, 7, 10}};
 
 static const structured_command_case navigate_cases[] = {
@@ -191,6 +192,17 @@ void infrared_sensors_read_speed_test(uint32_t time_per_sensor_ms)
 void wheel_motor_and_encoder_test(struct wheel_motor_and_encoder_test_config cfg)
 {
     mock().actualCall("wheel_motor_and_encoder_test")
+        .withUnsignedIntParameter("timeout_ms", cfg.timeout_ms)
+        .withUnsignedIntParameter("drift_delay_ms", cfg.drift_delay_ms)
+        .withIntParameter("encoder_target", cfg.encoder_target)
+        .withUnsignedIntParameter("start_speed", cfg.start_speed)
+        .withUnsignedIntParameter("end_speed", cfg.end_speed)
+        .withUnsignedIntParameter("speed_step", cfg.speed_step);
+}
+
+void wheel_motor_drift_test(struct wheel_motor_and_encoder_test_config cfg)
+{
+    mock().actualCall("wheel_motor_drift_test")
         .withUnsignedIntParameter("timeout_ms", cfg.timeout_ms)
         .withUnsignedIntParameter("drift_delay_ms", cfg.drift_delay_ms)
         .withIntParameter("encoder_target", cfg.encoder_target)
@@ -616,7 +628,7 @@ TEST(CommandsTests, TestWheelEncoderCommandMatchDepthIsTwo)
     LONGS_EQUAL(2u, match.depth);
 }
 
-TEST(CommandsTests, WheelEncoderCommandContainsTwoSubcommands)
+TEST(CommandsTests, WheelEncoderCommandContainsSubcommands)
 {
     struct command cmd{{0}};
     cmd.token_count = 2;
@@ -627,7 +639,7 @@ TEST(CommandsTests, WheelEncoderCommandContainsTwoSubcommands)
         find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
 
     CHECK(node != nullptr);
-    LONGS_EQUAL(2u, node->child_count);
+    LONGS_EQUAL(3u, node->child_count);
 }
 
 TEST(CommandsTests, FindCommandNodeReturnsWheelEncoderNodes)
@@ -694,6 +706,39 @@ TEST(CommandsTests, ExecuteTestWheelEncoderTargetCallsFunctions)
         .withUnsignedIntParameter("speed_step", 5u);
 
     execute_test_wheel_encoder_target(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test wheel-encoder-drift */
+TEST(CommandsTests, ValidateTestWheelEncoderDriftReturnsTooFewParameters)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 7;
+
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS,
+                validate_test_wheel_encoder_drift(&cmd));
+}
+
+TEST(CommandsTests, ExecuteTestWheelEncoderDriftCallsFunctions)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 9;
+    cmd.tokens[3] = "5000";
+    cmd.tokens[4] = "100";
+    cmd.tokens[5] = "2500";
+    cmd.tokens[6] = "10";
+    cmd.tokens[7] = "50";
+    cmd.tokens[8] = "5";
+
+    mock().expectOneCall("wheel_motor_drift_test")
+        .withUnsignedIntParameter("timeout_ms", 5000u)
+        .withUnsignedIntParameter("drift_delay_ms", 100u)
+        .withIntParameter("encoder_target", 2500)
+        .withUnsignedIntParameter("start_speed", 10u)
+        .withUnsignedIntParameter("end_speed", 50u)
+        .withUnsignedIntParameter("speed_step", 5u);
+
+    execute_test_wheel_encoder_drift(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/
