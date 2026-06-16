@@ -163,6 +163,97 @@ void calculate_navigation_params(void)
     mock().actualCall("calculate_navigation_params");
 }
 
+void set_no_wall_move_forward_control_config(struct move_forward_control_config cfg)
+{
+    (void)cfg;
+
+    mock().actualCall("set_no_wall_move_forward_control_config");
+}
+
+void set_one_wall_move_forward_control_config(struct move_forward_control_config cfg)
+{
+    (void)cfg;
+
+    mock().actualCall("set_one_wall_move_forward_control_config");
+}
+
+void set_both_wall_move_forward_control_config(struct move_forward_control_config cfg)
+{
+    (void)cfg;
+
+    mock().actualCall("set_both_wall_move_forward_control_config");
+}
+
+void set_rotate_control_config(struct rotate_control_config cfg)
+{
+    (void)cfg;
+
+    mock().actualCall("set_rotate_control_config");
+}
+
+void set_side_wall_detection_config(struct side_wall_detection_config cfg)
+{
+    (void)cfg;
+
+    mock().actualCall("set_side_wall_detection_config");
+}
+
+void set_front_wall_detection_config(struct front_wall_detection_config cfg)
+{
+    (void)cfg;
+
+    mock().actualCall("set_front_wall_detection_config");
+
+}
+
+struct move_forward_control_config get_saved_default_move_forward_control_no_wall_config(void)
+{
+    mock().actualCall("get_saved_default_move_forward_control_no_wall_config");
+
+    struct move_forward_control_config cfg{};
+    return cfg;
+}
+
+struct move_forward_control_config get_saved_default_move_forward_control_one_wall_config(void)
+{
+    mock().actualCall("get_saved_default_move_forward_control_one_wall_config");
+
+    struct move_forward_control_config cfg{};
+    return cfg;
+}
+
+struct move_forward_control_config get_saved_default_move_forward_control_both_wall_config(void)
+{
+    mock().actualCall("get_saved_default_move_forward_control_both_wall_config");
+
+    struct move_forward_control_config cfg{};
+    return cfg;
+}
+
+struct rotate_control_config get_saved_default_rotate_control_config(void)
+{
+    mock().actualCall("get_saved_default_rotate_control_config");
+
+    struct rotate_control_config cfg{};
+    return cfg;
+}
+
+struct front_wall_detection_config get_saved_default_front_wall_detection_config(void)
+{
+    mock().actualCall("get_saved_default_front_wall_detection_config");
+
+    struct front_wall_detection_config cfg{};
+    return cfg;
+}
+
+struct side_wall_detection_config get_saved_default_side_wall_detection_config(void)
+{
+    mock().actualCall("get_saved_default_side_wall_detection_config");
+
+    struct side_wall_detection_config cfg{};
+    return cfg;
+}
+
 }
 
 /*============================================================================*/
@@ -198,6 +289,18 @@ TEST(StartupTests, StartupCallsFunctions)
     mock().expectOneCall("get_saved_default_maze_physical_params");
     mock().expectOneCall("calculate_maze_params");
     mock().expectOneCall("calculate_navigation_params");
+    mock().expectOneCall("get_saved_default_move_forward_control_no_wall_config");
+    mock().expectOneCall("set_no_wall_move_forward_control_config");
+    mock().expectOneCall("get_saved_default_move_forward_control_one_wall_config");
+    mock().expectOneCall("set_one_wall_move_forward_control_config");
+    mock().expectOneCall("get_saved_default_move_forward_control_both_wall_config");
+    mock().expectOneCall("set_both_wall_move_forward_control_config");
+    mock().expectOneCall("get_saved_default_rotate_control_config");
+    mock().expectOneCall("set_rotate_control_config");
+    mock().expectOneCall("get_saved_default_side_wall_detection_config");
+    mock().expectOneCall("set_side_wall_detection_config");
+    mock().expectOneCall("get_saved_default_front_wall_detection_config");
+    mock().expectOneCall("set_front_wall_detection_config");
 
     mock().expectOneCall("init_configuration");
 
