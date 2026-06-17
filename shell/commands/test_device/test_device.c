@@ -733,6 +733,7 @@ static void print_move_forward_statistics(struct move_forward_statistics stats)
     printf("left_wall_present=%s\r\n", stats.left_wall_present ? "true" : "false");
     printf("right_wall_present=%s\r\n", stats.right_wall_present ? "true" : "false");
     printf("timeout_occurred=%s\r\n", stats.timeout_occurred ? "true" : "false");
+    printf("emergency_stop_occurred=%s\r\n", stats.emergency_stop_occurred ? "true" : "false");
 }
 
 static void print_rotate_statistics(struct rotate_statistics stats)
