@@ -104,12 +104,15 @@ static const get_command_test_case get_commands[] = {
     {"move-forward-no-wall-default", validate_get_move_forward_no_wall_default},
     {"move-forward-no-wall-test", validate_get_move_forward_no_wall_test},
     {"move-forward-no-wall-current", validate_get_move_forward_no_wall_current},
+    {"move-forward-no-wall-calculated", validate_get_move_forward_no_wall_calculated},
     {"move-forward-one-wall-default", validate_get_move_forward_one_wall_default},
     {"move-forward-one-wall-test", validate_get_move_forward_one_wall_test},
     {"move-forward-one-wall-current", validate_get_move_forward_one_wall_current},
+    {"move-forward-one-wall-calculated", validate_get_move_forward_one_wall_calculated},
     {"move-forward-both-wall-default", validate_get_move_forward_both_wall_default},
     {"move-forward-both-wall-test", validate_get_move_forward_both_wall_test},
     {"move-forward-both-wall-current", validate_get_move_forward_both_wall_current},
+    {"move-forward-both-wall-calculated", validate_get_move_forward_both_wall_calculated},
     {"rotate-default", validate_get_rotate_default},
     {"rotate-test", validate_get_rotate_test},
     {"rotate-current", validate_get_rotate_current},
@@ -272,6 +275,30 @@ struct move_forward_control_config get_both_wall_move_forward_control_config(voi
     mock().actualCall("get_both_wall_move_forward_control_config");
     struct move_forward_control_config cfg{};
     return cfg;
+}
+
+struct move_forward_calculated_params get_no_wall_move_forward_calculated_params(void)
+{
+    mock().actualCall("get_no_wall_move_forward_calculated_params");
+
+    struct move_forward_calculated_params p{};
+    return p;
+}
+
+struct move_forward_calculated_params get_one_wall_move_forward_calculated_params(void)
+{
+    mock().actualCall("get_one_wall_move_forward_calculated_params");
+
+    struct move_forward_calculated_params p{};
+    return p;
+}
+
+struct move_forward_calculated_params get_both_wall_move_forward_calculated_params(void)
+{
+    mock().actualCall("get_both_wall_move_forward_calculated_params");
+
+    struct move_forward_calculated_params p{};
+    return p;
 }
 
 struct rotate_control_config get_saved_default_rotate_control_config(void)
@@ -585,6 +612,17 @@ TEST(GetTests, ExecuteMoveForwardNoWallCurrentRuns)
 }
 
 /*----------------------------------------------------------------------------*/
+/* get move-forward-no-wall-calculated */
+TEST(GetTests, ExecuteMoveForwardNoWallCalculatedRuns)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("get_no_wall_move_forward_calculated_params");
+
+    execute_get_move_forward_no_wall_calculated(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
 /* get move-forward-one-wall-default */
 TEST(GetTests, ExecuteMoveForwardOneWallDefaultRuns)
 {
@@ -612,6 +650,17 @@ TEST(GetTests, ExecuteMoveForwardOneWallCurrentRuns)
 }
 
 /*----------------------------------------------------------------------------*/
+/* get move-forward-one-wall-calculated */
+TEST(GetTests, ExecuteMoveForwardOneWallCalculatedRuns)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("get_one_wall_move_forward_calculated_params");
+
+    execute_get_move_forward_one_wall_calculated(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
 /* get move-forward-both-wall-default */
 TEST(GetTests, ExecuteMoveForwardBothWallDefaultRuns)
 {
@@ -636,6 +685,17 @@ TEST(GetTests, ExecuteMoveForwardBothWallCurrentRuns)
     struct command cmd{{0}};
     mock().expectOneCall("get_both_wall_move_forward_control_config");
     execute_get_move_forward_both_wall_current(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-both-wall-calculated */
+TEST(GetTests, ExecuteMoveForwardBothWallCalculatedRuns)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("get_both_wall_move_forward_calculated_params");
+
+    execute_get_move_forward_both_wall_calculated(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/
