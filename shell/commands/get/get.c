@@ -30,6 +30,7 @@ static void print_maze_physical_params(struct maze_physical_params p);
 static void print_maze_calculated_params(struct maze_calculated_params p);
 static void print_navigation_params(struct navigation_params p);
 static void print_move_forward_control_config(struct move_forward_control_config cfg);
+static void print_move_forward_calculated_params(struct move_forward_calculated_params p);
 static void print_rotate_control_config(struct rotate_control_config cfg);
 static void print_front_wall_detection_config(struct front_wall_detection_config cfg);
 static void print_side_wall_detection_config(struct side_wall_detection_config cfg);
@@ -151,6 +152,13 @@ static const struct command_node get_commands[] =
         .execute = execute_get_move_forward_no_wall_current
     },
     {
+        .name = "move-forward-no-wall-calculated",
+        .help = "Display no-wall move-forward calculated parameters",
+        .parameters = NULL,
+        .validate = validate_get_move_forward_no_wall_calculated,
+        .execute = execute_get_move_forward_no_wall_calculated
+    },
+    {
         .name = "move-forward-one-wall-default",
         .help = "Display default one-wall move-forward control config",
         .parameters = NULL,
@@ -172,6 +180,13 @@ static const struct command_node get_commands[] =
         .execute = execute_get_move_forward_one_wall_current
     },
     {
+        .name = "move-forward-one-wall-calculated",
+        .help = "Display one-wall move-forward calculated parameters",
+        .parameters = NULL,
+        .validate = validate_get_move_forward_one_wall_calculated,
+        .execute = execute_get_move_forward_one_wall_calculated
+    },
+    {
         .name = "move-forward-both-wall-default",
         .help = "Display default both-wall move-forward control config",
         .parameters = NULL,
@@ -191,6 +206,13 @@ static const struct command_node get_commands[] =
         .parameters = NULL,
         .validate = validate_get_move_forward_both_wall_current,
         .execute = execute_get_move_forward_both_wall_current
+    },
+    {
+        .name = "move-forward-both-wall-calculated",
+        .help = "Display both-wall move-forward calculated parameters",
+        .parameters = NULL,
+        .validate = validate_get_move_forward_both_wall_calculated,
+        .execute = execute_get_move_forward_both_wall_calculated
     },
     {
         .name = "rotate-default",
@@ -521,6 +543,20 @@ void execute_get_move_forward_no_wall_current(struct command const *cmd)
 }
 
 /*----------------------------------------------------------------------------*/
+/* get move-forward-no-wall-calculated */
+enum validation_result validate_get_move_forward_no_wall_calculated(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_no_wall_calculated(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_calculated_params(get_no_wall_move_forward_calculated_params());
+}
+
+/*----------------------------------------------------------------------------*/
 /* get move-forward-one-wall-default */
 enum validation_result validate_get_move_forward_one_wall_default(struct command *cmd)
 {
@@ -563,6 +599,20 @@ void execute_get_move_forward_one_wall_current(struct command const *cmd)
 }
 
 /*----------------------------------------------------------------------------*/
+/* get move-forward-one-wall-calculated */
+enum validation_result validate_get_move_forward_one_wall_calculated(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_one_wall_calculated(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_calculated_params(get_one_wall_move_forward_calculated_params());
+}
+
+/*----------------------------------------------------------------------------*/
 /* get move-forward-both-wall-default */
 enum validation_result validate_get_move_forward_both_wall_default(struct command *cmd)
 {
@@ -602,6 +652,20 @@ void execute_get_move_forward_both_wall_current(struct command const *cmd)
     (void)cmd;
 
     print_move_forward_control_config(get_both_wall_move_forward_control_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-both-wall-calculated */
+enum validation_result validate_get_move_forward_both_wall_calculated(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_both_wall_calculated(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_calculated_params(get_both_wall_move_forward_calculated_params());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -805,6 +869,11 @@ static void print_move_forward_control_config(struct move_forward_control_config
     printf("kd_ir          = %" PRId32 "\r\n", cfg.kd_ir);
     printf("pid_scale      = %" PRId32 "\r\n", cfg.pid_scale);
     printf("wall_target    = %" PRIu32 "\r\n", cfg.wall_target);
+}
+
+static void print_move_forward_calculated_params(struct move_forward_calculated_params p)
+{
+    printf("drift_ticks    = %" PRId32 "\r\n", p.drift_ticks);
 }
 
 static void print_rotate_control_config(struct rotate_control_config cfg)
