@@ -56,8 +56,10 @@ void poll_shell(void)
     if (ready_for_parsing) {
         struct command cmd = parse_cli_buffer_contents();
         if (cmd.token_count > 0u) {
+            printf("\r\n");
             process_command(&cmd);
         }
+        printf("\r\n>");
         reset_shell_state();
     }
 }
