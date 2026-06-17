@@ -54,6 +54,13 @@ static const struct maze_physical_params default_maze_physical_params =
 
 static struct maze_physical_params test_maze_physical_params = {0};
 
+static const struct move_forward_common_config default_move_forward_common_config =
+{
+    .emergency_stop_threshold = 400
+};
+
+static struct move_forward_common_config test_move_forward_common_config = {0};
+
 static const struct move_forward_control_config default_move_forward_control_no_wall_config =
 {
     .base_speed = 140,
@@ -195,6 +202,21 @@ void save_maze_physical_params_as_test(struct maze_physical_params cfg)
     test_maze_physical_params = cfg;
 }
 
+struct move_forward_common_config get_saved_default_move_forward_common_config(void)
+{
+    return default_move_forward_common_config;
+}
+
+struct move_forward_common_config get_saved_test_move_forward_common_config(void)
+{
+    return test_move_forward_common_config;
+}
+
+void save_move_forward_common_config_as_test(struct move_forward_common_config cfg)
+{
+    test_move_forward_common_config = cfg;
+}
+
 struct move_forward_control_config get_saved_default_move_forward_control_no_wall_config(void)
 {
     return default_move_forward_control_no_wall_config;
@@ -295,6 +317,8 @@ static void reset_all_test_configs(void)
            sizeof(test_mouse_physical_params));
     memcpy(&test_maze_physical_params, &default_maze_physical_params,
            sizeof(test_maze_physical_params));
+    memcpy(&test_move_forward_common_config, &default_move_forward_common_config,
+           sizeof(test_move_forward_common_config));
     memcpy(&test_move_forward_control_no_wall_config, &default_move_forward_control_no_wall_config,
            sizeof(test_move_forward_control_no_wall_config));
     memcpy(&test_move_forward_control_one_wall_config,

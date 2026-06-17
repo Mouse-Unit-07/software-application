@@ -39,6 +39,7 @@ enum
     MAZE_SOLVER_PARAMETER_COUNT = 5,
     MOUSE_PHYSICAL_PARAMETER_COUNT = 6,
     MAZE_PHYSICAL_PARAMETER_COUNT = 2,
+    MOVE_FORWARD_COMMON_PARAMETER_COUNT = 1,
     MOVE_FORWARD_CONTROL_PARAMETER_COUNT = 11,
     ROTATE_CONTROL_PARAMETER_COUNT = 8,
     FRONT_WALL_PARAMETER_COUNT = 2,
@@ -90,6 +91,21 @@ static const struct command_node set_commands[] =
         .parameters = "(optional params): post_size_mm, wall_size_mm",
         .validate = validate_set_maze_physical_test,
         .execute = execute_set_maze_physical_test
+    },
+    {
+        .name = "move-forward-common-default",
+        .help = "Use default move-forward common config",
+        .parameters = NULL,
+        .validate = validate_set_move_forward_common_default,
+        .execute = execute_set_move_forward_common_default
+    },
+    {
+        .name = "move-forward-common-test",
+        .help = "Use test move-forward common config",
+        .parameters =
+            "(optional params): emergency_stop_threshold",
+        .validate = validate_set_move_forward_common_test,
+        .execute = execute_set_move_forward_common_test
     },
     {
         .name = "move-forward-no-wall-default",
@@ -373,6 +389,64 @@ void execute_set_maze_physical_test(struct command const *cmd)
     save_maze_physical_params_as_test(p);
     calculate_maze_params(p);
     calculate_navigation_params();
+}
+
+/*----------------------------------------------------------------------------*/
+/* set move-forward-common-default */
+enum validation_result validate_set_move_forward_common_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, SET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_set_move_forward_common_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    set_move_forward_common_config(get_saved_default_move_forward_common_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* set move-forward-common-test */
+enum validation_result validate_set_move_forward_common_test(struct command *cmd)
+{
+    uint32_t max_token_count = SET_COMMAND_TOKEN_COUNT + MOVE_FORWARD_COMMON_PARAMETER_COUNT;
+
+    if ((cmd->token_count != SET_COMMAND_TOKEN_COUNT) && (cmd->token_count != max_token_count)) {
+        if (cmd->token_count < max_token_count) {
+            return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
+        }
+
+        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
+    }
+
+    if (cmd->token_count == max_token_count) {
+        uint32_t base = SET_COMMAND_TOKEN_COUNT;
+        struct move_forward_common_config cfg = {0};
+        cfg.emergency_stop_threshold =
+            (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
+
+        if (cfg.emergency_stop_threshold >= 1023u) {
+            cmd->bad_parameter_index = base + PARAM_0_OFFSET;
+            return COMMAND_VALIDATION_BAD_PARAMETER;
+        }
+    }
+
+    return COMMAND_VALIDATION_SUCCESS;
+}
+
+void execute_set_move_forward_common_test(struct command const *cmd)
+{
+    if (cmd->token_count == SET_COMMAND_TOKEN_COUNT) {
+        set_move_forward_common_config(get_saved_test_move_forward_common_config());
+        return;
+    }
+
+    uint32_t base = SET_COMMAND_TOKEN_COUNT;
+    struct move_forward_common_config cfg = {0};
+    cfg.emergency_stop_threshold = (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
+
+    save_move_forward_common_config_as_test(cfg);
+    set_move_forward_common_config(cfg);
 }
 
 /*----------------------------------------------------------------------------*/

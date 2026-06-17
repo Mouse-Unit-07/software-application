@@ -60,7 +60,7 @@ void check_command_lookup(char const *command_name, uint32_t token_count)
 {
     struct command cmd{make_get_command(command_name, token_count)};
 
-    struct command_node const *node = 
+    struct command_node const *node =
         find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
 
     CHECK(node != nullptr);
@@ -101,6 +101,9 @@ static const get_command_test_case get_commands[] = {
     {"maze-physical-current", validate_get_maze_physical_current},
     {"maze-calculated", validate_get_maze_calculated},
     {"navigation", validate_get_navigation},
+    {"move-forward-common-default", validate_get_move_forward_common_default},
+    {"move-forward-common-test", validate_get_move_forward_common_test},
+    {"move-forward-common-current", validate_get_move_forward_common_current},
     {"move-forward-no-wall-default", validate_get_move_forward_no_wall_default},
     {"move-forward-no-wall-test", validate_get_move_forward_no_wall_test},
     {"move-forward-no-wall-current", validate_get_move_forward_no_wall_current},
@@ -212,6 +215,27 @@ struct maze_physical_params get_saved_test_maze_physical_params(void)
     mock().actualCall("get_saved_test_maze_physical_params");
     struct maze_physical_params p{};
     return p;
+}
+
+struct move_forward_common_config get_saved_default_move_forward_common_config(void)
+{
+    mock().actualCall("get_saved_default_move_forward_common_config");
+    struct move_forward_common_config cfg{};
+    return cfg;
+}
+
+struct move_forward_common_config get_saved_test_move_forward_common_config(void)
+{
+    mock().actualCall("get_saved_test_move_forward_common_config");
+    struct move_forward_common_config cfg{};
+    return cfg;
+}
+
+struct move_forward_common_config get_move_forward_common_config(void)
+{
+    mock().actualCall("get_move_forward_common_config");
+    struct move_forward_common_config cfg{};
+    return cfg;
 }
 
 struct move_forward_control_config get_saved_default_move_forward_control_no_wall_config(void)
@@ -582,6 +606,33 @@ TEST(GetTests, ExecuteGetNavigationRuns)
     struct command cmd{{0}};
     mock().expectOneCall("get_navigation_params");
     execute_get_navigation(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-common-default */
+TEST(GetTests, ExecuteMoveForwardCommonDefaultRuns)
+{
+    struct command cmd{{0}};
+    mock().expectOneCall("get_saved_default_move_forward_common_config");
+    execute_get_move_forward_common_default(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-common-test */
+TEST(GetTests, ExecuteMoveForwardCommonTestRuns)
+{
+    struct command cmd{{0}};
+    mock().expectOneCall("get_saved_test_move_forward_common_config");
+    execute_get_move_forward_common_test(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-common-current */
+TEST(GetTests, ExecuteMoveForwardCommonCurrentRuns)
+{
+    struct command cmd{{0}};
+    mock().expectOneCall("get_move_forward_common_config");
+    execute_get_move_forward_common_current(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/

@@ -105,6 +105,8 @@ static const validation_test_case validation_test_cases[] = {
     {"mouse-physical-test", validate_set_mouse_physical_test, 2, 8},
     {"maze-physical-default", validate_set_maze_physical_default, 2, 2},
     {"maze-physical-test", validate_set_maze_physical_test, 2, 4},
+    {"move-forward-common-default", validate_set_move_forward_common_default, 2, 2},
+    {"move-forward-common-test", validate_set_move_forward_common_test, 2, 3},
     {"move-forward-no-wall-default", validate_set_move_forward_no_wall_default, 2, 2},
     {"move-forward-no-wall-test", validate_set_move_forward_no_wall_test, 2, 13},
     {"move-forward-one-wall-default", validate_set_move_forward_one_wall_default, 2, 2},
@@ -212,6 +214,33 @@ void calculate_navigation_params(void)
 {
     mock().actualCall("calculate_navigation_params");
 }
+
+struct move_forward_common_config get_saved_default_move_forward_common_config(void)
+{
+    struct move_forward_common_config cfg{};
+    cfg.emergency_stop_threshold = 500u;
+    return cfg;
+}
+
+struct move_forward_common_config get_saved_test_move_forward_common_config(void)
+{
+    struct move_forward_common_config cfg{};
+    cfg.emergency_stop_threshold = 800u;
+    return cfg;
+}
+
+void save_move_forward_common_config_as_test(struct move_forward_common_config cfg)
+{
+    mock().actualCall("save_move_forward_common_config_as_test")
+        .withUnsignedIntParameter("emergency_stop_threshold", cfg.emergency_stop_threshold);
+}
+
+void set_move_forward_common_config(struct move_forward_common_config cfg)
+{
+    mock().actualCall("set_move_forward_common_config")
+        .withUnsignedIntParameter("emergency_stop_threshold", cfg.emergency_stop_threshold);
+}
+
 
 struct move_forward_control_config get_saved_default_move_forward_control_no_wall_config(void)
 {
@@ -775,6 +804,68 @@ TEST(SetTests, ExecuteSetMazePhysicalTestUpdatesConfig)
 }
 
 /*----------------------------------------------------------------------------*/
+/* set move-forward-common-default */
+TEST(SetTests, ExecuteSetMoveForwardCommonDefaultCallsFunctions)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("set_move_forward_common_config")
+        .withUnsignedIntParameter("emergency_stop_threshold", 500u);
+
+    execute_set_move_forward_common_default(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* set move-forward-common-test */
+TEST(SetTests, ExecuteSetMoveForwardCommonTestUsesStoredConfig)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 2;
+
+    mock().expectOneCall("set_move_forward_common_config")
+        .withUnsignedIntParameter("emergency_stop_threshold", 800u);
+
+    execute_set_move_forward_common_test(&cmd);
+}
+
+TEST(SetTests, ExecuteSetMoveForwardCommonTestUpdatesConfig)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+
+    cmd.tokens[2] = "10";
+
+    mock().expectOneCall("save_move_forward_common_config_as_test")
+        .withUnsignedIntParameter("emergency_stop_threshold", 10u);
+
+    mock().expectOneCall("set_move_forward_common_config")
+        .withUnsignedIntParameter("emergency_stop_threshold", 10u);
+
+    execute_set_move_forward_common_test(&cmd);
+}
+
+TEST(SetTests, ValidateSetMoveForwardCommonTestAccepts1022)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+
+    cmd.tokens[2] = "1022";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_move_forward_common_test(&cmd));
+}
+
+TEST(SetTests, ValidateSetMoveForwardCommonTestRejects1023)
+{
+    struct command cmd{{0}};
+    cmd.token_count = 3;
+
+    cmd.tokens[2] = "1023";
+
+    LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_set_move_forward_common_test(&cmd));
+    LONGS_EQUAL(2u, cmd.bad_parameter_index);
+}
+
+/*----------------------------------------------------------------------------*/
 /* set move-forward-no-wall-default */
 TEST(SetTests, ExecuteSetMoveForwardNoWallDefaultCallsFunctions)
 {
@@ -1225,8 +1316,7 @@ TEST(SetTests, ValidateSetFrontWallTestAccepts1022)
     cmd.tokens[2] = "1022";
     cmd.tokens[3] = "5";
 
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS,
-                validate_set_front_wall_test(&cmd));
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_front_wall_test(&cmd));
 }
 
 TEST(SetTests, ValidateSetFrontWallTestRejects1023)

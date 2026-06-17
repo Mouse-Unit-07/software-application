@@ -30,6 +30,10 @@ struct maze_physical_params get_saved_default_maze_physical_params(void);
 struct maze_physical_params get_saved_test_maze_physical_params(void);
 void save_maze_physical_params_as_test(struct maze_physical_params cfg);
 
+struct move_forward_common_config get_saved_default_move_forward_common_config(void);
+struct move_forward_common_config get_saved_test_move_forward_common_config(void);
+void save_move_forward_common_config_as_test(struct move_forward_common_config cfg);
+
 struct move_forward_control_config get_saved_default_move_forward_control_no_wall_config(void);
 struct move_forward_control_config get_saved_test_move_forward_control_no_wall_config(void);
 void save_move_forward_control_no_wall_config_as_test(struct move_forward_control_config cfg);
