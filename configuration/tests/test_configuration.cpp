@@ -52,6 +52,11 @@ static void check_default_maze_physical_params(struct maze_physical_params const
     DOUBLES_EQUAL(166.37, cfg.wall_size_mm, FLOAT_TOLERANCE);
 }
 
+static void check_default_move_forward_common_config(struct move_forward_common_config const& cfg)
+{
+    LONGS_EQUAL(400, cfg.emergency_stop_threshold);
+}
+
 static void
 check_default_move_forward_control_no_wall_config(struct move_forward_control_config const& cfg)
 {
@@ -204,6 +209,18 @@ TEST(ConfigurationTests, InitConfigurationResetsMazePhysicalParamsToDefaults)
     check_default_maze_physical_params(get_saved_test_maze_physical_params());
 }
 
+TEST(ConfigurationTests, InitConfigurationResetsMoveForwardCommonConfigToDefaults)
+{
+    struct move_forward_common_config cfg{};
+    cfg.emergency_stop_threshold = 123;
+
+    save_move_forward_common_config_as_test(cfg);
+
+    init_configuration();
+
+    check_default_move_forward_common_config(get_saved_test_move_forward_common_config());
+}
+
 TEST(ConfigurationTests, InitConfigurationResetsMoveForwardNoWallConfigToDefaults)
 {
     struct move_forward_control_config cfg{};
@@ -354,6 +371,18 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMazePhysicalParamsToDefaults)
     deinit_configuration();
 
     check_default_maze_physical_params(get_saved_test_maze_physical_params());
+}
+
+TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardCommonConfigToDefaults)
+{
+    struct move_forward_common_config cfg{};
+    cfg.emergency_stop_threshold = 123;
+
+    save_move_forward_common_config_as_test(cfg);
+
+    deinit_configuration();
+
+    check_default_move_forward_common_config(get_saved_test_move_forward_common_config());
 }
 
 TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardNoWallConfigToDefaults)
@@ -548,6 +577,28 @@ TEST(ConfigurationTests, SetTestMazePhysicalParamsUpdatesValues)
 
     DOUBLES_EQUAL(1.0, result.post_size_mm, FLOAT_TOLERANCE);
     DOUBLES_EQUAL(2.0, result.wall_size_mm, FLOAT_TOLERANCE);
+}
+
+TEST(ConfigurationTests, DefaultMoveForwardCommonConfigContainsExpectedValues)
+{
+    check_default_move_forward_common_config(get_saved_default_move_forward_common_config());
+}
+
+TEST(ConfigurationTests, TestMoveForwardCommonConfigInitiallyContainsExpectedValues)
+{
+    check_default_move_forward_common_config(get_saved_test_move_forward_common_config());
+}
+
+TEST(ConfigurationTests, SetTestMoveForwardCommonConfigUpdatesValues)
+{
+    struct move_forward_common_config cfg{};
+    cfg.emergency_stop_threshold = 123;
+
+    save_move_forward_common_config_as_test(cfg);
+
+    struct move_forward_common_config result{get_saved_test_move_forward_common_config()};
+
+    LONGS_EQUAL(123, result.emergency_stop_threshold);
 }
 
 TEST(ConfigurationTests, DefaultMoveForwardNoWallConfigContainsExpectedValues)

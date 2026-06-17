@@ -163,6 +163,21 @@ void calculate_navigation_params(void)
     mock().actualCall("calculate_navigation_params");
 }
 
+void set_move_forward_common_config(struct move_forward_common_config cfg)
+{
+    (void)cfg;
+
+    mock().actualCall("set_move_forward_common_config");
+}
+
+struct move_forward_common_config get_saved_default_move_forward_common_config(void)
+{
+    mock().actualCall("get_saved_default_move_forward_common_config");
+
+    struct move_forward_common_config cfg{};
+    return cfg;
+}
+
 void set_no_wall_move_forward_control_config(struct move_forward_control_config cfg)
 {
     (void)cfg;
@@ -203,7 +218,6 @@ void set_front_wall_detection_config(struct front_wall_detection_config cfg)
     (void)cfg;
 
     mock().actualCall("set_front_wall_detection_config");
-
 }
 
 struct move_forward_control_config get_saved_default_move_forward_control_no_wall_config(void)
@@ -289,6 +303,8 @@ TEST(StartupTests, StartupCallsFunctions)
     mock().expectOneCall("get_saved_default_maze_physical_params");
     mock().expectOneCall("calculate_maze_params");
     mock().expectOneCall("calculate_navigation_params");
+    mock().expectOneCall("get_saved_default_move_forward_common_config");
+    mock().expectOneCall("set_move_forward_common_config");
     mock().expectOneCall("get_saved_default_move_forward_control_no_wall_config");
     mock().expectOneCall("set_no_wall_move_forward_control_config");
     mock().expectOneCall("get_saved_default_move_forward_control_one_wall_config");

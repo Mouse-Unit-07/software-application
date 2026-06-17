@@ -44,6 +44,7 @@ void startup(void)
     calculate_mouse_params(get_saved_default_mouse_physical_params());
     calculate_maze_params(get_saved_default_maze_physical_params());
     calculate_navigation_params();
+    set_move_forward_common_config(get_saved_default_move_forward_common_config());
     set_no_wall_move_forward_control_config(
         get_saved_default_move_forward_control_no_wall_config());
     set_one_wall_move_forward_control_config(

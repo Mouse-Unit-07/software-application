@@ -29,6 +29,7 @@ static void print_mouse_calculated_params(struct mouse_calculated_params p);
 static void print_maze_physical_params(struct maze_physical_params p);
 static void print_maze_calculated_params(struct maze_calculated_params p);
 static void print_navigation_params(struct navigation_params p);
+static void print_move_forward_common_config(struct move_forward_common_config cfg);
 static void print_move_forward_control_config(struct move_forward_control_config cfg);
 static void print_move_forward_calculated_params(struct move_forward_calculated_params p);
 static void print_rotate_control_config(struct rotate_control_config cfg);
@@ -129,6 +130,27 @@ static const struct command_node get_commands[] =
         .parameters = NULL,
         .validate = validate_get_navigation,
         .execute = execute_get_navigation
+    },
+    {
+        .name = "move-forward-common-default",
+        .help = "Display default move-forward common config",
+        .parameters = NULL,
+        .validate = validate_get_move_forward_common_default,
+        .execute = execute_get_move_forward_common_default
+    },
+    {
+        .name = "move-forward-common-test",
+        .help = "Display test move-forward common config",
+        .parameters = NULL,
+        .validate = validate_get_move_forward_common_test,
+        .execute = execute_get_move_forward_common_test
+    },
+    {
+        .name = "move-forward-common-current",
+        .help = "Display current move-forward common config",
+        .parameters = NULL,
+        .validate = validate_get_move_forward_common_current,
+        .execute = execute_get_move_forward_common_current
     },
     {
         .name = "move-forward-no-wall-default",
@@ -501,6 +523,48 @@ void execute_get_navigation(struct command const *cmd)
 }
 
 /*----------------------------------------------------------------------------*/
+/* get move-forward-common-default */
+enum validation_result validate_get_move_forward_common_default(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_common_default(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_common_config(get_saved_default_move_forward_common_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-common-test */
+enum validation_result validate_get_move_forward_common_test(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_common_test(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_common_config(get_saved_test_move_forward_common_config());
+}
+
+/*----------------------------------------------------------------------------*/
+/* get move-forward-common-current */
+enum validation_result validate_get_move_forward_common_current(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, GET_COMMAND_TOKEN_COUNT);
+}
+
+void execute_get_move_forward_common_current(struct command const *cmd)
+{
+    (void)cmd;
+
+    print_move_forward_common_config(get_move_forward_common_config());
+}
+
+/*----------------------------------------------------------------------------*/
 /* get move-forward-no-wall-default */
 enum validation_result validate_get_move_forward_no_wall_default(struct command *cmd)
 {
@@ -854,6 +918,11 @@ static void print_navigation_params(struct navigation_params p)
            p.move_forward_one_cell_target_ticks);
     printf("rotate_90_degree_ticks           = %" PRId32 "\r\n", p.rotate_90_degree_target_ticks);
     printf("rotate_180_degree_ticks          = %" PRId32 "\r\n", p.rotate_180_degree_target_ticks);
+}
+
+static void print_move_forward_common_config(struct move_forward_common_config cfg)
+{
+    printf("emergency_stop_threshold     = %" PRIu32 "\r\n", cfg.emergency_stop_threshold);
 }
 
 static void print_move_forward_control_config(struct move_forward_control_config cfg)

@@ -44,6 +44,12 @@ enum validation_result validate_set_maze_physical_test(struct command *cmd);
 void execute_set_maze_physical_test(struct command const *cmd);
 
 /* move forward */
+enum validation_result validate_set_move_forward_common_default(struct command *cmd);
+void execute_set_move_forward_common_default(struct command const *cmd);
+
+enum validation_result validate_set_move_forward_common_test(struct command *cmd);
+void execute_set_move_forward_common_test(struct command const *cmd);
+
 enum validation_result validate_set_move_forward_no_wall_default(struct command *cmd);
 void execute_set_move_forward_no_wall_default(struct command const *cmd);
 
