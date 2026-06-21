@@ -111,6 +111,13 @@ static const struct command_node test_navigate_commands[] =
         .execute = execute_test_navigate_move_forward
     },
     {
+        .name = "move-forward-continuous",
+        .help = "Move forward until a turn or intersection is detected",
+        .parameters = NULL,
+        .validate = validate_test_navigate_move_forward_continuous,
+        .execute = execute_test_navigate_move_forward_continuous
+    },
+    {
         .name = "rotate-clockwise-90",
         .help = "Execute clockwise 90 degree rotation",
         .parameters = NULL,
@@ -627,6 +634,24 @@ void execute_test_navigate_move_forward(struct command const *cmd)
     move_forward();
     print_move_forward_statistics(get_move_forward_statistics());
     printf("ending move-forward...\r\n");
+}
+
+/*----------------------------------------------------------------------------*/
+/* test navigate move forward continuous */
+enum validation_result validate_test_navigate_move_forward_continuous(struct command *cmd)
+{
+    return validate_parameterless_command(cmd, TEST_NAVIGATE_COMMAND_TOKEN_COUNT);
+}
+
+void execute_test_navigate_move_forward_continuous(struct command const *cmd)
+{
+    (void)cmd;
+
+    printf("running move-forward-continuous...\r\n");
+    uint32_t steps = move_forward_until_turn_or_intersection_and_return_steps();
+    print_move_forward_statistics(get_move_forward_statistics());
+    printf("cells_traversed=%" PRIu32 "\r\n", steps);
+    printf("ending move-forward-continuous...\r\n");
 }
 
 /*----------------------------------------------------------------------------*/
