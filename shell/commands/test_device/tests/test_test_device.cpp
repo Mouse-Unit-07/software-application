@@ -126,6 +126,8 @@ static const structured_command_case wheel_encoder_cases[] = {
 
 static const structured_command_case navigate_cases[] = {
     {"navigate", "move-forward", validate_test_navigate_move_forward, 3, 2, 4},
+    {"navigate", "move-forward-continuous", validate_test_navigate_move_forward_continuous, 3, 2,
+     4},
     {"navigate", "rotate-clockwise-90", validate_test_navigate_rotate_clockwise_90, 3, 2, 4},
     {"navigate", "rotate-counterclockwise-90", validate_test_navigate_rotate_counterclockwise_90, 3,
      2, 4},
@@ -230,6 +232,13 @@ void vacuum_test(void)
 void move_forward(void)
 {
     mock().actualCall("move_forward");
+}
+
+uint32_t move_forward_until_turn_or_intersection_and_return_steps(void)
+{
+    mock().actualCall("move_forward_until_turn_or_intersection_and_return_steps");
+
+    return 3u;
 }
 
 struct move_forward_statistics get_move_forward_statistics(void)
@@ -787,7 +796,7 @@ TEST(CommandsTests, ExecuteTestVacuumCallsFunctions)
 
 /*----------------------------------------------------------------------------*/
 /* test navigate */
-TEST(CommandsTests, NavigateCommandContainsSevenSubcommands)
+TEST(CommandsTests, NavigateCommandContainsSubcommands)
 {
     struct command cmd{{0}};
     cmd.token_count = 2;
@@ -798,7 +807,7 @@ TEST(CommandsTests, NavigateCommandContainsSevenSubcommands)
         find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
 
     CHECK(node != nullptr);
-    LONGS_EQUAL(7u, node->child_count);
+    LONGS_EQUAL(8u, node->child_count);
 }
 
 TEST(CommandsTests, NavigateCommandsAreInExpectedOrder)
@@ -806,12 +815,13 @@ TEST(CommandsTests, NavigateCommandsAreInExpectedOrder)
     const struct command_node *commands = get_test_commands()[8].children;
 
     STRCMP_EQUAL("move-forward", commands[0].name);
-    STRCMP_EQUAL("rotate-clockwise-90", commands[1].name);
-    STRCMP_EQUAL("rotate-counterclockwise-90", commands[2].name);
-    STRCMP_EQUAL("rotate-180", commands[3].name);
-    STRCMP_EQUAL("left-wall-presence", commands[4].name);
-    STRCMP_EQUAL("right-wall-presence", commands[5].name);
-    STRCMP_EQUAL("front-wall-presence", commands[6].name);
+    STRCMP_EQUAL("move-forward-continuous", commands[1].name);
+    STRCMP_EQUAL("rotate-clockwise-90", commands[2].name);
+    STRCMP_EQUAL("rotate-counterclockwise-90", commands[3].name);
+    STRCMP_EQUAL("rotate-180", commands[4].name);
+    STRCMP_EQUAL("left-wall-presence", commands[5].name);
+    STRCMP_EQUAL("right-wall-presence", commands[6].name);
+    STRCMP_EQUAL("front-wall-presence", commands[7].name);
 }
 
 TEST(CommandsTests, TestNavigateCommandMatchDepthIsTwo)
@@ -867,6 +877,18 @@ TEST(CommandsTests, ExecuteTestNavigateMoveForwardCallsFunctions)
     mock().expectOneCall("get_move_forward_statistics");
 
     execute_test_navigate_move_forward(&cmd);
+}
+
+/*----------------------------------------------------------------------------*/
+/* test navigate move forward continuous */
+TEST(CommandsTests, ExecuteTestNavigateMoveForwardContinuousCallsFunctions)
+{
+    struct command cmd{{0}};
+
+    mock().expectOneCall("move_forward_until_turn_or_intersection_and_return_steps");
+    mock().expectOneCall("get_move_forward_statistics");
+
+    execute_test_navigate_move_forward_continuous(&cmd);
 }
 
 /*----------------------------------------------------------------------------*/

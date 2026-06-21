@@ -79,6 +79,9 @@ void execute_test_navigate(struct command const *cmd);
 enum validation_result validate_test_navigate_move_forward(struct command *cmd);
 void execute_test_navigate_move_forward(struct command const *cmd);
 
+enum validation_result validate_test_navigate_move_forward_continuous(struct command *cmd);
+void execute_test_navigate_move_forward_continuous(struct command const *cmd);
+
 enum validation_result validate_test_navigate_rotate_clockwise_90(struct command *cmd);
 void execute_test_navigate_rotate_clockwise_90(struct command const *cmd);
 
