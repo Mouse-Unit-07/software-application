@@ -25,7 +25,4 @@ void execute_solve(struct command const *cmd);
 enum validation_result validate_solve_wallfollower(struct command *cmd);
 void execute_solve_wallfollower(struct command const *cmd);
 
-enum validation_result validate_solve_floodfill(struct command *cmd);
-void execute_solve_floodfill(struct command const *cmd);
-
 #endif /* SOLVE_H_ */

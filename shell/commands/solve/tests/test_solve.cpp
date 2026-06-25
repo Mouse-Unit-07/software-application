@@ -15,7 +15,6 @@ extern "C"
 #include <stdint.h>
 #include "maze_solver_common.h"
 #include "wall_follower.h"
-#include "partial_flood_fill.h"
 #include "command.h"
 #include "solve.h"
 
@@ -59,12 +58,6 @@ void run_wall_follower(enum wall_follower_mode mode, bool enable_print)
         .withBoolParameter("enable_print", enable_print);
 }
 
-void run_partial_flood_fill(bool enable_print)
-{
-    mock().actualCall("run_partial_flood_fill")
-        .withBoolParameter("enable_print", enable_print);
-}
-
 }
 
 /*============================================================================*/
@@ -103,7 +96,7 @@ TEST(SolveTests, GetSolveNodeReturnsValidNode)
 
 TEST(SolveTests, GetSolveCommandsCountReturnsExpectedValue)
 {
-    LONGS_EQUAL(2u, get_solve_commands_count());
+    LONGS_EQUAL(1u, get_solve_commands_count());
 }
 
 TEST(SolveTests, SolveCommandsAreInExpectedOrder)
@@ -111,7 +104,6 @@ TEST(SolveTests, SolveCommandsAreInExpectedOrder)
     const struct command_node *commands = get_solve_commands();
 
     STRCMP_EQUAL("wallfollower", commands[0].name);
-    STRCMP_EQUAL("floodfill", commands[1].name);
 }
 
 TEST(SolveTests, GetSolveCommandsContainsWallFollowerNode)
@@ -122,16 +114,6 @@ TEST(SolveTests, GetSolveCommandsContainsWallFollowerNode)
 
     CHECK(commands[0].validate != nullptr);
     CHECK(commands[0].execute != nullptr);
-}
-
-TEST(SolveTests, GetSolveCommandsContainsFloodFillNode)
-{
-    const struct command_node *commands = get_solve_commands();
-
-    STRCMP_EQUAL("floodfill", commands[1].name);
-
-    CHECK(commands[1].validate != nullptr);
-    CHECK(commands[1].execute != nullptr);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -146,7 +128,7 @@ TEST(SolveTests, SolveCommandContainsTwoSubcommands)
         find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
 
     CHECK(node != nullptr);
-    LONGS_EQUAL(2u, node->child_count);
+    LONGS_EQUAL(1u, node->child_count);
 }
 
 TEST(SolveTests, FindCommandNodeReturnsSolveNode)
@@ -304,79 +286,4 @@ TEST(SolveTests, ExecuteSolveWallFollowerRightEnable)
         .withBoolParameter("enable_print", true);
 
     execute_solve_wallfollower(&cmd);
-}
-
-/*----------------------------------------------------------------------------*/
-/* solve floodfill */
-TEST(SolveTests, FindCommandNodeReturnsFloodFillNode)
-{
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-    cmd.tokens[0] = "solve";
-    cmd.tokens[1] = "floodfill";
-
-    struct command_node const *node =
-        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
-
-    CHECK(node != nullptr);
-    STRCMP_EQUAL("floodfill", node->name);
-}
-
-TEST(SolveTests, ValidateSolveFloodFillReturnsSuccess)
-{
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve_floodfill(&cmd));
-}
-
-TEST(SolveTests, ValidateSolveFloodFillEnableReturnsSuccess)
-{
-    struct command cmd{{0}};
-    cmd.token_count = 3;
-    cmd.tokens[2] = "enable";
-
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_solve_floodfill(&cmd));
-}
-
-TEST(SolveTests, ValidateSolveFloodFillReturnsTooManyParameters)
-{
-    struct command cmd{{0}};
-    cmd.token_count = 4;
-
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_solve_floodfill(&cmd));
-}
-
-TEST(SolveTests, ValidateSolveFloodFillRejectsBadParameter)
-{
-    struct command cmd{{0}};
-    cmd.token_count = 3;
-    cmd.tokens[2] = "bad";
-
-    LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_solve_floodfill(&cmd));
-
-    LONGS_EQUAL(2u, cmd.bad_parameter_index);
-}
-
-TEST(SolveTests, ExecuteSolveFloodFillWithoutPrint)
-{
-    struct command cmd{{0}};
-    cmd.token_count = 2;
-
-    mock().expectOneCall("run_partial_flood_fill")
-        .withBoolParameter("enable_print", false);
-
-    execute_solve_floodfill(&cmd);
-}
-
-TEST(SolveTests, ExecuteSolveFloodFillWithPrint)
-{
-    struct command cmd{{0}};
-    cmd.token_count = 3;
-    cmd.tokens[2] = "enable";
-
-    mock().expectOneCall("run_partial_flood_fill")
-        .withBoolParameter("enable_print", true);
-
-    execute_solve_floodfill(&cmd);
 }
