@@ -14,7 +14,6 @@
 #include <string.h>
 #include "maze_solver_common.h"
 #include "wall_follower.h"
-#include "partial_flood_fill.h"
 #include "command.h"
 #include "solve.h"
 
@@ -34,9 +33,7 @@ enum
 enum
 {
     WALLFOLLOWER_PARAM_COUNT_MIN = 1,
-    WALLFOLLOWER_PARAM_COUNT_MAX = 2,
-    FLOODFILL_PARAM_COUNT_MIN = 0,
-    FLOODFILL_PARAM_COUNT_MAX = 1,
+    WALLFOLLOWER_PARAM_COUNT_MAX = 2
 };
 
 static const struct command_node solve_commands[] =
@@ -47,13 +44,6 @@ static const struct command_node solve_commands[] =
         .parameters = "(required; optional print enable): left|right; enable",
         .validate = validate_solve_wallfollower,
         .execute = execute_solve_wallfollower
-    },
-    {
-        .name = "floodfill",
-        .help = "Run partial flood fill",
-        .parameters = "(optional print enable): enable",
-        .validate = validate_solve_floodfill,
-        .execute = execute_solve_floodfill
     }
 };
 
@@ -162,51 +152,6 @@ void execute_solve_wallfollower(struct command const *cmd)
     }
 
     run_wall_follower(mode, enable_print);
-}
-
-/*----------------------------------------------------------------------------*/
-/* solve floodfill */
-enum validation_result validate_solve_floodfill(struct command *cmd)
-{
-    uint32_t min_token_count = SOLVE_COMMAND_TOKEN_COUNT + FLOODFILL_PARAM_COUNT_MIN;
-    uint32_t max_token_count = SOLVE_COMMAND_TOKEN_COUNT + FLOODFILL_PARAM_COUNT_MAX;
-
-    if (cmd->token_count < min_token_count) {
-        return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
-    }
-
-    if (cmd->token_count > max_token_count) {
-        return COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
-    }
-
-    uint32_t base_offset = SOLVE_COMMAND_TOKEN_COUNT;
-    uint32_t param_0_offset = base_offset + PARAM_0_OFFSET;
-
-    if (cmd->token_count == max_token_count) {
-        if (strcmp(cmd->tokens[param_0_offset], "enable") != 0) {
-            cmd->bad_parameter_index = param_0_offset;
-            return COMMAND_VALIDATION_BAD_PARAMETER;
-        }
-    }
-
-    return COMMAND_VALIDATION_SUCCESS;
-}
-
-void execute_solve_floodfill(struct command const *cmd)
-{
-    bool enable_print = false;
-
-    uint32_t max_token_count = SOLVE_COMMAND_TOKEN_COUNT + FLOODFILL_PARAM_COUNT_MAX;
-    uint32_t base_offset = SOLVE_COMMAND_TOKEN_COUNT;
-    uint32_t param_0_offset = base_offset + PARAM_0_OFFSET;
-
-    if (cmd->token_count == max_token_count) {
-        if (strcmp(cmd->tokens[param_0_offset], "enable") == 0) {
-            enable_print = true;
-        }
-    }
-
-    run_partial_flood_fill(enable_print);
 }
 
 /*----------------------------------------------------------------------------*/
