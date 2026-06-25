@@ -54,67 +54,67 @@ static void check_default_maze_physical_params(struct maze_physical_params const
 
 static void check_default_move_forward_common_config(struct move_forward_common_config const& cfg)
 {
-    LONGS_EQUAL(400, cfg.emergency_stop_threshold);
+    LONGS_EQUAL(250, cfg.emergency_stop_threshold);
 }
 
 static void
 check_default_move_forward_control_no_wall_config(struct move_forward_control_config const& cfg)
 {
-    LONGS_EQUAL(140, cfg.base_speed);
-    LONGS_EQUAL(140, cfg.min_speed);
+    LONGS_EQUAL(50, cfg.base_speed);
+    LONGS_EQUAL(40, cfg.min_speed);
     LONGS_EQUAL(255, cfg.max_speed);
-    LONGS_EQUAL(783, cfg.kp_velocity);
-    LONGS_EQUAL(510, cfg.kd_velocity);
-    LONGS_EQUAL(75826, cfg.kp_angle);
-    LONGS_EQUAL(280, cfg.kd_angle);
+    LONGS_EQUAL(14, cfg.kp_velocity);
+    LONGS_EQUAL(899, cfg.kd_velocity);
+    LONGS_EQUAL(66582, cfg.kp_angle);
+    LONGS_EQUAL(554, cfg.kd_angle);
     LONGS_EQUAL(0, cfg.kp_ir);
     LONGS_EQUAL(0, cfg.kd_ir);
-    LONGS_EQUAL(2284, cfg.pid_scale);
+    LONGS_EQUAL(2165, cfg.pid_scale);
     LONGS_EQUAL(0, cfg.wall_target);
 }
 
 static void
 check_default_move_forward_control_one_wall_config(struct move_forward_control_config const& cfg)
 {
-    LONGS_EQUAL(142, cfg.base_speed);
-    LONGS_EQUAL(140, cfg.min_speed);
-    LONGS_EQUAL(255, cfg.max_speed);
-    LONGS_EQUAL(1133, cfg.kp_velocity);
-    LONGS_EQUAL(1704, cfg.kd_velocity);
-    LONGS_EQUAL(2568, cfg.kp_angle);
-    LONGS_EQUAL(1796, cfg.kd_angle);
-    LONGS_EQUAL(1506, cfg.kp_ir);
-    LONGS_EQUAL(446, cfg.kd_ir);
-    LONGS_EQUAL(614, cfg.pid_scale);
-    LONGS_EQUAL(164, cfg.wall_target);
+    LONGS_EQUAL(50, cfg.base_speed);
+    LONGS_EQUAL(40, cfg.min_speed);
+    LONGS_EQUAL(120, cfg.max_speed);
+    LONGS_EQUAL(99, cfg.kp_velocity);
+    LONGS_EQUAL(407, cfg.kd_velocity);
+    LONGS_EQUAL(2709, cfg.kp_angle);
+    LONGS_EQUAL(912, cfg.kd_angle);
+    LONGS_EQUAL(5092, cfg.kp_ir);
+    LONGS_EQUAL(163, cfg.kd_ir);
+    LONGS_EQUAL(5629, cfg.pid_scale);
+    LONGS_EQUAL(174, cfg.wall_target);
 }
 
 static void
 check_default_move_forward_control_both_wall_config(struct move_forward_control_config const& cfg)
 {
-    LONGS_EQUAL(159, cfg.base_speed);
-    LONGS_EQUAL(140, cfg.min_speed);
-    LONGS_EQUAL(255, cfg.max_speed);
-    LONGS_EQUAL(777, cfg.kp_velocity);
-    LONGS_EQUAL(568, cfg.kd_velocity);
-    LONGS_EQUAL(972, cfg.kp_angle);
-    LONGS_EQUAL(1088, cfg.kd_angle);
-    LONGS_EQUAL(1967, cfg.kp_ir);
-    LONGS_EQUAL(671, cfg.kd_ir);
-    LONGS_EQUAL(2396, cfg.pid_scale);
+    LONGS_EQUAL(50, cfg.base_speed);
+    LONGS_EQUAL(40, cfg.min_speed);
+    LONGS_EQUAL(120, cfg.max_speed);
+    LONGS_EQUAL(163, cfg.kp_velocity);
+    LONGS_EQUAL(219, cfg.kd_velocity);
+    LONGS_EQUAL(1542, cfg.kp_angle);
+    LONGS_EQUAL(1679, cfg.kd_angle);
+    LONGS_EQUAL(9198, cfg.kp_ir);
+    LONGS_EQUAL(223, cfg.kd_ir);
+    LONGS_EQUAL(7954, cfg.pid_scale);
     LONGS_EQUAL(0, cfg.wall_target);
 }
 
 static void check_default_rotate_control_config(struct rotate_control_config const &cfg)
 {
-    LONGS_EQUAL(143, cfg.base_speed);
-    LONGS_EQUAL(140, cfg.min_speed);
-    LONGS_EQUAL(255, cfg.max_speed);
-    LONGS_EQUAL(818, cfg.kp_velocity);
-    LONGS_EQUAL(1256, cfg.kd_velocity);
-    LONGS_EQUAL(34644, cfg.kp_angle);
-    LONGS_EQUAL(48, cfg.kd_angle);
-    LONGS_EQUAL(1656, cfg.pid_scale);
+    LONGS_EQUAL(65, cfg.base_speed);
+    LONGS_EQUAL(60, cfg.min_speed);
+    LONGS_EQUAL(70, cfg.max_speed);
+    LONGS_EQUAL(1453, cfg.kp_velocity);
+    LONGS_EQUAL(446, cfg.kd_velocity);
+    LONGS_EQUAL(82643, cfg.kp_angle);
+    LONGS_EQUAL(532, cfg.kd_angle);
+    LONGS_EQUAL(1823, cfg.pid_scale);
 }
 
 static void check_default_front_wall_detection_config(struct front_wall_detection_config const &cfg)
@@ -128,7 +128,7 @@ static void check_default_side_wall_detection_config(struct side_wall_detection_
     LONGS_EQUAL(49, cfg.reading_threshold);
     LONGS_EQUAL(77, cfg.slope_threshold);
     LONGS_EQUAL(10, cfg.num_detection_samples);
-    LONGS_EQUAL(0, cfg.reading_start_offset);
+    DOUBLES_EQUAL(0.1, cfg.reading_start_offset, FLOAT_TOLERANCE);
 }
 
 /*============================================================================*/
