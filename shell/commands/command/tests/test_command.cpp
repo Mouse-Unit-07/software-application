@@ -22,30 +22,24 @@ extern "C"
 /*============================================================================*/
 /*                             Public Definitions                             */
 /*============================================================================*/
-struct command_node const grandchildren[] =
-{
+struct command_node const grandchildren[] = {
     {
         .name = "leaf"
-    }
-};
+    }};
 
-struct command_node const children[] =
-{
+struct command_node const children[] = {
     {
         .name = "child",
         .children = grandchildren,
         .child_count = 1
-    }
-};
+    }};
 
-struct command_node const roots[] =
-{
+struct command_node const roots[] = {
     {
         .name = "root",
         .children = children,
         .child_count = 1
-    }
-};
+    }};
 
 /*============================================================================*/
 /*                            Mock Implementations                            */
@@ -172,8 +166,7 @@ TEST(CommandTests, PrintCommandHelpRunsForSingleCommand)
 
 TEST(CommandTests, PrintCommandHelpRunsForMultipleCommands)
 {
-    struct command_node const commands[] =
-    {
+    struct command_node const commands[] = {
         {
             .name = "cmd1",
             .help = "help1"
@@ -181,8 +174,7 @@ TEST(CommandTests, PrintCommandHelpRunsForMultipleCommands)
         {
             .name = "cmd2",
             .help = "help2"
-        }
-    };
+        }};
 
     print_command_help(commands, 2);
 }

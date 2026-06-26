@@ -46,11 +46,11 @@ void startup(void)
     calculate_navigation_params();
     set_move_forward_common_config(get_saved_default_move_forward_common_config());
     set_no_wall_move_forward_control_config(
-        get_saved_default_move_forward_control_no_wall_config());
+            get_saved_default_move_forward_control_no_wall_config());
     set_one_wall_move_forward_control_config(
-        get_saved_default_move_forward_control_one_wall_config());
+            get_saved_default_move_forward_control_one_wall_config());
     set_both_wall_move_forward_control_config(
-        get_saved_default_move_forward_control_both_wall_config());
+            get_saved_default_move_forward_control_both_wall_config());
     set_rotate_control_config(get_saved_default_rotate_control_config());
     set_side_wall_detection_config(get_saved_default_side_wall_detection_config());
     set_front_wall_detection_config(get_saved_default_front_wall_detection_config());

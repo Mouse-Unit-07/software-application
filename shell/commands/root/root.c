@@ -35,8 +35,7 @@ enum
     MAX_ROOT_NODES = 10
 };
 
-static struct command_node root_commands[MAX_ROOT_NODES] =
-{
+static struct command_node root_commands[MAX_ROOT_NODES] = {
     {
         .name = "help",
         .help = "Display available commands",
@@ -64,8 +63,7 @@ static struct command_node root_commands[MAX_ROOT_NODES] =
         .parameters = NULL,
         .validate = validate_time,
         .execute = execute_time
-    }
-};
+    }};
 
 static const uint32_t ROOT_COMMANDS_DEFAULT_COUNT = 4u;
 static uint32_t root_commands_count = 4u;

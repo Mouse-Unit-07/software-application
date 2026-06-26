@@ -36,27 +36,23 @@ enum
     WALLFOLLOWER_PARAM_COUNT_MAX = 2
 };
 
-static const struct command_node solve_commands[] =
-{
+static const struct command_node solve_commands[] = {
     {
         .name = "wallfollower",
         .help = "Run wall follower",
         .parameters = "(required; optional print enable): left|right; enable",
         .validate = validate_solve_wallfollower,
         .execute = execute_solve_wallfollower
-    }
-};
+    }};
 
-static const struct command_node solve_node =
-{
+static const struct command_node solve_node = {
     .name = "solve",
     .help = "Run maze solving algorithms",
     .parameters = NULL,
     .validate = validate_solve,
     .execute = execute_solve,
     .children = solve_commands,
-    .child_count = sizeof(solve_commands) / sizeof(solve_commands[0])
-};
+    .child_count = sizeof(solve_commands) / sizeof(solve_commands[0])};
 
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Definitions                        */

@@ -54,8 +54,8 @@ extern "C"
 void run_wall_follower(enum wall_follower_mode mode, bool enable_print)
 {
     mock().actualCall("run_wall_follower")
-        .withUnsignedIntParameter("mode", (uint32_t)mode)
-        .withBoolParameter("enable_print", enable_print);
+            .withUnsignedIntParameter("mode", (uint32_t)mode)
+            .withBoolParameter("enable_print", enable_print);
 }
 
 }
@@ -125,7 +125,7 @@ TEST(SolveTests, SolveCommandContainsTwoSubcommands)
     cmd.tokens[0] = "solve";
 
     struct command_node const *node =
-        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
 
     CHECK(node != nullptr);
     LONGS_EQUAL(1u, node->child_count);
@@ -138,7 +138,7 @@ TEST(SolveTests, FindCommandNodeReturnsSolveNode)
     cmd.tokens[0] = "solve";
 
     struct command_node const *node =
-        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("solve", node->name);
@@ -177,7 +177,7 @@ TEST(SolveTests, FindCommandNodeReturnsWallFollowerNode)
     cmd.tokens[1] = "wallfollower";
 
     struct command_node const *node =
-        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("wallfollower", node->name);
@@ -192,7 +192,7 @@ TEST(SolveTests, WallFollowerCommandMatchDepthIsTwo)
     cmd.tokens[1] = "wallfollower";
 
     struct command_match match =
-        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT);
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT);
 
     LONGS_EQUAL(2u, match.depth);
 }
@@ -268,8 +268,8 @@ TEST(SolveTests, ExecuteSolveWallFollowerLeft)
     cmd.tokens[2] = "left";
 
     mock().expectOneCall("run_wall_follower")
-        .withUnsignedIntParameter("mode", WALL_FOLLOWER_LEFT)
-        .withBoolParameter("enable_print", false);
+            .withUnsignedIntParameter("mode", WALL_FOLLOWER_LEFT)
+            .withBoolParameter("enable_print", false);
 
     execute_solve_wallfollower(&cmd);
 }
@@ -282,8 +282,8 @@ TEST(SolveTests, ExecuteSolveWallFollowerRightEnable)
     cmd.tokens[3] = "enable";
 
     mock().expectOneCall("run_wall_follower")
-        .withUnsignedIntParameter("mode", WALL_FOLLOWER_RIGHT)
-        .withBoolParameter("enable_print", true);
+            .withUnsignedIntParameter("mode", WALL_FOLLOWER_RIGHT)
+            .withBoolParameter("enable_print", true);
 
     execute_solve_wallfollower(&cmd);
 }

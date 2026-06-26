@@ -23,124 +23,104 @@ static void reset_all_test_configs(void);
 /*----------------------------------------------------------------------------*/
 /*                               Private Globals                              */
 /*----------------------------------------------------------------------------*/
-static const struct maze_solver_config default_maze_solver_config =
-{
-    .maze_size = 16u,
-    .total_timeout_sec = 10u * 60u,
-    .move_forward_time_sec = 1u,
-    .rotate_90_deg_time_sec = 1u,
-    .rotate_180_deg_time_sec = 1u
-};
+static const struct maze_solver_config default_maze_solver_config = {
+        .maze_size = 16u,
+        .total_timeout_sec = 10u * 60u,
+        .move_forward_time_sec = 1u,
+        .rotate_90_deg_time_sec = 1u,
+        .rotate_180_deg_time_sec = 1u};
 
 static struct maze_solver_config test_maze_solver_config = {0};
 
-static const struct mouse_physical_params default_mouse_physical_params =
-{
-    .wheel_diameter_mm = 32.0,
-    .wheel_base_mm = 87.56,
-    .max_motor_rpm = 4900.0,
-    .encoder_events_per_revolution = 60.8077,
-    .motor_pinion_gear_teeth = 13.0,
-    .wheel_gear_teeth = 44.0
-};
+static const struct mouse_physical_params default_mouse_physical_params = {
+        .wheel_diameter_mm = 32.0,
+        .wheel_base_mm = 87.56,
+        .max_motor_rpm = 4900.0,
+        .encoder_events_per_revolution = 60.8077,
+        .motor_pinion_gear_teeth = 13.0,
+        .wheel_gear_teeth = 44.0};
 
 static struct mouse_physical_params test_mouse_physical_params = {0};
 
-static const struct maze_physical_params default_maze_physical_params =
-{
-    .post_size_mm = 12.07,
-    .wall_size_mm = 166.37
-};
+static const struct maze_physical_params default_maze_physical_params ={
+        .post_size_mm = 12.07,
+        .wall_size_mm = 166.37};
 
 static struct maze_physical_params test_maze_physical_params = {0};
 
-static const struct move_forward_common_config default_move_forward_common_config =
-{
-    .emergency_stop_threshold = 250
-};
+static const struct move_forward_common_config default_move_forward_common_config = {
+        .emergency_stop_threshold = 250};
 
 static struct move_forward_common_config test_move_forward_common_config = {0};
 
-static const struct move_forward_control_config default_move_forward_control_no_wall_config =
-{
-    .base_speed = 50,
-    .min_speed = 40,
-    .max_speed = 255,
-    .kp_velocity = 14,
-    .kd_velocity = 899,
-    .kp_angle = 66582,
-    .kd_angle = 554,
-    .kp_ir = 0,
-    .kd_ir = 0,
-    .pid_scale = 2165,
-    .wall_target = 0
-};
+static const struct move_forward_control_config default_move_forward_control_no_wall_config = {
+        .base_speed = 50,
+        .min_speed = 40,
+        .max_speed = 255,
+        .kp_velocity = 14,
+        .kd_velocity = 899,
+        .kp_angle = 66582,
+        .kd_angle = 554,
+        .kp_ir = 0,
+        .kd_ir = 0,
+        .pid_scale = 2165,
+        .wall_target = 0};
 
 static struct move_forward_control_config test_move_forward_control_no_wall_config = {0};
 
-static const struct move_forward_control_config default_move_forward_control_one_wall_config =
-{
-    .base_speed = 50,
-    .min_speed = 40,
-    .max_speed = 120,
-    .kp_velocity = 99,
-    .kd_velocity = 407,
-    .kp_angle = 2709,
-    .kd_angle = 912,
-    .kp_ir = 5092,
-    .kd_ir = 163,
-    .pid_scale = 5629,
-    .wall_target = 174
-};
+static const struct move_forward_control_config default_move_forward_control_one_wall_config = {
+        .base_speed = 50,
+        .min_speed = 40,
+        .max_speed = 120,
+        .kp_velocity = 99,
+        .kd_velocity = 407,
+        .kp_angle = 2709,
+        .kd_angle = 912,
+        .kp_ir = 5092,
+        .kd_ir = 163,
+        .pid_scale = 5629,
+        .wall_target = 174};
 
 static struct move_forward_control_config test_move_forward_control_one_wall_config = {0};
 
-static const struct move_forward_control_config default_move_forward_control_both_wall_config =
-{
-    .base_speed = 50,
-    .min_speed = 40,
-    .max_speed = 120,
-    .kp_velocity = 163,
-    .kd_velocity = 219,
-    .kp_angle = 1542,
-    .kd_angle = 1679,
-    .kp_ir = 9198,
-    .kd_ir = 223,
-    .pid_scale = 7954,
-    .wall_target = 0
-};
+static const struct move_forward_control_config default_move_forward_control_both_wall_config = {
+        .base_speed = 50,
+        .min_speed = 40,
+        .max_speed = 120,
+        .kp_velocity = 163,
+        .kd_velocity = 219,
+        .kp_angle = 1542,
+        .kd_angle = 1679,
+        .kp_ir = 9198,
+        .kd_ir = 223,
+        .pid_scale = 7954,
+        .wall_target = 0};
 
 static struct move_forward_control_config test_move_forward_control_both_wall_config = {0};
 
-static const struct rotate_control_config default_rotate_control_config =
-{
-    .base_speed = 65,
-    .min_speed = 60,
-    .max_speed = 70,
-    .kp_velocity = 1453,
-    .kd_velocity = 446,
-    .kp_angle = 82643,
-    .kd_angle = 532,
-    .pid_scale = 1823
-};
+static const struct rotate_control_config default_rotate_control_config = {
+        .base_speed = 65,
+        .min_speed = 60,
+        .max_speed = 70,
+        .kp_velocity = 1453,
+        .kd_velocity = 446,
+        .kp_angle = 82643,
+        .kd_angle = 532,
+        .pid_scale = 1823};
 
 static struct rotate_control_config test_rotate_control_config = {0};
 
-static const struct front_wall_detection_config default_front_wall_detection_config =
-{
-    .reading_threshold = 161,
-    .num_detection_samples = 10
-};
+static const struct front_wall_detection_config default_front_wall_detection_config = {
+        .reading_threshold = 161,
+        .num_detection_samples = 10};
 
 static struct front_wall_detection_config test_front_wall_detection_config = {0};
 
-static const struct side_wall_detection_config default_side_wall_detection_config =
-{
-    .reading_threshold = 49,
-    .slope_threshold = 77,
-    .num_detection_samples = 10,
-    .reading_start_offset = 0.1
-};
+static const struct side_wall_detection_config default_side_wall_detection_config = {
+        .reading_threshold = 49,
+        .slope_threshold = 77,
+        .num_detection_samples = 10,
+        .reading_start_offset = 0.1};
 
 static struct side_wall_detection_config test_side_wall_detection_config = {0};
 

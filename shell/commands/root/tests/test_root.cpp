@@ -38,8 +38,7 @@ void print_hardware_state(void)
 
 uint32_t get_current_global_time_sec(void)
 {
-    return mock().actualCall("get_current_global_time_sec")
-        .returnUnsignedIntValue();
+    return mock().actualCall("get_current_global_time_sec").returnUnsignedIntValue();
 }
 
 struct command_node const *get_get_node(void)
@@ -171,7 +170,7 @@ TEST(RootTests, FindCommandNodeReturnsNullForUnknownCommand)
     cmd.tokens[0] = "invalid";
 
     struct command_match match{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
 
     POINTERS_EQUAL(nullptr, match.node);
 }
@@ -181,7 +180,7 @@ TEST(RootTests, FindCommandNodeReturnsNullForEmptyCommand)
     struct command cmd{{0}};
 
     struct command_match match{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
 
     POINTERS_EQUAL(nullptr, match.node);
 }
@@ -232,7 +231,7 @@ TEST(RootTests, FindHelpCommandReturnsNode)
     cmd.tokens[0] = "help";
 
     struct command_node const *node{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
 
     CHECK(node != nullptr);
 
@@ -249,7 +248,7 @@ TEST(RootTests, HelpCommandMatchDepthIsOne)
     cmd.tokens[0] = "help";
 
     struct command_match match{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
 
     LONGS_EQUAL(1u, match.depth);
 }
@@ -285,7 +284,7 @@ TEST(RootTests, FindClearCommandReturnsNode)
     cmd.tokens[0] = "clear";
 
     struct command_node const *node{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
 
     CHECK(node != nullptr);
 
@@ -326,7 +325,7 @@ TEST(RootTests, FindFaultsCommandReturnsNode)
     cmd.tokens[0] = "faults";
 
     struct command_node const *node{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
 
     CHECK(node != nullptr);
 
@@ -369,7 +368,7 @@ TEST(RootTests, FindTimeCommandReturnsNode)
     cmd.tokens[0] = "time";
 
     struct command_node const *node{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
 
     CHECK(node != nullptr);
 
@@ -397,8 +396,7 @@ TEST(RootTests, ValidateTimeReturnsTooManyParameters)
 TEST(RootTests, ExecuteTimeCallsFunctions)
 {
     struct command cmd{{0}};
-    mock().expectOneCall("get_current_global_time_sec")
-        .andReturnValue(0u);
+    mock().expectOneCall("get_current_global_time_sec").andReturnValue(0u);
 
     execute_time(&cmd);
 }

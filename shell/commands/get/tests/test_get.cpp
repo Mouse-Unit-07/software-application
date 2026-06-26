@@ -61,7 +61,7 @@ void check_command_lookup(char const *command_name, uint32_t token_count)
     struct command cmd{make_get_command(command_name, token_count)};
 
     struct command_node const *node =
-        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
 
     CHECK(node != nullptr);
     STRCMP_EQUAL(command_name, node->name);
@@ -89,43 +89,43 @@ struct get_command_test_case {
 };
 
 static const get_command_test_case get_commands[] = {
-    {"solver-default", validate_get_solver_default},
-    {"solver-test", validate_get_solver_test},
-    {"solver-current", validate_get_solver_current},
-    {"mouse-physical-default", validate_get_mouse_physical_default},
-    {"mouse-physical-test", validate_get_mouse_physical_test},
-    {"mouse-physical-current", validate_get_mouse_physical_current},
-    {"mouse-calculated", validate_get_mouse_calculated},
-    {"maze-physical-default", validate_get_maze_physical_default},
-    {"maze-physical-test", validate_get_maze_physical_test},
-    {"maze-physical-current", validate_get_maze_physical_current},
-    {"maze-calculated", validate_get_maze_calculated},
-    {"navigation", validate_get_navigation},
-    {"move-forward-common-default", validate_get_move_forward_common_default},
-    {"move-forward-common-test", validate_get_move_forward_common_test},
-    {"move-forward-common-current", validate_get_move_forward_common_current},
-    {"move-forward-no-wall-default", validate_get_move_forward_no_wall_default},
-    {"move-forward-no-wall-test", validate_get_move_forward_no_wall_test},
-    {"move-forward-no-wall-current", validate_get_move_forward_no_wall_current},
-    {"move-forward-no-wall-calculated", validate_get_move_forward_no_wall_calculated},
-    {"move-forward-one-wall-default", validate_get_move_forward_one_wall_default},
-    {"move-forward-one-wall-test", validate_get_move_forward_one_wall_test},
-    {"move-forward-one-wall-current", validate_get_move_forward_one_wall_current},
-    {"move-forward-one-wall-calculated", validate_get_move_forward_one_wall_calculated},
-    {"move-forward-both-wall-default", validate_get_move_forward_both_wall_default},
-    {"move-forward-both-wall-test", validate_get_move_forward_both_wall_test},
-    {"move-forward-both-wall-current", validate_get_move_forward_both_wall_current},
-    {"move-forward-both-wall-calculated", validate_get_move_forward_both_wall_calculated},
-    {"rotate-default", validate_get_rotate_default},
-    {"rotate-test", validate_get_rotate_test},
-    {"rotate-current", validate_get_rotate_current},
-    {"front-wall-default", validate_get_front_wall_default},
-    {"front-wall-test", validate_get_front_wall_test},
-    {"front-wall-current", validate_get_front_wall_current},
-    {"side-wall-default", validate_get_side_wall_default},
-    {"side-wall-test", validate_get_side_wall_test},
-    {"side-wall-current", validate_get_side_wall_current},
-    {"side-wall-calculated", validate_get_side_wall_calculated}};
+        {"solver-default", validate_get_solver_default},
+        {"solver-test", validate_get_solver_test},
+        {"solver-current", validate_get_solver_current},
+        {"mouse-physical-default", validate_get_mouse_physical_default},
+        {"mouse-physical-test", validate_get_mouse_physical_test},
+        {"mouse-physical-current", validate_get_mouse_physical_current},
+        {"mouse-calculated", validate_get_mouse_calculated},
+        {"maze-physical-default", validate_get_maze_physical_default},
+        {"maze-physical-test", validate_get_maze_physical_test},
+        {"maze-physical-current", validate_get_maze_physical_current},
+        {"maze-calculated", validate_get_maze_calculated},
+        {"navigation", validate_get_navigation},
+        {"move-forward-common-default", validate_get_move_forward_common_default},
+        {"move-forward-common-test", validate_get_move_forward_common_test},
+        {"move-forward-common-current", validate_get_move_forward_common_current},
+        {"move-forward-no-wall-default", validate_get_move_forward_no_wall_default},
+        {"move-forward-no-wall-test", validate_get_move_forward_no_wall_test},
+        {"move-forward-no-wall-current", validate_get_move_forward_no_wall_current},
+        {"move-forward-no-wall-calculated", validate_get_move_forward_no_wall_calculated},
+        {"move-forward-one-wall-default", validate_get_move_forward_one_wall_default},
+        {"move-forward-one-wall-test", validate_get_move_forward_one_wall_test},
+        {"move-forward-one-wall-current", validate_get_move_forward_one_wall_current},
+        {"move-forward-one-wall-calculated", validate_get_move_forward_one_wall_calculated},
+        {"move-forward-both-wall-default", validate_get_move_forward_both_wall_default},
+        {"move-forward-both-wall-test", validate_get_move_forward_both_wall_test},
+        {"move-forward-both-wall-current", validate_get_move_forward_both_wall_current},
+        {"move-forward-both-wall-calculated", validate_get_move_forward_both_wall_calculated},
+        {"rotate-default", validate_get_rotate_default},
+        {"rotate-test", validate_get_rotate_test},
+        {"rotate-current", validate_get_rotate_current},
+        {"front-wall-default", validate_get_front_wall_default},
+        {"front-wall-test", validate_get_front_wall_test},
+        {"front-wall-current", validate_get_front_wall_current},
+        {"side-wall-default", validate_get_side_wall_default},
+        {"side-wall-test", validate_get_side_wall_test},
+        {"side-wall-current", validate_get_side_wall_current},
+        {"side-wall-calculated", validate_get_side_wall_calculated}};
 
 /*============================================================================*/
 /*                            Mock Implementations                            */
@@ -472,7 +472,7 @@ TEST(GetTests, FindCommandNodeReturnsGetNode)
     struct command cmd{make_get_command("", 1)};
 
     struct command_node const *node =
-        find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("get", node->name);

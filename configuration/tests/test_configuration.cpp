@@ -52,13 +52,13 @@ static void check_default_maze_physical_params(struct maze_physical_params const
     DOUBLES_EQUAL(166.37, cfg.wall_size_mm, FLOAT_TOLERANCE);
 }
 
-static void check_default_move_forward_common_config(struct move_forward_common_config const& cfg)
+static void check_default_move_forward_common_config(struct move_forward_common_config const &cfg)
 {
     LONGS_EQUAL(250, cfg.emergency_stop_threshold);
 }
 
 static void
-check_default_move_forward_control_no_wall_config(struct move_forward_control_config const& cfg)
+check_default_move_forward_control_no_wall_config(struct move_forward_control_config const &cfg)
 {
     LONGS_EQUAL(50, cfg.base_speed);
     LONGS_EQUAL(40, cfg.min_speed);
@@ -74,7 +74,7 @@ check_default_move_forward_control_no_wall_config(struct move_forward_control_co
 }
 
 static void
-check_default_move_forward_control_one_wall_config(struct move_forward_control_config const& cfg)
+check_default_move_forward_control_one_wall_config(struct move_forward_control_config const &cfg)
 {
     LONGS_EQUAL(50, cfg.base_speed);
     LONGS_EQUAL(40, cfg.min_speed);
@@ -90,7 +90,7 @@ check_default_move_forward_control_one_wall_config(struct move_forward_control_c
 }
 
 static void
-check_default_move_forward_control_both_wall_config(struct move_forward_control_config const& cfg)
+check_default_move_forward_control_both_wall_config(struct move_forward_control_config const &cfg)
 {
     LONGS_EQUAL(50, cfg.base_speed);
     LONGS_EQUAL(40, cfg.min_speed);
@@ -239,7 +239,7 @@ TEST(ConfigurationTests, InitConfigurationResetsMoveForwardNoWallConfigToDefault
     save_move_forward_control_no_wall_config_as_test(cfg);
     init_configuration();
     check_default_move_forward_control_no_wall_config(
-        get_saved_test_move_forward_control_no_wall_config());
+            get_saved_test_move_forward_control_no_wall_config());
 }
 
 TEST(ConfigurationTests, InitConfigurationResetsMoveForwardOneWallConfigToDefaults)
@@ -260,7 +260,7 @@ TEST(ConfigurationTests, InitConfigurationResetsMoveForwardOneWallConfigToDefaul
     save_move_forward_control_one_wall_config_as_test(cfg);
     init_configuration();
     check_default_move_forward_control_one_wall_config(
-        get_saved_test_move_forward_control_one_wall_config());
+            get_saved_test_move_forward_control_one_wall_config());
 }
 
 TEST(ConfigurationTests, InitConfigurationResetsMoveForwardBothWallConfigToDefaults)
@@ -281,7 +281,7 @@ TEST(ConfigurationTests, InitConfigurationResetsMoveForwardBothWallConfigToDefau
     save_move_forward_control_both_wall_config_as_test(cfg);
     init_configuration();
     check_default_move_forward_control_both_wall_config(
-        get_saved_test_move_forward_control_both_wall_config());
+            get_saved_test_move_forward_control_both_wall_config());
 }
 
 TEST(ConfigurationTests, InitConfigurationResetsRotateControlConfigToDefaults)
@@ -403,7 +403,7 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardNoWallConfigToDefau
     save_move_forward_control_no_wall_config_as_test(cfg);
     deinit_configuration();
     check_default_move_forward_control_no_wall_config(
-        get_saved_test_move_forward_control_no_wall_config());
+            get_saved_test_move_forward_control_no_wall_config());
 }
 
 TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardOneWallConfigToDefaults)
@@ -424,7 +424,7 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardOneWallConfigToDefa
     save_move_forward_control_one_wall_config_as_test(cfg);
     deinit_configuration();
     check_default_move_forward_control_one_wall_config(
-        get_saved_test_move_forward_control_one_wall_config());
+            get_saved_test_move_forward_control_one_wall_config());
 }
 
 TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardBothWallConfigToDefaults)
@@ -445,7 +445,7 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardBothWallConfigToDef
     save_move_forward_control_both_wall_config_as_test(cfg);
     deinit_configuration();
     check_default_move_forward_control_both_wall_config(
-        get_saved_test_move_forward_control_both_wall_config());
+            get_saved_test_move_forward_control_both_wall_config());
 }
 
 TEST(ConfigurationTests, DeinitConfigurationResetsRotateControlConfigToDefaults)
@@ -604,19 +604,19 @@ TEST(ConfigurationTests, SetTestMoveForwardCommonConfigUpdatesValues)
 TEST(ConfigurationTests, DefaultMoveForwardNoWallConfigContainsExpectedValues)
 {
     check_default_move_forward_control_no_wall_config(
-        get_saved_default_move_forward_control_no_wall_config());
+            get_saved_default_move_forward_control_no_wall_config());
 }
 
 TEST(ConfigurationTests, DefaultMoveForwardOneWallConfigContainsExpectedValues)
 {
     check_default_move_forward_control_one_wall_config(
-        get_saved_default_move_forward_control_one_wall_config());
+            get_saved_default_move_forward_control_one_wall_config());
 }
 
 TEST(ConfigurationTests, DefaultMoveForwardBothWallConfigContainsExpectedValues)
 {
     check_default_move_forward_control_both_wall_config(
-        get_saved_default_move_forward_control_both_wall_config());
+            get_saved_default_move_forward_control_both_wall_config());
 }
 
 TEST(ConfigurationTests, DefaultRotateControlConfigContainsExpectedValues)
@@ -637,19 +637,19 @@ TEST(ConfigurationTests, DefaultSideWallDetectionConfigContainsExpectedValues)
 TEST(ConfigurationTests, TestMoveForwardNoWallConfigInitiallyContainsExpectedValues)
 {
     check_default_move_forward_control_no_wall_config(
-        get_saved_test_move_forward_control_no_wall_config());
+            get_saved_test_move_forward_control_no_wall_config());
 }
 
 TEST(ConfigurationTests, TestMoveForwardOneWallConfigInitiallyContainsExpectedValues)
 {
     check_default_move_forward_control_one_wall_config(
-        get_saved_test_move_forward_control_one_wall_config());
+            get_saved_test_move_forward_control_one_wall_config());
 }
 
 TEST(ConfigurationTests, TestMoveForwardBothWallConfigInitiallyContainsExpectedValues)
 {
     check_default_move_forward_control_both_wall_config(
-        get_saved_test_move_forward_control_both_wall_config());
+            get_saved_test_move_forward_control_both_wall_config());
 }
 
 TEST(ConfigurationTests, TestRotateControlConfigInitiallyContainsExpectedValues)
@@ -684,7 +684,7 @@ TEST(ConfigurationTests, SetTestMoveForwardNoWallConfigUpdatesValues)
 
     save_move_forward_control_no_wall_config_as_test(cfg);
     struct move_forward_control_config result =
-        get_saved_test_move_forward_control_no_wall_config();
+            get_saved_test_move_forward_control_no_wall_config();
 
     LONGS_EQUAL(1, result.base_speed);
     LONGS_EQUAL(2, result.min_speed);
@@ -716,7 +716,7 @@ TEST(ConfigurationTests, SetTestMoveForwardOneWallConfigUpdatesValues)
 
     save_move_forward_control_one_wall_config_as_test(cfg);
     struct move_forward_control_config result =
-        get_saved_test_move_forward_control_one_wall_config();
+            get_saved_test_move_forward_control_one_wall_config();
 
     LONGS_EQUAL(1, result.base_speed);
     LONGS_EQUAL(2, result.min_speed);
@@ -748,7 +748,7 @@ TEST(ConfigurationTests, SetTestMoveForwardBothWallConfigUpdatesValues)
 
     save_move_forward_control_both_wall_config_as_test(cfg);
     struct move_forward_control_config result =
-        get_saved_test_move_forward_control_both_wall_config();
+            get_saved_test_move_forward_control_both_wall_config();
 
     LONGS_EQUAL(1, result.base_speed);
     LONGS_EQUAL(2, result.min_speed);
