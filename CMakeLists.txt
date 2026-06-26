@@ -26,7 +26,6 @@ add_subdirectory(shell/commands/test_device)
 add_subdirectory(shell/core)
 add_subdirectory(startup)
 
-# \/=== Add all test directories
 if(TARGET_WINDOWS AND SUPPORTS_WINDOWS)
     if(ENABLE_APPLICATION_TESTS)
         add_subdirectory(configuration/tests)

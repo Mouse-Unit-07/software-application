@@ -47,8 +47,7 @@ enum
     WHEEL_ENCODER_DECEL_PARAMETER_COUNT = 6
 };
 
-static const struct command_node test_ir_commands[] =
-{
+static const struct command_node test_ir_commands[] = {
     {
         .name = "distance",
         .help ="Run IR distance test",
@@ -70,11 +69,9 @@ static const struct command_node test_ir_commands[] =
         .parameters = "(required): time_per_sensor_ms",
         .validate = validate_test_ir_speed,
         .execute = execute_test_ir_speed
-    }
-};
+    }};
 
-static const struct command_node test_wheel_encoder_commands[] =
-{
+static const struct command_node test_wheel_encoder_commands[] = {
     {
         .name = "target",
         .help = "Run wheel encoder target test",
@@ -98,11 +95,9 @@ static const struct command_node test_wheel_encoder_commands[] =
             "start_speed, top_speed, max_accel_decel_percent",
         .validate = validate_test_wheel_encoder_deceleration,
         .execute = execute_test_wheel_encoder_deceleration
-    }
-};
+    }};
 
-static const struct command_node test_navigate_commands[] =
-{
+static const struct command_node test_navigate_commands[] = {
     {
         .name = "move-forward",
         .help = "Execute one-cell move forward",
@@ -158,11 +153,9 @@ static const struct command_node test_navigate_commands[] =
         .parameters = NULL,
         .validate = validate_test_navigate_front_wall_presence,
         .execute = execute_test_navigate_front_wall_presence
-    }
-};
+    }};
 
-static const struct command_node test_commands[] =
-{
+static const struct command_node test_commands[] = {
     {
         .name = "processor",
         .help = "Run processor self-test",
@@ -231,19 +224,16 @@ static const struct command_node test_commands[] =
         .execute = execute_test_navigate,
         .children = test_navigate_commands,
         .child_count = sizeof(test_navigate_commands) / sizeof(test_navigate_commands[0])
-    }
-};
+    }};
 
-static const struct command_node test_node =
-{
-    .name = "test",
-    .help = "Run device self-tests",
-    .parameters = NULL,
-    .validate = validate_test,
-    .execute = execute_test,
-    .children = test_commands,
-    .child_count = sizeof(test_commands) / sizeof(test_commands[0])
-};
+static const struct command_node test_node = {
+        .name = "test",
+        .help = "Run device self-tests",
+        .parameters = NULL,
+        .validate = validate_test,
+        .execute = execute_test,
+        .children = test_commands,
+        .child_count = sizeof(test_commands) / sizeof(test_commands[0])};
 
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Definitions                        */
@@ -478,8 +468,9 @@ void execute_test_wheel_encoder(struct command const *cmd)
     (void)cmd;
 
     printf("test wheel-encoder command parameters:\r\n");
-    print_command_help(test_wheel_encoder_commands, sizeof(test_wheel_encoder_commands)
-                                                        / sizeof(test_wheel_encoder_commands[0]));
+    print_command_help(test_wheel_encoder_commands,
+                       sizeof(test_wheel_encoder_commands)
+                               / sizeof(test_wheel_encoder_commands[0]));
 }
 
 /*----------------------------------------------------------------------------*/
@@ -487,7 +478,7 @@ void execute_test_wheel_encoder(struct command const *cmd)
 enum validation_result validate_test_wheel_encoder_target(struct command *cmd)
 {
     uint32_t expected =
-        TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT + WHEEL_ENCODER_TARGET_PARAMETER_COUNT;
+            TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT + WHEEL_ENCODER_TARGET_PARAMETER_COUNT;
 
     if (cmd->token_count < expected) {
         return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
@@ -522,7 +513,7 @@ void execute_test_wheel_encoder_target(struct command const *cmd)
 enum validation_result validate_test_wheel_encoder_drift(struct command *cmd)
 {
     uint32_t expected =
-        TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT + WHEEL_ENCODER_DRIFT_PARAMETER_COUNT;
+            TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT + WHEEL_ENCODER_DRIFT_PARAMETER_COUNT;
 
     if (cmd->token_count < expected) {
         return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;
@@ -557,7 +548,7 @@ void execute_test_wheel_encoder_drift(struct command const *cmd)
 enum validation_result validate_test_wheel_encoder_deceleration(struct command *cmd)
 {
     uint32_t expected =
-        TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT + WHEEL_ENCODER_DECEL_PARAMETER_COUNT;
+            TEST_WHEEL_ENCODER_COMMAND_TOKEN_COUNT + WHEEL_ENCODER_DECEL_PARAMETER_COUNT;
 
     if (cmd->token_count < expected) {
         return COMMAND_VALIDATION_TOO_FEW_PARAMETERS;

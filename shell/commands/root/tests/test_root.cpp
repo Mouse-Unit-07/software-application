@@ -38,8 +38,7 @@ void print_hardware_state(void)
 
 uint32_t get_current_global_time_sec(void)
 {
-    return mock().actualCall("get_current_global_time_sec")
-        .returnUnsignedIntValue();
+    return mock().actualCall("get_current_global_time_sec").returnUnsignedIntValue();
 }
 
 struct command_node const *get_get_node(void)
@@ -154,10 +153,9 @@ TEST(RootTests, GetRootCommandsCountReturnsExpectedValue)
 
 TEST(RootTests, GetCommandTreeRootContainsHelpNode)
 {
-    struct command_node const *root = get_root_commands();
+    struct command_node const *root{get_root_commands()};
 
     STRCMP_EQUAL("help", root[0].name);
-
     STRCMP_EQUAL("Display available commands", root[0].help);
 
     CHECK(root[0].validate != nullptr);
@@ -167,11 +165,11 @@ TEST(RootTests, GetCommandTreeRootContainsHelpNode)
 TEST(RootTests, FindCommandNodeReturnsNullForUnknownCommand)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "invalid";
 
     struct command_match match{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
 
     POINTERS_EQUAL(nullptr, match.node);
 }
@@ -181,7 +179,7 @@ TEST(RootTests, FindCommandNodeReturnsNullForEmptyCommand)
     struct command cmd{{0}};
 
     struct command_match match{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
 
     POINTERS_EQUAL(nullptr, match.node);
 }
@@ -189,10 +187,10 @@ TEST(RootTests, FindCommandNodeReturnsNullForEmptyCommand)
 TEST(RootTests, FindCommandNodeInRootReturnsHelpNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "help";
 
-    struct command_match match = find_command_node_in_root(&cmd);
+    struct command_match match{find_command_node_in_root(&cmd)};
 
     CHECK(match.node != nullptr);
     STRCMP_EQUAL("help", match.node->name);
@@ -201,17 +199,17 @@ TEST(RootTests, FindCommandNodeInRootReturnsHelpNode)
 TEST(RootTests, FindCommandNodeInRootReturnsDepthOne)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "help";
 
-    struct command_match match = find_command_node_in_root(&cmd);
+    struct command_match match{find_command_node_in_root(&cmd)};
 
     LONGS_EQUAL(1u, match.depth);
 }
 
 TEST(RootTests, RootCommandsAreAddedInExpectedOrder)
 {
-    struct command_node const *root = get_root_commands();
+    struct command_node const *root{get_root_commands()};
 
     STRCMP_EQUAL("help", root[0].name);
     STRCMP_EQUAL("clear", root[1].name);
@@ -228,11 +226,11 @@ TEST(RootTests, RootCommandsAreAddedInExpectedOrder)
 TEST(RootTests, FindHelpCommandReturnsNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "help";
 
     struct command_node const *node{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
 
     CHECK(node != nullptr);
 
@@ -245,11 +243,11 @@ TEST(RootTests, FindHelpCommandReturnsNode)
 TEST(RootTests, HelpCommandMatchDepthIsOne)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "help";
 
     struct command_match match{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count())};
 
     LONGS_EQUAL(1u, match.depth);
 }
@@ -264,7 +262,7 @@ TEST(RootTests, ValidateHelpReturnsSuccess)
 TEST(RootTests, ValidateHelpReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_help(&cmd));
 }
@@ -281,11 +279,11 @@ TEST(RootTests, ExecuteHelpRunsWithoutCrash)
 TEST(RootTests, FindClearCommandReturnsNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "clear";
 
     struct command_node const *node{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
 
     CHECK(node != nullptr);
 
@@ -305,7 +303,7 @@ TEST(RootTests, ValidateClearReturnsSuccess)
 TEST(RootTests, ValidateClearReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_clear(&cmd));
 }
@@ -322,11 +320,11 @@ TEST(RootTests, ExecuteClearRunsWithoutCrash)
 TEST(RootTests, FindFaultsCommandReturnsNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "faults";
 
     struct command_node const *node{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
 
     CHECK(node != nullptr);
 
@@ -346,7 +344,7 @@ TEST(RootTests, ValidateHardwareFaultsReturnsSuccess)
 TEST(RootTests, ValidateHardwareFaultsReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_hardware_faults(&cmd));
 }
@@ -365,11 +363,11 @@ TEST(RootTests, ExecuteHardwareFaultsCallsFunctions)
 TEST(RootTests, FindTimeCommandReturnsNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "time";
 
     struct command_node const *node{
-        find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
+            find_command_node(&cmd, get_root_commands(), get_root_commands_count()).node};
 
     CHECK(node != nullptr);
 
@@ -389,7 +387,7 @@ TEST(RootTests, ValidateTimeReturnsSuccess)
 TEST(RootTests, ValidateTimeReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_time(&cmd));
 }
@@ -397,8 +395,7 @@ TEST(RootTests, ValidateTimeReturnsTooManyParameters)
 TEST(RootTests, ExecuteTimeCallsFunctions)
 {
     struct command cmd{{0}};
-    mock().expectOneCall("get_current_global_time_sec")
-        .andReturnValue(0u);
+    mock().expectOneCall("get_current_global_time_sec").andReturnValue(0u);
 
     execute_time(&cmd);
 }

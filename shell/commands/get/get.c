@@ -45,8 +45,7 @@ enum
     GET_COMMAND_TOKEN_COUNT = ROOT_COMMAND_TOKEN_COUNT + 1
 };
 
-static const struct command_node get_commands[] =
-{
+static const struct command_node get_commands[] = {
     {
         .name = "solver-default",
         .help = "Display default solver configuration",
@@ -305,19 +304,16 @@ static const struct command_node get_commands[] =
         .parameters = NULL,
         .validate = validate_get_side_wall_calculated,
         .execute = execute_get_side_wall_calculated
-    },
-};
+    }};
 
-static const struct command_node get_node =
-{
-    .name = "get",
-    .help = "Read configuration values",
-    .parameters = NULL,
-    .validate = validate_get,
-    .execute = execute_get,
-    .children = get_commands,
-    .child_count = sizeof(get_commands) / sizeof(get_commands[0])
-};
+static const struct command_node get_node = {
+        .name = "get",
+        .help = "Read configuration values",
+        .parameters = NULL,
+        .validate = validate_get,
+        .execute = execute_get,
+        .children = get_commands,
+        .child_count = sizeof(get_commands) / sizeof(get_commands[0])};
 
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Definitions                        */

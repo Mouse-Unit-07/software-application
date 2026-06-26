@@ -46,8 +46,7 @@ enum
     SIDE_WALL_PARAMETER_COUNT = 4
 };
 
-static const struct command_node set_commands[] =
-{
+static const struct command_node set_commands[] = {
     {
         .name = "solver-default",
         .help = "Use default solver configuration",
@@ -102,8 +101,7 @@ static const struct command_node set_commands[] =
     {
         .name = "move-forward-common-test",
         .help = "Use test move-forward common config",
-        .parameters =
-            "(optional params): emergency_stop_threshold",
+        .parameters = "(optional params): emergency_stop_threshold",
         .validate = validate_set_move_forward_common_test,
         .execute = execute_set_move_forward_common_test
     },
@@ -195,19 +193,16 @@ static const struct command_node set_commands[] =
             "num_detection_samples, reading_start_offset",
         .validate = validate_set_side_wall_test,
         .execute = execute_set_side_wall_test
-    },
-};
+    }};
 
-static const struct command_node set_node =
-{
-    .name = "set",
-    .help = "Select configuration values to use w/ or w/o new values for test configs",
-    .parameters = NULL,
-    .validate = validate_set,
-    .execute = execute_set,
-    .children = set_commands,
-    .child_count = sizeof(set_commands) / sizeof(set_commands[0])
-};
+static const struct command_node set_node = {
+        .name = "set",
+        .help = "Select configuration values to use w/ or w/o new values for test configs",
+        .parameters = NULL,
+        .validate = validate_set,
+        .execute = execute_set,
+        .children = set_commands,
+        .child_count = sizeof(set_commands) / sizeof(set_commands[0])};
 
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Definitions                        */
@@ -423,7 +418,7 @@ enum validation_result validate_set_move_forward_common_test(struct command *cmd
         uint32_t base = SET_COMMAND_TOKEN_COUNT;
         struct move_forward_common_config cfg = {0};
         cfg.emergency_stop_threshold =
-            (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
+                (uint32_t)strtoul(cmd->tokens[base + PARAM_0_OFFSET], NULL, 10);
 
         if (cfg.emergency_stop_threshold >= 1023u) {
             cmd->bad_parameter_index = base + PARAM_0_OFFSET;
@@ -461,7 +456,7 @@ void execute_set_move_forward_no_wall_default(struct command const *cmd)
     (void)cmd;
 
     set_no_wall_move_forward_control_config(
-        get_saved_default_move_forward_control_no_wall_config());
+            get_saved_default_move_forward_control_no_wall_config());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -475,7 +470,7 @@ void execute_set_move_forward_no_wall_test(struct command const *cmd)
 {
     if (cmd->token_count == SET_COMMAND_TOKEN_COUNT) {
         set_no_wall_move_forward_control_config(
-            get_saved_test_move_forward_control_no_wall_config());
+                get_saved_test_move_forward_control_no_wall_config());
         return;
     }
 
@@ -497,7 +492,7 @@ void execute_set_move_forward_one_wall_default(struct command const *cmd)
     (void)cmd;
 
     set_one_wall_move_forward_control_config(
-        get_saved_default_move_forward_control_one_wall_config());
+            get_saved_default_move_forward_control_one_wall_config());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -511,7 +506,7 @@ void execute_set_move_forward_one_wall_test(struct command const *cmd)
 {
     if (cmd->token_count == SET_COMMAND_TOKEN_COUNT) {
         set_one_wall_move_forward_control_config(
-            get_saved_test_move_forward_control_one_wall_config());
+                get_saved_test_move_forward_control_one_wall_config());
         return;
     }
 
@@ -533,7 +528,7 @@ void execute_set_move_forward_both_wall_default(struct command const *cmd)
     (void)cmd;
 
     set_both_wall_move_forward_control_config(
-        get_saved_default_move_forward_control_both_wall_config());
+            get_saved_default_move_forward_control_both_wall_config());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -547,7 +542,7 @@ void execute_set_move_forward_both_wall_test(struct command const *cmd)
 {
     if (cmd->token_count == SET_COMMAND_TOKEN_COUNT) {
         set_both_wall_move_forward_control_config(
-            get_saved_test_move_forward_control_both_wall_config());
+                get_saved_test_move_forward_control_both_wall_config());
         return;
     }
 

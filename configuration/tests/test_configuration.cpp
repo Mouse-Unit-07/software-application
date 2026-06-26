@@ -52,17 +52,17 @@ static void check_default_maze_physical_params(struct maze_physical_params const
     DOUBLES_EQUAL(166.37, cfg.wall_size_mm, FLOAT_TOLERANCE);
 }
 
-static void check_default_move_forward_common_config(struct move_forward_common_config const& cfg)
+static void check_default_move_forward_common_config(struct move_forward_common_config const &cfg)
 {
-    LONGS_EQUAL(250, cfg.emergency_stop_threshold);
+    LONGS_EQUAL(250u, cfg.emergency_stop_threshold);
 }
 
 static void
-check_default_move_forward_control_no_wall_config(struct move_forward_control_config const& cfg)
+check_default_move_forward_control_no_wall_config(struct move_forward_control_config const &cfg)
 {
-    LONGS_EQUAL(50, cfg.base_speed);
-    LONGS_EQUAL(40, cfg.min_speed);
-    LONGS_EQUAL(255, cfg.max_speed);
+    LONGS_EQUAL(50u, cfg.base_speed);
+    LONGS_EQUAL(40u, cfg.min_speed);
+    LONGS_EQUAL(255u, cfg.max_speed);
     LONGS_EQUAL(14, cfg.kp_velocity);
     LONGS_EQUAL(899, cfg.kd_velocity);
     LONGS_EQUAL(66582, cfg.kp_angle);
@@ -70,15 +70,15 @@ check_default_move_forward_control_no_wall_config(struct move_forward_control_co
     LONGS_EQUAL(0, cfg.kp_ir);
     LONGS_EQUAL(0, cfg.kd_ir);
     LONGS_EQUAL(2165, cfg.pid_scale);
-    LONGS_EQUAL(0, cfg.wall_target);
+    LONGS_EQUAL(0u, cfg.wall_target);
 }
 
 static void
-check_default_move_forward_control_one_wall_config(struct move_forward_control_config const& cfg)
+check_default_move_forward_control_one_wall_config(struct move_forward_control_config const &cfg)
 {
-    LONGS_EQUAL(50, cfg.base_speed);
-    LONGS_EQUAL(40, cfg.min_speed);
-    LONGS_EQUAL(120, cfg.max_speed);
+    LONGS_EQUAL(50u, cfg.base_speed);
+    LONGS_EQUAL(40u, cfg.min_speed);
+    LONGS_EQUAL(120u, cfg.max_speed);
     LONGS_EQUAL(99, cfg.kp_velocity);
     LONGS_EQUAL(407, cfg.kd_velocity);
     LONGS_EQUAL(2709, cfg.kp_angle);
@@ -86,15 +86,15 @@ check_default_move_forward_control_one_wall_config(struct move_forward_control_c
     LONGS_EQUAL(5092, cfg.kp_ir);
     LONGS_EQUAL(163, cfg.kd_ir);
     LONGS_EQUAL(5629, cfg.pid_scale);
-    LONGS_EQUAL(174, cfg.wall_target);
+    LONGS_EQUAL(174u, cfg.wall_target);
 }
 
 static void
-check_default_move_forward_control_both_wall_config(struct move_forward_control_config const& cfg)
+check_default_move_forward_control_both_wall_config(struct move_forward_control_config const &cfg)
 {
-    LONGS_EQUAL(50, cfg.base_speed);
-    LONGS_EQUAL(40, cfg.min_speed);
-    LONGS_EQUAL(120, cfg.max_speed);
+    LONGS_EQUAL(50u, cfg.base_speed);
+    LONGS_EQUAL(40u, cfg.min_speed);
+    LONGS_EQUAL(120u, cfg.max_speed);
     LONGS_EQUAL(163, cfg.kp_velocity);
     LONGS_EQUAL(219, cfg.kd_velocity);
     LONGS_EQUAL(1542, cfg.kp_angle);
@@ -102,32 +102,32 @@ check_default_move_forward_control_both_wall_config(struct move_forward_control_
     LONGS_EQUAL(9198, cfg.kp_ir);
     LONGS_EQUAL(223, cfg.kd_ir);
     LONGS_EQUAL(7954, cfg.pid_scale);
-    LONGS_EQUAL(0, cfg.wall_target);
+    LONGS_EQUAL(0u, cfg.wall_target);
 }
 
 static void check_default_rotate_control_config(struct rotate_control_config const &cfg)
 {
-    LONGS_EQUAL(65, cfg.base_speed);
-    LONGS_EQUAL(60, cfg.min_speed);
-    LONGS_EQUAL(70, cfg.max_speed);
+    LONGS_EQUAL(65u, cfg.base_speed);
+    LONGS_EQUAL(60u, cfg.min_speed);
+    LONGS_EQUAL(70u, cfg.max_speed);
     LONGS_EQUAL(1453, cfg.kp_velocity);
     LONGS_EQUAL(446, cfg.kd_velocity);
     LONGS_EQUAL(82643, cfg.kp_angle);
     LONGS_EQUAL(532, cfg.kd_angle);
-    LONGS_EQUAL(1823, cfg.pid_scale);
+    LONGS_EQUAL(1823u, cfg.pid_scale);
 }
 
 static void check_default_front_wall_detection_config(struct front_wall_detection_config const &cfg)
 {
-    LONGS_EQUAL(161, cfg.reading_threshold);
-    LONGS_EQUAL(10, cfg.num_detection_samples);
+    LONGS_EQUAL(161u, cfg.reading_threshold);
+    LONGS_EQUAL(10u, cfg.num_detection_samples);
 }
 
 static void check_default_side_wall_detection_config(struct side_wall_detection_config const &cfg)
 {
-    LONGS_EQUAL(49, cfg.reading_threshold);
-    LONGS_EQUAL(77, cfg.slope_threshold);
-    LONGS_EQUAL(10, cfg.num_detection_samples);
+    LONGS_EQUAL(49u, cfg.reading_threshold);
+    LONGS_EQUAL(77u, cfg.slope_threshold);
+    LONGS_EQUAL(10u, cfg.num_detection_samples);
     DOUBLES_EQUAL(0.1, cfg.reading_start_offset, FLOAT_TOLERANCE);
 }
 
@@ -212,7 +212,7 @@ TEST(ConfigurationTests, InitConfigurationResetsMazePhysicalParamsToDefaults)
 TEST(ConfigurationTests, InitConfigurationResetsMoveForwardCommonConfigToDefaults)
 {
     struct move_forward_common_config cfg{};
-    cfg.emergency_stop_threshold = 123;
+    cfg.emergency_stop_threshold = 123u;
 
     save_move_forward_common_config_as_test(cfg);
 
@@ -224,9 +224,9 @@ TEST(ConfigurationTests, InitConfigurationResetsMoveForwardCommonConfigToDefault
 TEST(ConfigurationTests, InitConfigurationResetsMoveForwardNoWallConfigToDefaults)
 {
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -234,20 +234,20 @@ TEST(ConfigurationTests, InitConfigurationResetsMoveForwardNoWallConfigToDefault
     cfg.kp_ir = 8;
     cfg.kd_ir = 9;
     cfg.pid_scale = 10;
-    cfg.wall_target = 11;
+    cfg.wall_target = 11u;
 
     save_move_forward_control_no_wall_config_as_test(cfg);
     init_configuration();
     check_default_move_forward_control_no_wall_config(
-        get_saved_test_move_forward_control_no_wall_config());
+            get_saved_test_move_forward_control_no_wall_config());
 }
 
 TEST(ConfigurationTests, InitConfigurationResetsMoveForwardOneWallConfigToDefaults)
 {
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -255,20 +255,20 @@ TEST(ConfigurationTests, InitConfigurationResetsMoveForwardOneWallConfigToDefaul
     cfg.kp_ir = 8;
     cfg.kd_ir = 9;
     cfg.pid_scale = 10;
-    cfg.wall_target = 11;
+    cfg.wall_target = 11u;
 
     save_move_forward_control_one_wall_config_as_test(cfg);
     init_configuration();
     check_default_move_forward_control_one_wall_config(
-        get_saved_test_move_forward_control_one_wall_config());
+            get_saved_test_move_forward_control_one_wall_config());
 }
 
 TEST(ConfigurationTests, InitConfigurationResetsMoveForwardBothWallConfigToDefaults)
 {
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -276,25 +276,25 @@ TEST(ConfigurationTests, InitConfigurationResetsMoveForwardBothWallConfigToDefau
     cfg.kp_ir = 8;
     cfg.kd_ir = 9;
     cfg.pid_scale = 10;
-    cfg.wall_target = 11;
+    cfg.wall_target = 11u;
 
     save_move_forward_control_both_wall_config_as_test(cfg);
     init_configuration();
     check_default_move_forward_control_both_wall_config(
-        get_saved_test_move_forward_control_both_wall_config());
+            get_saved_test_move_forward_control_both_wall_config());
 }
 
 TEST(ConfigurationTests, InitConfigurationResetsRotateControlConfigToDefaults)
 {
     struct rotate_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
     cfg.kd_angle = 7;
-    cfg.pid_scale = 8;
+    cfg.pid_scale = 8u;
 
     save_rotate_control_config_as_test(cfg);
     init_configuration();
@@ -304,8 +304,8 @@ TEST(ConfigurationTests, InitConfigurationResetsRotateControlConfigToDefaults)
 TEST(ConfigurationTests, InitConfigurationResetsFrontWallDetectionConfigToDefaults)
 {
     struct front_wall_detection_config cfg{};
-    cfg.reading_threshold = 1;
-    cfg.num_detection_samples = 2;
+    cfg.reading_threshold = 1u;
+    cfg.num_detection_samples = 2u;
 
     save_front_wall_detection_config_as_test(cfg);
     init_configuration();
@@ -315,9 +315,9 @@ TEST(ConfigurationTests, InitConfigurationResetsFrontWallDetectionConfigToDefaul
 TEST(ConfigurationTests, InitConfigurationResetsSideWallDetectionConfigToDefaults)
 {
     struct side_wall_detection_config cfg{};
-    cfg.reading_threshold = 1;
-    cfg.slope_threshold = 2;
-    cfg.num_detection_samples = 3;
+    cfg.reading_threshold = 1u;
+    cfg.slope_threshold = 2u;
+    cfg.num_detection_samples = 3u;
     cfg.reading_start_offset = 4;
 
     save_side_wall_detection_config_as_test(cfg);
@@ -376,7 +376,7 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMazePhysicalParamsToDefaults)
 TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardCommonConfigToDefaults)
 {
     struct move_forward_common_config cfg{};
-    cfg.emergency_stop_threshold = 123;
+    cfg.emergency_stop_threshold = 123u;
 
     save_move_forward_common_config_as_test(cfg);
 
@@ -388,9 +388,9 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardCommonConfigToDefau
 TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardNoWallConfigToDefaults)
 {
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -398,20 +398,20 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardNoWallConfigToDefau
     cfg.kp_ir = 8;
     cfg.kd_ir = 9;
     cfg.pid_scale = 10;
-    cfg.wall_target = 11;
+    cfg.wall_target = 11u;
 
     save_move_forward_control_no_wall_config_as_test(cfg);
     deinit_configuration();
     check_default_move_forward_control_no_wall_config(
-        get_saved_test_move_forward_control_no_wall_config());
+            get_saved_test_move_forward_control_no_wall_config());
 }
 
 TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardOneWallConfigToDefaults)
 {
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -419,20 +419,20 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardOneWallConfigToDefa
     cfg.kp_ir = 8;
     cfg.kd_ir = 9;
     cfg.pid_scale = 10;
-    cfg.wall_target = 11;
+    cfg.wall_target = 11u;
 
     save_move_forward_control_one_wall_config_as_test(cfg);
     deinit_configuration();
     check_default_move_forward_control_one_wall_config(
-        get_saved_test_move_forward_control_one_wall_config());
+            get_saved_test_move_forward_control_one_wall_config());
 }
 
 TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardBothWallConfigToDefaults)
 {
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -440,20 +440,20 @@ TEST(ConfigurationTests, DeinitConfigurationResetsMoveForwardBothWallConfigToDef
     cfg.kp_ir = 8;
     cfg.kd_ir = 9;
     cfg.pid_scale = 10;
-    cfg.wall_target = 11;
+    cfg.wall_target = 11u;
 
     save_move_forward_control_both_wall_config_as_test(cfg);
     deinit_configuration();
     check_default_move_forward_control_both_wall_config(
-        get_saved_test_move_forward_control_both_wall_config());
+            get_saved_test_move_forward_control_both_wall_config());
 }
 
 TEST(ConfigurationTests, DeinitConfigurationResetsRotateControlConfigToDefaults)
 {
     struct rotate_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -468,8 +468,8 @@ TEST(ConfigurationTests, DeinitConfigurationResetsRotateControlConfigToDefaults)
 TEST(ConfigurationTests, DeinitConfigurationResetsFrontWallDetectionConfigToDefaults)
 {
     struct front_wall_detection_config cfg{};
-    cfg.reading_threshold = 1;
-    cfg.num_detection_samples = 2;
+    cfg.reading_threshold = 1u;
+    cfg.num_detection_samples = 2u;
 
     save_front_wall_detection_config_as_test(cfg);
     deinit_configuration();
@@ -479,10 +479,10 @@ TEST(ConfigurationTests, DeinitConfigurationResetsFrontWallDetectionConfigToDefa
 TEST(ConfigurationTests, DeinitConfigurationResetsSideWallDetectionConfigToDefaults)
 {
     struct side_wall_detection_config cfg{};
-    cfg.reading_threshold = 1;
-    cfg.slope_threshold = 2;
-    cfg.num_detection_samples = 3;
-    cfg.reading_start_offset = 4;
+    cfg.reading_threshold = 1u;
+    cfg.slope_threshold = 2u;
+    cfg.num_detection_samples = 3u;
+    cfg.reading_start_offset = 4u;
 
     save_side_wall_detection_config_as_test(cfg);
     deinit_configuration();
@@ -545,7 +545,7 @@ TEST(ConfigurationTests, SetTestMousePhysicalParamsUpdatesValues)
 
     save_mouse_physical_params_as_test(cfg);
 
-    struct mouse_physical_params result = get_saved_test_mouse_physical_params();
+    struct mouse_physical_params result{get_saved_test_mouse_physical_params()};
 
     DOUBLES_EQUAL(1.0, result.wheel_diameter_mm, FLOAT_TOLERANCE);
     DOUBLES_EQUAL(2.0, result.wheel_base_mm, FLOAT_TOLERANCE);
@@ -573,7 +573,7 @@ TEST(ConfigurationTests, SetTestMazePhysicalParamsUpdatesValues)
 
     save_maze_physical_params_as_test(cfg);
 
-    struct maze_physical_params result = get_saved_test_maze_physical_params();
+    struct maze_physical_params result{get_saved_test_maze_physical_params()};
 
     DOUBLES_EQUAL(1.0, result.post_size_mm, FLOAT_TOLERANCE);
     DOUBLES_EQUAL(2.0, result.wall_size_mm, FLOAT_TOLERANCE);
@@ -592,31 +592,31 @@ TEST(ConfigurationTests, TestMoveForwardCommonConfigInitiallyContainsExpectedVal
 TEST(ConfigurationTests, SetTestMoveForwardCommonConfigUpdatesValues)
 {
     struct move_forward_common_config cfg{};
-    cfg.emergency_stop_threshold = 123;
+    cfg.emergency_stop_threshold = 123u;
 
     save_move_forward_common_config_as_test(cfg);
 
     struct move_forward_common_config result{get_saved_test_move_forward_common_config()};
 
-    LONGS_EQUAL(123, result.emergency_stop_threshold);
+    LONGS_EQUAL(123u, result.emergency_stop_threshold);
 }
 
 TEST(ConfigurationTests, DefaultMoveForwardNoWallConfigContainsExpectedValues)
 {
     check_default_move_forward_control_no_wall_config(
-        get_saved_default_move_forward_control_no_wall_config());
+            get_saved_default_move_forward_control_no_wall_config());
 }
 
 TEST(ConfigurationTests, DefaultMoveForwardOneWallConfigContainsExpectedValues)
 {
     check_default_move_forward_control_one_wall_config(
-        get_saved_default_move_forward_control_one_wall_config());
+            get_saved_default_move_forward_control_one_wall_config());
 }
 
 TEST(ConfigurationTests, DefaultMoveForwardBothWallConfigContainsExpectedValues)
 {
     check_default_move_forward_control_both_wall_config(
-        get_saved_default_move_forward_control_both_wall_config());
+            get_saved_default_move_forward_control_both_wall_config());
 }
 
 TEST(ConfigurationTests, DefaultRotateControlConfigContainsExpectedValues)
@@ -637,19 +637,19 @@ TEST(ConfigurationTests, DefaultSideWallDetectionConfigContainsExpectedValues)
 TEST(ConfigurationTests, TestMoveForwardNoWallConfigInitiallyContainsExpectedValues)
 {
     check_default_move_forward_control_no_wall_config(
-        get_saved_test_move_forward_control_no_wall_config());
+            get_saved_test_move_forward_control_no_wall_config());
 }
 
 TEST(ConfigurationTests, TestMoveForwardOneWallConfigInitiallyContainsExpectedValues)
 {
     check_default_move_forward_control_one_wall_config(
-        get_saved_test_move_forward_control_one_wall_config());
+            get_saved_test_move_forward_control_one_wall_config());
 }
 
 TEST(ConfigurationTests, TestMoveForwardBothWallConfigInitiallyContainsExpectedValues)
 {
     check_default_move_forward_control_both_wall_config(
-        get_saved_test_move_forward_control_both_wall_config());
+            get_saved_test_move_forward_control_both_wall_config());
 }
 
 TEST(ConfigurationTests, TestRotateControlConfigInitiallyContainsExpectedValues)
@@ -670,9 +670,9 @@ TEST(ConfigurationTests, TestSideWallDetectionConfigInitiallyContainsExpectedVal
 TEST(ConfigurationTests, SetTestMoveForwardNoWallConfigUpdatesValues)
 {
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -680,15 +680,14 @@ TEST(ConfigurationTests, SetTestMoveForwardNoWallConfigUpdatesValues)
     cfg.kp_ir = 8;
     cfg.kd_ir = 9;
     cfg.pid_scale = 10;
-    cfg.wall_target = 11;
+    cfg.wall_target = 11u;
 
     save_move_forward_control_no_wall_config_as_test(cfg);
-    struct move_forward_control_config result =
-        get_saved_test_move_forward_control_no_wall_config();
+    struct move_forward_control_config result{get_saved_test_move_forward_control_no_wall_config()};
 
-    LONGS_EQUAL(1, result.base_speed);
-    LONGS_EQUAL(2, result.min_speed);
-    LONGS_EQUAL(3, result.max_speed);
+    LONGS_EQUAL(1u, result.base_speed);
+    LONGS_EQUAL(2u, result.min_speed);
+    LONGS_EQUAL(3u, result.max_speed);
     LONGS_EQUAL(4, result.kp_velocity);
     LONGS_EQUAL(5, result.kd_velocity);
     LONGS_EQUAL(6, result.kp_angle);
@@ -696,15 +695,15 @@ TEST(ConfigurationTests, SetTestMoveForwardNoWallConfigUpdatesValues)
     LONGS_EQUAL(8, result.kp_ir);
     LONGS_EQUAL(9, result.kd_ir);
     LONGS_EQUAL(10, result.pid_scale);
-    LONGS_EQUAL(11, result.wall_target);
+    LONGS_EQUAL(11u, result.wall_target);
 }
 
 TEST(ConfigurationTests, SetTestMoveForwardOneWallConfigUpdatesValues)
 {
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -712,15 +711,15 @@ TEST(ConfigurationTests, SetTestMoveForwardOneWallConfigUpdatesValues)
     cfg.kp_ir = 8;
     cfg.kd_ir = 9;
     cfg.pid_scale = 10;
-    cfg.wall_target = 11;
+    cfg.wall_target = 11u;
 
     save_move_forward_control_one_wall_config_as_test(cfg);
-    struct move_forward_control_config result =
-        get_saved_test_move_forward_control_one_wall_config();
+    struct move_forward_control_config result{
+            get_saved_test_move_forward_control_one_wall_config()};
 
-    LONGS_EQUAL(1, result.base_speed);
-    LONGS_EQUAL(2, result.min_speed);
-    LONGS_EQUAL(3, result.max_speed);
+    LONGS_EQUAL(1u, result.base_speed);
+    LONGS_EQUAL(2u, result.min_speed);
+    LONGS_EQUAL(3u, result.max_speed);
     LONGS_EQUAL(4, result.kp_velocity);
     LONGS_EQUAL(5, result.kd_velocity);
     LONGS_EQUAL(6, result.kp_angle);
@@ -728,15 +727,15 @@ TEST(ConfigurationTests, SetTestMoveForwardOneWallConfigUpdatesValues)
     LONGS_EQUAL(8, result.kp_ir);
     LONGS_EQUAL(9, result.kd_ir);
     LONGS_EQUAL(10, result.pid_scale);
-    LONGS_EQUAL(11, result.wall_target);
+    LONGS_EQUAL(11u, result.wall_target);
 }
 
 TEST(ConfigurationTests, SetTestMoveForwardBothWallConfigUpdatesValues)
 {
     struct move_forward_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -744,15 +743,15 @@ TEST(ConfigurationTests, SetTestMoveForwardBothWallConfigUpdatesValues)
     cfg.kp_ir = 8;
     cfg.kd_ir = 9;
     cfg.pid_scale = 10;
-    cfg.wall_target = 11;
+    cfg.wall_target = 11u;
 
     save_move_forward_control_both_wall_config_as_test(cfg);
-    struct move_forward_control_config result =
-        get_saved_test_move_forward_control_both_wall_config();
+    struct move_forward_control_config result{
+            get_saved_test_move_forward_control_both_wall_config()};
 
-    LONGS_EQUAL(1, result.base_speed);
-    LONGS_EQUAL(2, result.min_speed);
-    LONGS_EQUAL(3, result.max_speed);
+    LONGS_EQUAL(1u, result.base_speed);
+    LONGS_EQUAL(2u, result.min_speed);
+    LONGS_EQUAL(3u, result.max_speed);
     LONGS_EQUAL(4, result.kp_velocity);
     LONGS_EQUAL(5, result.kd_velocity);
     LONGS_EQUAL(6, result.kp_angle);
@@ -760,15 +759,15 @@ TEST(ConfigurationTests, SetTestMoveForwardBothWallConfigUpdatesValues)
     LONGS_EQUAL(8, result.kp_ir);
     LONGS_EQUAL(9, result.kd_ir);
     LONGS_EQUAL(10, result.pid_scale);
-    LONGS_EQUAL(11, result.wall_target);
+    LONGS_EQUAL(11u, result.wall_target);
 }
 
 TEST(ConfigurationTests, SetTestRotateControlConfigUpdatesValues)
 {
     struct rotate_control_config cfg{};
-    cfg.base_speed = 1;
-    cfg.min_speed = 2;
-    cfg.max_speed = 3;
+    cfg.base_speed = 1u;
+    cfg.min_speed = 2u;
+    cfg.max_speed = 3u;
     cfg.kp_velocity = 4;
     cfg.kd_velocity = 5;
     cfg.kp_angle = 6;
@@ -776,11 +775,11 @@ TEST(ConfigurationTests, SetTestRotateControlConfigUpdatesValues)
     cfg.pid_scale = 8;
 
     save_rotate_control_config_as_test(cfg);
-    struct rotate_control_config result = get_saved_test_rotate_control_config();
+    struct rotate_control_config result{get_saved_test_rotate_control_config()};
 
-    LONGS_EQUAL(1, result.base_speed);
-    LONGS_EQUAL(2, result.min_speed);
-    LONGS_EQUAL(3, result.max_speed);
+    LONGS_EQUAL(1u, result.base_speed);
+    LONGS_EQUAL(2u, result.min_speed);
+    LONGS_EQUAL(3u, result.max_speed);
     LONGS_EQUAL(4, result.kp_velocity);
     LONGS_EQUAL(5, result.kd_velocity);
     LONGS_EQUAL(6, result.kp_angle);
@@ -791,29 +790,29 @@ TEST(ConfigurationTests, SetTestRotateControlConfigUpdatesValues)
 TEST(ConfigurationTests, SetTestFrontWallDetectionConfigUpdatesValues)
 {
     struct front_wall_detection_config cfg{};
-    cfg.reading_threshold = 1;
-    cfg.num_detection_samples = 2;
+    cfg.reading_threshold = 1u;
+    cfg.num_detection_samples = 2u;
 
     save_front_wall_detection_config_as_test(cfg);
-    struct front_wall_detection_config result = get_saved_test_front_wall_detection_config();
+    struct front_wall_detection_config result{get_saved_test_front_wall_detection_config()};
 
-    LONGS_EQUAL(1, result.reading_threshold);
-    LONGS_EQUAL(2, result.num_detection_samples);
+    LONGS_EQUAL(1u, result.reading_threshold);
+    LONGS_EQUAL(2u, result.num_detection_samples);
 }
 
 TEST(ConfigurationTests, SetTestSideWallDetectionConfigUpdatesValues)
 {
     struct side_wall_detection_config cfg{};
-    cfg.reading_threshold = 1;
-    cfg.slope_threshold = 2;
-    cfg.num_detection_samples = 3;
+    cfg.reading_threshold = 1u;
+    cfg.slope_threshold = 2u;
+    cfg.num_detection_samples = 3u;
     cfg.reading_start_offset = 4.0;
 
     save_side_wall_detection_config_as_test(cfg);
-    struct side_wall_detection_config result = get_saved_test_side_wall_detection_config();
+    struct side_wall_detection_config result{get_saved_test_side_wall_detection_config()};
 
-    LONGS_EQUAL(1, result.reading_threshold);
-    LONGS_EQUAL(2, result.slope_threshold);
-    LONGS_EQUAL(3, result.num_detection_samples);
+    LONGS_EQUAL(1u, result.reading_threshold);
+    LONGS_EQUAL(2u, result.slope_threshold);
+    LONGS_EQUAL(3u, result.num_detection_samples);
     DOUBLES_EQUAL(4.0, result.reading_start_offset, FLOAT_TOLERANCE);
 }

@@ -26,15 +26,12 @@ extern "C"
 /*============================================================================*/
 void feedCharacters(char const *str)
 {
-    size_t len = strlen(str);
-    bool terminated = false;
+    size_t len{strlen(str)};
+    bool terminated{false};
 
-    for (size_t i = 0u; i < len; i++) {
-        mock().expectOneCall("is_cli_buffer_empty")
-              .andReturnValue(false);
-
-        mock().expectOneCall("pop_cli_buffer")
-              .andReturnValue(str[i]);
+    for (size_t i{0u}; i < len; i++) {
+        mock().expectOneCall("is_cli_buffer_empty").andReturnValue(false);
+        mock().expectOneCall("pop_cli_buffer").andReturnValue(str[i]);
 
         if ((str[i] == '\n') || (str[i] == '\r')) {
             mock().expectOneCall("clear_cli_buffer");
@@ -44,8 +41,7 @@ void feedCharacters(char const *str)
     }
 
     if (!terminated) {
-        mock().expectOneCall("is_cli_buffer_empty")
-              .andReturnValue(true);
+        mock().expectOneCall("is_cli_buffer_empty").andReturnValue(true);
     }
 }
 
@@ -71,16 +67,12 @@ extern "C"
 
 bool is_cli_buffer_empty(void)
 {
-    return mock()
-        .actualCall("is_cli_buffer_empty")
-        .returnBoolValue();
+    return mock().actualCall("is_cli_buffer_empty").returnBoolValue();
 }
 
 char pop_cli_buffer(void)
 {
-    return (char)mock()
-        .actualCall("pop_cli_buffer")
-        .returnIntValue();
+    return (char)mock().actualCall("pop_cli_buffer").returnIntValue();
 }
 
 void clear_cli_buffer(void)
@@ -100,8 +92,7 @@ void deinit_root(void)
 
 struct command_match find_command_node_in_root(struct command *cmd)
 {
-    mock().actualCall("find_command_node_in_root")
-        .withPointerParameter("cmd", cmd);
+    mock().actualCall("find_command_node_in_root").withPointerParameter("cmd", cmd);
 
     struct command_match match{};
     return match;
@@ -157,14 +148,9 @@ TEST(ShellTests, DeinitShellResetsStateAndCallsFunctions)
 
 TEST(ShellTests, LoadCliBufferCopiesSingleCharacter)
 {
-    mock().expectOneCall("is_cli_buffer_empty")
-          .andReturnValue(false);
-
-    mock().expectOneCall("pop_cli_buffer")
-          .andReturnValue('a');
-
-    mock().expectOneCall("is_cli_buffer_empty")
-          .andReturnValue(true);
+    mock().expectOneCall("is_cli_buffer_empty").andReturnValue(false);
+    mock().expectOneCall("pop_cli_buffer").andReturnValue('a');
+    mock().expectOneCall("is_cli_buffer_empty").andReturnValue(true);
 
     load_cli_buffer_contents();
 
@@ -174,20 +160,11 @@ TEST(ShellTests, LoadCliBufferCopiesSingleCharacter)
 
 TEST(ShellTests, LoadCliBufferCopiesMultipleCharacters)
 {
-    mock().expectOneCall("is_cli_buffer_empty")
-          .andReturnValue(false);
-
-    mock().expectOneCall("pop_cli_buffer")
-          .andReturnValue('a');
-
-    mock().expectOneCall("is_cli_buffer_empty")
-          .andReturnValue(false);
-
-    mock().expectOneCall("pop_cli_buffer")
-          .andReturnValue('b');
-
-    mock().expectOneCall("is_cli_buffer_empty")
-          .andReturnValue(true);
+    mock().expectOneCall("is_cli_buffer_empty").andReturnValue(false);
+    mock().expectOneCall("pop_cli_buffer").andReturnValue('a');
+    mock().expectOneCall("is_cli_buffer_empty").andReturnValue(false);
+    mock().expectOneCall("pop_cli_buffer").andReturnValue('b');
+    mock().expectOneCall("is_cli_buffer_empty").andReturnValue(true);
 
     load_cli_buffer_contents();
 
@@ -225,12 +202,8 @@ TEST(ShellTests, NewlineSetsReadyForParsing)
 
 TEST(ShellTests, EnterClearsCliBuffer)
 {
-    mock().expectOneCall("is_cli_buffer_empty")
-          .andReturnValue(false);
-
-    mock().expectOneCall("pop_cli_buffer")
-          .andReturnValue('\r');
-
+    mock().expectOneCall("is_cli_buffer_empty").andReturnValue(false);
+    mock().expectOneCall("pop_cli_buffer").andReturnValue('\r');
     mock().expectOneCall("clear_cli_buffer");
 
     load_cli_buffer_contents();
