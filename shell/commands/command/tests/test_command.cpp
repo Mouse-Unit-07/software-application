@@ -72,23 +72,23 @@ TEST_GROUP(CommandTests)
 TEST(CommandTests, ValidateParameterlessCommandReturnsSuccess)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
-    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_parameterless_command(&cmd, 2));
+    LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_parameterless_command(&cmd, 2u));
 }
 
 TEST(CommandTests, ValidateParameterlessCommandReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 3;
+    cmd.token_count = 3u;
 
-    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_parameterless_command(&cmd, 2));
+    LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_parameterless_command(&cmd, 2u));
 }
 
 TEST(CommandTests, FindCommandNodeReturnsNullForEmptyCommand)
 {
     struct command cmd{{0}};
-    struct command_match match = find_command_node(&cmd, roots, 1);
+    struct command_match match{find_command_node(&cmd, roots, 1u)};
 
     POINTERS_EQUAL(nullptr, match.node);
     LONGS_EQUAL(0u, match.depth);
@@ -97,10 +97,10 @@ TEST(CommandTests, FindCommandNodeReturnsNullForEmptyCommand)
 TEST(CommandTests, FindCommandNodeReturnsRootNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "root";
 
-    struct command_match match = find_command_node(&cmd, roots, 1);
+    struct command_match match{find_command_node(&cmd, roots, 1u)};
 
     POINTERS_EQUAL(&roots[0], match.node);
     LONGS_EQUAL(1u, match.depth);
@@ -109,11 +109,11 @@ TEST(CommandTests, FindCommandNodeReturnsRootNode)
 TEST(CommandTests, FindCommandNodeReturnsChildNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
     cmd.tokens[0] = "root";
     cmd.tokens[1] = "child";
 
-    struct command_match match = find_command_node(&cmd, roots, 1);
+    struct command_match match{find_command_node(&cmd, roots, 1u)};
 
     POINTERS_EQUAL(&children[0], match.node);
     LONGS_EQUAL(2u, match.depth);
@@ -122,12 +122,12 @@ TEST(CommandTests, FindCommandNodeReturnsChildNode)
 TEST(CommandTests, FindCommandNodeReturnsGrandchildNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 3;
+    cmd.token_count = 3u;
     cmd.tokens[0] = "root";
     cmd.tokens[1] = "child";
     cmd.tokens[2] = "leaf";
 
-    struct command_match match = find_command_node(&cmd, roots, 1);
+    struct command_match match{find_command_node(&cmd, roots, 1u)};
 
     POINTERS_EQUAL(&grandchildren[0], match.node);
     LONGS_EQUAL(3u, match.depth);
@@ -136,10 +136,10 @@ TEST(CommandTests, FindCommandNodeReturnsGrandchildNode)
 TEST(CommandTests, FindCommandNodeReturnsNullForUnknownCommand)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "bad";
 
-    struct command_match match = find_command_node(&cmd, roots, 1);
+    struct command_match match{find_command_node(&cmd, roots, 1u)};
 
     POINTERS_EQUAL(nullptr, match.node);
     LONGS_EQUAL(0u, match.depth);
@@ -148,12 +148,12 @@ TEST(CommandTests, FindCommandNodeReturnsNullForUnknownCommand)
 TEST(CommandTests, FindCommandNodeReturnsLastValidMatch)
 {
     struct command cmd{{0}};
-    cmd.token_count = 3;
+    cmd.token_count = 3u;
     cmd.tokens[0] = "root";
     cmd.tokens[1] = "child";
     cmd.tokens[2] = "bad";
 
-    struct command_match match = find_command_node(&cmd, roots, 1);
+    struct command_match match{find_command_node(&cmd, roots, 1u)};
 
     POINTERS_EQUAL(&children[0], match.node);
     LONGS_EQUAL(2u, match.depth);
@@ -161,7 +161,7 @@ TEST(CommandTests, FindCommandNodeReturnsLastValidMatch)
 
 TEST(CommandTests, PrintCommandHelpRunsForSingleCommand)
 {
-    print_command_help(roots, 1);
+    print_command_help(roots, 1u);
 }
 
 TEST(CommandTests, PrintCommandHelpRunsForMultipleCommands)
@@ -176,5 +176,5 @@ TEST(CommandTests, PrintCommandHelpRunsForMultipleCommands)
             .help = "help2"
         }};
 
-    print_command_help(commands, 2);
+    print_command_help(commands, 2u);
 }

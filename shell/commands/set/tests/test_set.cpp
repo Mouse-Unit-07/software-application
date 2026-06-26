@@ -60,8 +60,8 @@ void check_command_lookup(char const *command_name, uint32_t token_count)
 {
     struct command cmd{make_set_command(command_name, token_count)};
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL(command_name, node->name);
@@ -159,14 +159,14 @@ void save_maze_solver_config_as_test(struct maze_solver_config cfg)
 struct mouse_physical_params get_saved_default_mouse_physical_params(void)
 {
     struct mouse_physical_params p{};
-    p.wheel_diameter_mm = 32.0f;
+    p.wheel_diameter_mm = 32.0;
     return p;
 }
 
 struct mouse_physical_params get_saved_test_mouse_physical_params(void)
 {
     struct mouse_physical_params p{};
-    p.wheel_diameter_mm = 40.0f;
+    p.wheel_diameter_mm = 40.0;
     return p;
 }
 
@@ -185,14 +185,14 @@ void calculate_mouse_params(struct mouse_physical_params p)
 struct maze_physical_params get_saved_default_maze_physical_params(void)
 {
     struct maze_physical_params p{};
-    p.post_size_mm = 12.0f;
+    p.post_size_mm = 12.0;
     return p;
 }
 
 struct maze_physical_params get_saved_test_maze_physical_params(void)
 {
     struct maze_physical_params p{};
-    p.post_size_mm = 20.0f;
+    p.post_size_mm = 20.0;
     return p;
 }
 
@@ -505,7 +505,7 @@ TEST_GROUP(SetTests)
 /*============================================================================*/
 TEST(SetTests, GetSetNodeReturnsValidNode)
 {
-    const struct command_node *node = get_set_node();
+    const struct command_node *node{get_set_node()};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("set", node->name);
@@ -517,12 +517,12 @@ TEST(SetTests, GetSetNodeReturnsValidNode)
 
 TEST(SetTests, SetCommandsAreConfiguredCorrectly)
 {
-    const struct command_node *commands = get_set_commands();
+    const struct command_node *commands{get_set_commands()};
 
     LONGS_EQUAL(sizeof(validation_test_cases) / sizeof(validation_test_cases[0]),
                 get_set_commands_count());
 
-    for (uint32_t i = 0; i < get_set_commands_count(); i++) {
+    for (uint32_t i{0u}; i < get_set_commands_count(); i++) {
         STRCMP_EQUAL(validation_test_cases[i].command_name, commands[i].name);
         POINTERS_EQUAL(validation_test_cases[i].validate, commands[i].validate);
         CHECK(commands[i].execute != nullptr);
@@ -531,7 +531,7 @@ TEST(SetTests, SetCommandsAreConfiguredCorrectly)
 
 TEST(SetTests, AllCommandNodesExist)
 {
-    for (uint32_t i = 0; i < sizeof(validation_test_cases) / sizeof(validation_test_cases[0]);
+    for (uint32_t i{0u}; i < sizeof(validation_test_cases) / sizeof(validation_test_cases[0]);
          i++) {
         check_command_lookup(validation_test_cases[i].command_name,
                              validation_test_cases[i].min_token_count);
@@ -540,18 +540,18 @@ TEST(SetTests, AllCommandNodesExist)
 
 TEST(SetTests, ValidationTokenCountsAreCorrect)
 {
-    for (uint32_t i = 0; i < sizeof(validation_test_cases) / sizeof(validation_test_cases[0]);
+    for (uint32_t i{0u}; i < sizeof(validation_test_cases) / sizeof(validation_test_cases[0]);
          i++) {
-        const validation_test_case &test_case = validation_test_cases[i];
+        const validation_test_case &test_case{validation_test_cases[i]};
 
-        for (uint32_t token_count = test_case.min_token_count;
-             token_count <= test_case.max_token_count + 1; token_count++) {
-            struct command cmd = make_set_command(test_case.command_name, token_count);
-            for (uint32_t j = 2; j < token_count; j++) {
+        for (uint32_t token_count{test_case.min_token_count};
+             token_count <= (test_case.max_token_count + 1); token_count++) {
+            struct command cmd{make_set_command(test_case.command_name, token_count)};
+            for (uint32_t j{2u}; j < token_count; j++) {
                 cmd.tokens[j] = "0";
             }
 
-            enum validation_result expected;
+            enum validation_result expected{COMMAND_VALIDATION_SUCCESS};
 
             if ((token_count == test_case.min_token_count)
                 || (token_count == test_case.max_token_count)) {
@@ -562,10 +562,10 @@ TEST(SetTests, ValidationTokenCountsAreCorrect)
                 expected = COMMAND_VALIDATION_TOO_MANY_PARAMETERS;
             }
 
-            enum validation_result actual = test_case.validate(&cmd);
-            SimpleString msg =
-                    StringFromFormat("command=%s token_count=%u expected=%d actual=%d",
-                                     test_case.command_name, token_count, expected, actual);
+            enum validation_result actual{test_case.validate(&cmd)};
+            SimpleString msg{StringFromFormat("command=%s token_count=%u expected=%d actual=%d",
+                                              test_case.command_name, token_count, expected,
+                                              actual)};
 
             LONGS_EQUAL_TEXT(expected, actual, msg.asCharString());
         }
@@ -577,11 +577,11 @@ TEST(SetTests, ValidationTokenCountsAreCorrect)
 TEST(SetTests, FindCommandNodeReturnsSetNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "set";
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("set", node->name);
@@ -597,7 +597,7 @@ TEST(SetTests, ValidateSetReturnsSuccess)
 TEST(SetTests, ValidateSetReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_set(&cmd));
 }
@@ -625,7 +625,7 @@ TEST(SetTests, ExecuteSetSolverDefaultCallsFunctions)
 TEST(SetTests, ValidateSetSolverTestReturnsSuccessForEditConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 7;
+    cmd.token_count = 7u;
     cmd.tokens[2] = "16";
     cmd.tokens[3] = "60";
     cmd.tokens[4] = "1";
@@ -638,7 +638,7 @@ TEST(SetTests, ValidateSetSolverTestReturnsSuccessForEditConfig)
 TEST(SetTests, ValidateSetSolverTestReturnsBadParameter)
 {
     struct command cmd{{0}};
-    cmd.token_count = 7;
+    cmd.token_count = 7u;
     cmd.tokens[2] = "17";
     cmd.tokens[3] = "60";
     cmd.tokens[4] = "1";
@@ -652,7 +652,7 @@ TEST(SetTests, ValidateSetSolverTestReturnsBadParameter)
 TEST(SetTests, ValidateSetSolverTestAcceptsMaximumMazeSize)
 {
     struct command cmd{{0}};
-    cmd.token_count = 7;
+    cmd.token_count = 7u;
     cmd.tokens[2] = "16";
     cmd.tokens[3] = "60";
     cmd.tokens[4] = "1";
@@ -665,7 +665,7 @@ TEST(SetTests, ValidateSetSolverTestAcceptsMaximumMazeSize)
 TEST(SetTests, ExecuteSetSolverTestUsesStoredTestConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     mock().expectOneCall("set_maze_solver_config").withUnsignedIntParameter("maze_size", 8u);
 
@@ -675,9 +675,7 @@ TEST(SetTests, ExecuteSetSolverTestUsesStoredTestConfig)
 TEST(SetTests, ExecuteSetSolverTestUpdatesTestConfig)
 {
     struct command cmd{{0}};
-
-    cmd.token_count = 7;
-
+    cmd.token_count = 7u;
     cmd.tokens[2] = "16";
     cmd.tokens[3] = "100";
     cmd.tokens[4] = "10";
@@ -703,7 +701,6 @@ TEST(SetTests, ExecuteSetMousePhysicalDefaultCallsFunctions)
     struct command cmd{{0}};
 
     mock().expectOneCall("calculate_mouse_params").withDoubleParameter("wheel_diameter_mm", 32.0);
-
     mock().expectOneCall("calculate_navigation_params");
 
     execute_set_mouse_physical_default(&cmd);
@@ -714,10 +711,9 @@ TEST(SetTests, ExecuteSetMousePhysicalDefaultCallsFunctions)
 TEST(SetTests, ExecuteSetMousePhysicalTestUsesStoredConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     mock().expectOneCall("calculate_mouse_params").withDoubleParameter("wheel_diameter_mm", 40.0);
-
     mock().expectOneCall("calculate_navigation_params");
 
     execute_set_mouse_physical_test(&cmd);
@@ -726,7 +722,7 @@ TEST(SetTests, ExecuteSetMousePhysicalTestUsesStoredConfig)
 TEST(SetTests, ExecuteSetMousePhysicalTestUpdatesConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 8;
+    cmd.token_count = 8u;
     cmd.tokens[2] = "32";
     cmd.tokens[3] = "72";
     cmd.tokens[4] = "30000";
@@ -736,9 +732,7 @@ TEST(SetTests, ExecuteSetMousePhysicalTestUpdatesConfig)
 
     mock().expectOneCall("save_mouse_physical_params_as_test")
             .withDoubleParameter("wheel_diameter_mm", 32.0);
-
     mock().expectOneCall("calculate_mouse_params").withDoubleParameter("wheel_diameter_mm", 32.0);
-
     mock().expectOneCall("calculate_navigation_params");
 
     execute_set_mouse_physical_test(&cmd);
@@ -753,7 +747,6 @@ TEST(SetTests, ExecuteSetMazePhysicalDefaultCallsFunctions)
     mock().expectOneCall("calculate_maze_params")
             .withDoubleParameter("post_size_mm", 12.0)
             .withDoubleParameter("wall_size_mm", 0.0);
-
     mock().expectOneCall("calculate_navigation_params");
 
     execute_set_maze_physical_default(&cmd);
@@ -764,12 +757,11 @@ TEST(SetTests, ExecuteSetMazePhysicalDefaultCallsFunctions)
 TEST(SetTests, ExecuteSetMazePhysicalTestUsesStoredConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     mock().expectOneCall("calculate_maze_params")
             .withDoubleParameter("post_size_mm", 20.0)
             .withDoubleParameter("wall_size_mm", 0.0);
-
     mock().expectOneCall("calculate_navigation_params");
 
     execute_set_maze_physical_test(&cmd);
@@ -778,19 +770,16 @@ TEST(SetTests, ExecuteSetMazePhysicalTestUsesStoredConfig)
 TEST(SetTests, ExecuteSetMazePhysicalTestUpdatesConfig)
 {
     struct command cmd{{0}};
-
-    cmd.token_count = 4;
+    cmd.token_count = 4u;
     cmd.tokens[2] = "12";
     cmd.tokens[3] = "6";
 
     mock().expectOneCall("save_maze_physical_params_as_test")
             .withDoubleParameter("post_size_mm", 12.0)
             .withDoubleParameter("wall_size_mm", 6.0);
-
     mock().expectOneCall("calculate_maze_params")
             .withDoubleParameter("post_size_mm", 12.0)
             .withDoubleParameter("wall_size_mm", 6.0);
-
     mock().expectOneCall("calculate_navigation_params");
 
     execute_set_maze_physical_test(&cmd);
@@ -813,7 +802,7 @@ TEST(SetTests, ExecuteSetMoveForwardCommonDefaultCallsFunctions)
 TEST(SetTests, ExecuteSetMoveForwardCommonTestUsesStoredConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     mock().expectOneCall("set_move_forward_common_config")
             .withUnsignedIntParameter("emergency_stop_threshold", 800u);
@@ -824,13 +813,11 @@ TEST(SetTests, ExecuteSetMoveForwardCommonTestUsesStoredConfig)
 TEST(SetTests, ExecuteSetMoveForwardCommonTestUpdatesConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 3;
-
+    cmd.token_count = 3u;
     cmd.tokens[2] = "10";
 
     mock().expectOneCall("save_move_forward_common_config_as_test")
             .withUnsignedIntParameter("emergency_stop_threshold", 10u);
-
     mock().expectOneCall("set_move_forward_common_config")
             .withUnsignedIntParameter("emergency_stop_threshold", 10u);
 
@@ -840,8 +827,7 @@ TEST(SetTests, ExecuteSetMoveForwardCommonTestUpdatesConfig)
 TEST(SetTests, ValidateSetMoveForwardCommonTestAccepts1022)
 {
     struct command cmd{{0}};
-    cmd.token_count = 3;
-
+    cmd.token_count = 3u;
     cmd.tokens[2] = "1022";
 
     LONGS_EQUAL(COMMAND_VALIDATION_SUCCESS, validate_set_move_forward_common_test(&cmd));
@@ -850,8 +836,7 @@ TEST(SetTests, ValidateSetMoveForwardCommonTestAccepts1022)
 TEST(SetTests, ValidateSetMoveForwardCommonTestRejects1023)
 {
     struct command cmd{{0}};
-    cmd.token_count = 3;
-
+    cmd.token_count = 3u;
     cmd.tokens[2] = "1023";
 
     LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_set_move_forward_common_test(&cmd));
@@ -885,7 +870,7 @@ TEST(SetTests, ExecuteSetMoveForwardNoWallDefaultCallsFunctions)
 TEST(SetTests, ExecuteSetMoveForwardNoWallTestUsesStoredConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     mock().expectOneCall("set_no_wall_move_forward_control_config")
             .withUnsignedIntParameter("base_speed", 0)
@@ -906,7 +891,7 @@ TEST(SetTests, ExecuteSetMoveForwardNoWallTestUsesStoredConfig)
 TEST(SetTests, ExecuteSetMoveForwardNoWallTestUpdatesConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 13;
+    cmd.token_count = 13u;
 
     cmd.tokens[2] = "10";
     cmd.tokens[3] = "11";
@@ -952,16 +937,14 @@ TEST(SetTests, ExecuteSetMoveForwardNoWallTestUpdatesConfig)
 TEST(SetTests, ValidateSetMoveForwardNoWallTestRejectsWallTargetGreaterThan1023)
 {
     struct command cmd{{0}};
-    cmd.token_count = 13;
+    cmd.token_count = 13u;
 
-    for (uint32_t i = 2; i < 12; i++) {
+    for (uint32_t i{2u}; i < 12u; i++) {
         cmd.tokens[i] = "0";
     }
-
     cmd.tokens[12] = "1024";
 
     LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_set_move_forward_no_wall_test(&cmd));
-
     LONGS_EQUAL(12u, cmd.bad_parameter_index);
 }
 
@@ -992,7 +975,7 @@ TEST(SetTests, ExecuteSetMoveForwardOneWallDefaultCallsFunctions)
 TEST(SetTests, ExecuteSetMoveForwardOneWallTestUsesStoredConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     mock().expectOneCall("set_one_wall_move_forward_control_config")
             .withUnsignedIntParameter("base_speed", 0)
@@ -1013,8 +996,7 @@ TEST(SetTests, ExecuteSetMoveForwardOneWallTestUsesStoredConfig)
 TEST(SetTests, ExecuteSetMoveForwardOneWallTestUpdatesConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 13;
-
+    cmd.token_count = 13u;
     cmd.tokens[2] = "10";
     cmd.tokens[3] = "11";
     cmd.tokens[4] = "12";
@@ -1059,16 +1041,13 @@ TEST(SetTests, ExecuteSetMoveForwardOneWallTestUpdatesConfig)
 TEST(SetTests, ValidateSetMoveForwardOneWallTestRejectsWallTargetGreaterThan1023)
 {
     struct command cmd{{0}};
-    cmd.token_count = 13;
-
-    for (uint32_t i = 2; i < 12; i++) {
+    cmd.token_count = 13u;
+    for (uint32_t i{2u}; i < 12u; i++) {
         cmd.tokens[i] = "0";
     }
-
     cmd.tokens[12] = "1024";
 
     LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_set_move_forward_one_wall_test(&cmd));
-
     LONGS_EQUAL(12u, cmd.bad_parameter_index);
 }
 
@@ -1099,7 +1078,7 @@ TEST(SetTests, ExecuteSetMoveForwardBothWallDefaultCallsFunctions)
 TEST(SetTests, ExecuteSetMoveForwardBothWallTestUsesStoredConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     mock().expectOneCall("set_both_wall_move_forward_control_config")
             .withUnsignedIntParameter("base_speed", 0)
@@ -1120,8 +1099,7 @@ TEST(SetTests, ExecuteSetMoveForwardBothWallTestUsesStoredConfig)
 TEST(SetTests, ExecuteSetMoveForwardBothWallTestUpdatesConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 13;
-
+    cmd.token_count = 13u;
     cmd.tokens[2] = "10";
     cmd.tokens[3] = "11";
     cmd.tokens[4] = "12";
@@ -1166,16 +1144,13 @@ TEST(SetTests, ExecuteSetMoveForwardBothWallTestUpdatesConfig)
 TEST(SetTests, ValidateSetMoveForwardBothWallTestRejectsWallTargetGreaterThan1023)
 {
     struct command cmd{{0}};
-    cmd.token_count = 13;
-
-    for (uint32_t i = 2; i < 12; i++) {
+    cmd.token_count = 13u;
+    for (uint32_t i{2u}; i < 12u; i++) {
         cmd.tokens[i] = "0";
     }
-
     cmd.tokens[12] = "1024";
 
     LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_set_move_forward_both_wall_test(&cmd));
-
     LONGS_EQUAL(12u, cmd.bad_parameter_index);
 }
 
@@ -1203,7 +1178,7 @@ TEST(SetTests, ExecuteSetRotateDefaultCallsFunctions)
 TEST(SetTests, ExecuteSetRotateTestUsesStoredConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     mock().expectOneCall("set_rotate_control_config")
             .withUnsignedIntParameter("base_speed", 20u)
@@ -1221,8 +1196,7 @@ TEST(SetTests, ExecuteSetRotateTestUsesStoredConfig)
 TEST(SetTests, ExecuteSetRotateTestUpdatesConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 10;
-
+    cmd.token_count = 10u;
     cmd.tokens[2] = "10";
     cmd.tokens[3] = "11";
     cmd.tokens[4] = "12";
@@ -1273,7 +1247,7 @@ TEST(SetTests, ExecuteSetFrontWallDefaultCallsFunctions)
 TEST(SetTests, ExecuteSetFrontWallTestUsesStoredConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     mock().expectOneCall("set_front_wall_detection_config")
             .withUnsignedIntParameter("reading_threshold", 200u)
@@ -1285,8 +1259,7 @@ TEST(SetTests, ExecuteSetFrontWallTestUsesStoredConfig)
 TEST(SetTests, ExecuteSetFrontWallTestUpdatesConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 4;
-
+    cmd.token_count = 4u;
     cmd.tokens[2] = "10";
     cmd.tokens[3] = "11";
 
@@ -1304,8 +1277,7 @@ TEST(SetTests, ExecuteSetFrontWallTestUpdatesConfig)
 TEST(SetTests, ValidateSetFrontWallTestAccepts1022)
 {
     struct command cmd{{0}};
-    cmd.token_count = 4;
-
+    cmd.token_count = 4u;
     cmd.tokens[2] = "1022";
     cmd.tokens[3] = "5";
 
@@ -1315,8 +1287,7 @@ TEST(SetTests, ValidateSetFrontWallTestAccepts1022)
 TEST(SetTests, ValidateSetFrontWallTestRejects1023)
 {
     struct command cmd{{0}};
-    cmd.token_count = 4;
-
+    cmd.token_count = 4u;
     cmd.tokens[2] = "1023";
     cmd.tokens[3] = "5";
 
@@ -1344,7 +1315,7 @@ TEST(SetTests, ExecuteSetSideWallDefaultCallsFunctions)
 TEST(SetTests, ExecuteSetSideWallTestUsesStoredConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     mock().expectOneCall("set_side_wall_detection_config")
             .withUnsignedIntParameter("reading_threshold", 200u)
@@ -1358,8 +1329,7 @@ TEST(SetTests, ExecuteSetSideWallTestUsesStoredConfig)
 TEST(SetTests, ExecuteSetSideWallTestUpdatesConfig)
 {
     struct command cmd{{0}};
-    cmd.token_count = 6;
-
+    cmd.token_count = 6u;
     cmd.tokens[2] = "10";
     cmd.tokens[3] = "11";
     cmd.tokens[4] = "12";
@@ -1383,8 +1353,7 @@ TEST(SetTests, ExecuteSetSideWallTestUpdatesConfig)
 TEST(SetTests, ValidateSetSideWallTestAcceptsMaximumValidValues)
 {
     struct command cmd{{0}};
-    cmd.token_count = 6;
-
+    cmd.token_count = 6u;
     cmd.tokens[2] = "1022";
     cmd.tokens[3] = "1022";
     cmd.tokens[4] = "5";
@@ -1396,59 +1365,51 @@ TEST(SetTests, ValidateSetSideWallTestAcceptsMaximumValidValues)
 TEST(SetTests, ValidateSetSideWallTestRejectsReadingThreshold1023)
 {
     struct command cmd{{0}};
-    cmd.token_count = 6;
-
+    cmd.token_count = 6u;
     cmd.tokens[2] = "1023";
     cmd.tokens[3] = "10";
     cmd.tokens[4] = "5";
     cmd.tokens[5] = "0.5";
 
     LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_set_side_wall_test(&cmd));
-
     LONGS_EQUAL(2u, cmd.bad_parameter_index);
 }
 
 TEST(SetTests, ValidateSetSideWallTestRejectsSlopeThreshold1023)
 {
     struct command cmd{{0}};
-    cmd.token_count = 6;
-
+    cmd.token_count = 6u;
     cmd.tokens[2] = "10";
     cmd.tokens[3] = "1023";
     cmd.tokens[4] = "5";
     cmd.tokens[5] = "0.5";
 
     LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_set_side_wall_test(&cmd));
-
     LONGS_EQUAL(3u, cmd.bad_parameter_index);
 }
 
 TEST(SetTests, ValidateSetSideWallTestRejectsNegativeReadingStartOffset)
 {
     struct command cmd{{0}};
-    cmd.token_count = 6;
-
+    cmd.token_count = 6u;
     cmd.tokens[2] = "10";
     cmd.tokens[3] = "11";
     cmd.tokens[4] = "5";
     cmd.tokens[5] = "-0.1";
 
     LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_set_side_wall_test(&cmd));
-
     LONGS_EQUAL(5u, cmd.bad_parameter_index);
 }
 
 TEST(SetTests, ValidateSetSideWallTestRejectsReadingStartOffsetOfOne)
 {
     struct command cmd{{0}};
-    cmd.token_count = 6;
-
+    cmd.token_count = 6u;
     cmd.tokens[2] = "10";
     cmd.tokens[3] = "11";
     cmd.tokens[4] = "5";
     cmd.tokens[5] = "1.0";
 
     LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_set_side_wall_test(&cmd));
-
     LONGS_EQUAL(5u, cmd.bad_parameter_index);
 }

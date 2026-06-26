@@ -60,8 +60,8 @@ void check_command_lookup(char const *command_name, uint32_t token_count)
 {
     struct command cmd{make_get_command(command_name, token_count)};
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL(command_name, node->name);
@@ -421,7 +421,7 @@ TEST_GROUP(GetTests)
 /*============================================================================*/
 TEST(GetTests, GetGetNodeReturnsExpectedNode)
 {
-    const struct command_node *node = get_get_node();
+    const struct command_node *node{get_get_node()};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("get", node->name);
@@ -433,11 +433,11 @@ TEST(GetTests, GetGetNodeReturnsExpectedNode)
 
 TEST(GetTests, GetCommandsAreConfiguredCorrectly)
 {
-    const struct command_node *commands = get_get_commands();
+    const struct command_node *commands{get_get_commands()};
 
     LONGS_EQUAL(sizeof(get_commands) / sizeof(get_commands[0]), get_get_commands_count());
 
-    for (uint32_t i{0}; i < get_get_commands_count(); i++) {
+    for (uint32_t i{0u}; i < get_get_commands_count(); i++) {
         STRCMP_EQUAL(get_commands[i].name, commands[i].name);
         POINTERS_EQUAL(get_commands[i].validate, commands[i].validate);
         CHECK(commands[i].execute != nullptr);
@@ -471,8 +471,8 @@ TEST(GetTests, FindCommandNodeReturnsGetNode)
 {
     struct command cmd{make_get_command("", 1)};
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("get", node->name);
@@ -667,9 +667,7 @@ TEST(GetTests, ExecuteMoveForwardNoWallCurrentRuns)
 TEST(GetTests, ExecuteMoveForwardNoWallCalculatedRuns)
 {
     struct command cmd{{0}};
-
     mock().expectOneCall("get_no_wall_move_forward_calculated_params");
-
     execute_get_move_forward_no_wall_calculated(&cmd);
 }
 
@@ -705,9 +703,7 @@ TEST(GetTests, ExecuteMoveForwardOneWallCurrentRuns)
 TEST(GetTests, ExecuteMoveForwardOneWallCalculatedRuns)
 {
     struct command cmd{{0}};
-
     mock().expectOneCall("get_one_wall_move_forward_calculated_params");
-
     execute_get_move_forward_one_wall_calculated(&cmd);
 }
 
@@ -743,9 +739,7 @@ TEST(GetTests, ExecuteMoveForwardBothWallCurrentRuns)
 TEST(GetTests, ExecuteMoveForwardBothWallCalculatedRuns)
 {
     struct command cmd{{0}};
-
     mock().expectOneCall("get_both_wall_move_forward_calculated_params");
-
     execute_get_move_forward_both_wall_calculated(&cmd);
 }
 

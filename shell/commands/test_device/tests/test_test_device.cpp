@@ -59,8 +59,8 @@ struct command make_test_command(char const *subcommand, uint32_t token_count)
 void check_command_lookup(char const *command_name, uint32_t token_count)
 {
     struct command cmd{make_test_command(command_name, token_count)};
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL(command_name, node->name);
@@ -70,9 +70,9 @@ void check_validation_success(char const *command_name, uint32_t token_count,
                               enum validation_result (*validate)(struct command *))
 {
     struct command cmd{make_test_command(command_name, token_count)};
-    enum validation_result actual = validate(&cmd);
-    SimpleString msg = StringFromFormat("SUCCESS CHECK FAILED: command=%s token_count=%u actual=%d",
-                                        command_name, token_count, actual);
+    enum validation_result actual{validate(&cmd)};
+    SimpleString msg{StringFromFormat("SUCCESS CHECK FAILED: command=%s token_count=%u actual=%d",
+                                        command_name, token_count, actual)};
 
     LONGS_EQUAL_TEXT(COMMAND_VALIDATION_SUCCESS, actual, msg.asCharString());
 }
@@ -81,10 +81,10 @@ void check_validation_too_many_params(char const *command_name, uint32_t token_c
                                       enum validation_result (*validate)(struct command *))
 {
     struct command cmd{make_test_command(command_name, token_count)};
-    enum validation_result actual = validate(&cmd);
-    SimpleString msg =
+    enum validation_result actual{validate(&cmd)};
+    SimpleString msg{
             StringFromFormat("TOO_MANY_PARAMS CHECK FAILED: command=%s token_count=%u actual=%d",
-                             command_name, token_count, actual);
+                             command_name, token_count, actual)};
 
     LONGS_EQUAL_TEXT(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, actual, msg.asCharString());
 }
@@ -115,26 +115,27 @@ struct structured_command_case {
 };
 
 static const structured_command_case ir_cases[] = {
-        {"ir", "distance", validate_test_ir_distance, 8, 7, 9},
-        {"ir", "free", validate_test_ir_free, 5, 4, 6},
-        {"ir", "speed", validate_test_ir_speed, 4, 3, 5}};
+        {"ir", "distance", validate_test_ir_distance, 8u, 7u, 9u},
+        {"ir", "free", validate_test_ir_free, 5u, 4u, 6u},
+        {"ir", "speed", validate_test_ir_speed, 4u, 3u, 5u}};
 
 static const structured_command_case wheel_encoder_cases[] = {
-        {"wheel-encoder", "target", validate_test_wheel_encoder_target, 9, 7, 10},
-        {"wheel-encoder", "drift", validate_test_wheel_encoder_drift, 9, 7, 10},
-        {"wheel-encoder", "deceleration", validate_test_wheel_encoder_deceleration, 9, 7, 10}};
+        {"wheel-encoder", "target", validate_test_wheel_encoder_target, 9u, 7u, 10u},
+        {"wheel-encoder", "drift", validate_test_wheel_encoder_drift, 9u, 7u, 10u},
+        {"wheel-encoder", "deceleration", validate_test_wheel_encoder_deceleration, 9u, 7u, 10u}};
 
 static const structured_command_case navigate_cases[] = {
-        {"navigate", "move-forward", validate_test_navigate_move_forward, 3, 2, 4},
-        {"navigate", "move-forward-continuous", validate_test_navigate_move_forward_continuous, 3,
-         2, 4},
-        {"navigate", "rotate-clockwise-90", validate_test_navigate_rotate_clockwise_90, 3, 2, 4},
+        {"navigate", "move-forward", validate_test_navigate_move_forward, 3u, 2u, 4u},
+        {"navigate", "move-forward-continuous", validate_test_navigate_move_forward_continuous, 3u,
+         2u, 4u},
+        {"navigate", "rotate-clockwise-90", validate_test_navigate_rotate_clockwise_90, 3u, 2u, 4u},
         {"navigate", "rotate-counterclockwise-90",
-         validate_test_navigate_rotate_counterclockwise_90, 3, 2, 4},
-        {"navigate", "rotate-180", validate_test_navigate_rotate_180, 3, 2, 4},
-        {"navigate", "left-wall-presence", validate_test_navigate_left_wall_presence, 3, 2, 4},
-        {"navigate", "right-wall-presence", validate_test_navigate_right_wall_presence, 3, 2, 4},
-        {"navigate", "front-wall-presence", validate_test_navigate_front_wall_presence, 3, 2, 4}};
+         validate_test_navigate_rotate_counterclockwise_90, 3u, 2u, 4u},
+        {"navigate", "rotate-180", validate_test_navigate_rotate_180, 3u, 2u, 4u},
+        {"navigate", "left-wall-presence", validate_test_navigate_left_wall_presence, 3u, 2u, 4u},
+        {"navigate", "right-wall-presence", validate_test_navigate_right_wall_presence, 3u, 2u, 4u},
+        {"navigate", "front-wall-presence", validate_test_navigate_front_wall_presence, 3u, 2u,
+         4u}};
 
 /*============================================================================*/
 /*                            Mock Implementations                            */
@@ -315,7 +316,7 @@ TEST_GROUP(CommandsTests)
 /*============================================================================*/
 TEST(CommandsTests, GetTestNodeReturnsValidNode)
 {
-    const struct command_node *node = get_test_node();
+    const struct command_node *node{get_test_node()};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("test", node->name);
@@ -332,7 +333,7 @@ TEST(CommandsTests, GetTestCommandsCountReturnsExpectedValue)
 
 TEST(CommandsTests, TestCommandsAreInExpectedOrder)
 {
-    const struct command_node *commands = get_test_commands();
+    const struct command_node *commands{get_test_commands()};
 
     STRCMP_EQUAL("processor", commands[0].name);
     STRCMP_EQUAL("battery", commands[1].name);
@@ -348,11 +349,11 @@ TEST(CommandsTests, TestCommandsAreInExpectedOrder)
 TEST(CommandsTests, TestCommandContainsSubcommands)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "test";
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     LONGS_EQUAL(9u, node->child_count);
@@ -361,21 +362,21 @@ TEST(CommandsTests, TestCommandContainsSubcommands)
 TEST(CommandsTests, FindCommandNodeReturnsExpectedNode)
 {
     for (auto const &test : simple_commands) {
-        check_command_lookup(test.name, 2);
+        check_command_lookup(test.name, 2u);
     }
 }
 
 TEST(CommandsTests, ValidateCommandsReturnSuccess)
 {
     for (auto const &test : simple_commands) {
-        check_validation_success(test.name, 2, test.validate);
+        check_validation_success(test.name, 2u, test.validate);
     }
 }
 
 TEST(CommandsTests, ValidateCommandsReturnTooManyParameters)
 {
     for (auto const &test : simple_commands) {
-        check_validation_too_many_params(test.name, 3, test.validate);
+        check_validation_too_many_params(test.name, 3u, test.validate);
     }
 }
 
@@ -384,11 +385,11 @@ TEST(CommandsTests, ValidateCommandsReturnTooManyParameters)
 TEST(CommandsTests, FindCommandNodeReturnsTestNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "test";
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("test", node->name);
@@ -404,7 +405,7 @@ TEST(CommandsTests, ValidateTestReturnsSuccess)
 TEST(CommandsTests, ValidateTestReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_test(&cmd));
 }
@@ -421,7 +422,7 @@ TEST(CommandsTests, ExecuteTestRunsWithoutCrash)
 TEST(CommandsTests, TestProcessorCommandMatchDepthIsTwo)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
     cmd.tokens[0] = "test";
     cmd.tokens[1] = "processor";
 
@@ -488,7 +489,7 @@ TEST(CommandsTests, ExecuteTestPushbuttonCallsFunctions)
 TEST(CommandsTests, TestIrCommandMatchDepthIsTwo)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
     cmd.tokens[0] = "test";
     cmd.tokens[1] = "ir";
 
@@ -501,12 +502,12 @@ TEST(CommandsTests, TestIrCommandMatchDepthIsTwo)
 TEST(CommandsTests, IrCommandContainsThreeSubcommands)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
     cmd.tokens[0] = "test";
     cmd.tokens[1] = "ir";
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     LONGS_EQUAL(3u, node->child_count);
@@ -516,18 +517,18 @@ TEST(CommandsTests, FindCommandNodeReturnsIRNodes)
 {
     for (auto const &test : ir_cases) {
         struct command cmd{{0}};
-        cmd.token_count = 3;
+        cmd.token_count = 3u;
         cmd.tokens[0] = "test";
         cmd.tokens[1] = test.parent;
         cmd.tokens[2] = test.child;
 
-        struct command_node const *node =
-                find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+        struct command_node const *node{
+                find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
         CHECK(node != nullptr);
 
-        SimpleString msg =
-                StringFromFormat("IR node mismatch parent=%s child=%s", test.parent, test.child);
+        SimpleString msg{
+                StringFromFormat("IR node mismatch parent=%s child=%s", test.parent, test.child)};
 
         STRCMP_EQUAL_TEXT(test.child, node->name, msg.asCharString());
     }
@@ -550,7 +551,7 @@ TEST(CommandsTests, ValidateIRCommandsReturnSuccessAndTooMany)
 TEST(CommandsTests, ValidateTestIrDistanceReturnsTooFewParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 7;
+    cmd.token_count = 7u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_ir_distance(&cmd));
 }
@@ -558,7 +559,7 @@ TEST(CommandsTests, ValidateTestIrDistanceReturnsTooFewParameters)
 TEST(CommandsTests, ExecuteTestIrDistanceCallsFunctions)
 {
     struct command cmd{{0}};
-    cmd.token_count = 8;
+    cmd.token_count = 8u;
     cmd.tokens[3] = "5";
     cmd.tokens[4] = "30";
     cmd.tokens[5] = "10";
@@ -580,7 +581,7 @@ TEST(CommandsTests, ExecuteTestIrDistanceCallsFunctions)
 TEST(CommandsTests, ValidateTestIrFreeReturnsTooFewParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 4;
+    cmd.token_count = 4u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_ir_free(&cmd));
 }
@@ -588,7 +589,7 @@ TEST(CommandsTests, ValidateTestIrFreeReturnsTooFewParameters)
 TEST(CommandsTests, ExecuteTestIrFreeCallsFunctions)
 {
     struct command cmd{{0}};
-    cmd.token_count = 5;
+    cmd.token_count = 5u;
     cmd.tokens[3] = "100";
     cmd.tokens[4] = "500";
 
@@ -604,7 +605,7 @@ TEST(CommandsTests, ExecuteTestIrFreeCallsFunctions)
 TEST(CommandsTests, ValidateTestIrSpeedReturnsTooFewParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 3;
+    cmd.token_count = 3u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_ir_speed(&cmd));
 }
@@ -612,7 +613,7 @@ TEST(CommandsTests, ValidateTestIrSpeedReturnsTooFewParameters)
 TEST(CommandsTests, ExecuteTestIrSpeedCallsFunctions)
 {
     struct command cmd{{0}};
-    cmd.token_count = 4;
+    cmd.token_count = 4u;
     cmd.tokens[3] = "250";
 
     mock().expectOneCall("infrared_sensors_read_speed_test")
@@ -626,7 +627,7 @@ TEST(CommandsTests, ExecuteTestIrSpeedCallsFunctions)
 TEST(CommandsTests, TestWheelEncoderCommandMatchDepthIsTwo)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
     cmd.tokens[0] = "test";
     cmd.tokens[1] = "wheel-encoder";
 
@@ -639,12 +640,12 @@ TEST(CommandsTests, TestWheelEncoderCommandMatchDepthIsTwo)
 TEST(CommandsTests, WheelEncoderCommandContainsSubcommands)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
     cmd.tokens[0] = "test";
     cmd.tokens[1] = "wheel-encoder";
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     LONGS_EQUAL(3u, node->child_count);
@@ -654,17 +655,17 @@ TEST(CommandsTests, FindCommandNodeReturnsWheelEncoderNodes)
 {
     for (auto const &test : wheel_encoder_cases) {
         struct command cmd{{0}};
-        cmd.token_count = 3;
+        cmd.token_count = 3u;
         cmd.tokens[0] = "test";
         cmd.tokens[1] = test.parent;
         cmd.tokens[2] = test.child;
 
-        struct command_node const *node =
-                find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+        struct command_node const *node{
+                find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
         CHECK(node != nullptr);
 
-        SimpleString msg = StringFromFormat("wheel-encoder node mismatch child=%s", test.child);
+        SimpleString msg{StringFromFormat("wheel-encoder node mismatch child=%s", test.child)};
 
         STRCMP_EQUAL_TEXT(test.child, node->name, msg.asCharString());
     }
@@ -689,7 +690,7 @@ TEST(CommandsTests, ValidateWheelEncoderCommandsReturnSuccessAndTooMany)
 TEST(CommandsTests, ValidateTestWheelEncoderTargetReturnsTooFewParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 7;
+    cmd.token_count = 7u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_wheel_encoder_target(&cmd));
 }
@@ -697,7 +698,7 @@ TEST(CommandsTests, ValidateTestWheelEncoderTargetReturnsTooFewParameters)
 TEST(CommandsTests, ExecuteTestWheelEncoderTargetCallsFunctions)
 {
     struct command cmd{{0}};
-    cmd.token_count = 9;
+    cmd.token_count = 9u;
     cmd.tokens[3] = "5000";
     cmd.tokens[4] = "100";
     cmd.tokens[5] = "2500";
@@ -721,7 +722,7 @@ TEST(CommandsTests, ExecuteTestWheelEncoderTargetCallsFunctions)
 TEST(CommandsTests, ValidateTestWheelEncoderDriftReturnsTooFewParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 7;
+    cmd.token_count = 7u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_test_wheel_encoder_drift(&cmd));
 }
@@ -729,7 +730,7 @@ TEST(CommandsTests, ValidateTestWheelEncoderDriftReturnsTooFewParameters)
 TEST(CommandsTests, ExecuteTestWheelEncoderDriftCallsFunctions)
 {
     struct command cmd{{0}};
-    cmd.token_count = 9;
+    cmd.token_count = 9u;
     cmd.tokens[3] = "5000";
     cmd.tokens[4] = "100";
     cmd.tokens[5] = "2500";
@@ -753,7 +754,7 @@ TEST(CommandsTests, ExecuteTestWheelEncoderDriftCallsFunctions)
 TEST(CommandsTests, ValidateTestWheelEncoderDecelerationReturnsTooFewParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 7;
+    cmd.token_count = 7u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS,
                 validate_test_wheel_encoder_deceleration(&cmd));
@@ -762,7 +763,7 @@ TEST(CommandsTests, ValidateTestWheelEncoderDecelerationReturnsTooFewParameters)
 TEST(CommandsTests, ExecuteTestWheelEncoderDecelerationCallsFunctions)
 {
     struct command cmd{{0}};
-    cmd.token_count = 9;
+    cmd.token_count = 9u;
     cmd.tokens[3] = "5000";
     cmd.tokens[4] = "100";
     cmd.tokens[5] = "2500";
@@ -797,12 +798,12 @@ TEST(CommandsTests, ExecuteTestVacuumCallsFunctions)
 TEST(CommandsTests, NavigateCommandContainsSubcommands)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
     cmd.tokens[0] = "test";
     cmd.tokens[1] = "navigate";
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     LONGS_EQUAL(8u, node->child_count);
@@ -810,7 +811,7 @@ TEST(CommandsTests, NavigateCommandContainsSubcommands)
 
 TEST(CommandsTests, NavigateCommandsAreInExpectedOrder)
 {
-    const struct command_node *commands = get_test_commands()[8].children;
+    const struct command_node *commands{get_test_commands()[8].children};
 
     STRCMP_EQUAL("move-forward", commands[0].name);
     STRCMP_EQUAL("move-forward-continuous", commands[1].name);
@@ -825,7 +826,7 @@ TEST(CommandsTests, NavigateCommandsAreInExpectedOrder)
 TEST(CommandsTests, TestNavigateCommandMatchDepthIsTwo)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
     cmd.tokens[0] = "test";
     cmd.tokens[1] = "navigate";
 
@@ -839,17 +840,17 @@ TEST(CommandsTests, FindCommandNodeReturnsNavigateNodes)
 {
     for (auto const &test : navigate_cases) {
         struct command cmd{{0}};
-        cmd.token_count = 3;
+        cmd.token_count = 3u;
         cmd.tokens[0] = "test";
         cmd.tokens[1] = test.parent;
         cmd.tokens[2] = test.child;
 
-        struct command_node const *node =
-                find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+        struct command_node const *node{
+                find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
         CHECK(node != nullptr);
 
-        SimpleString msg = StringFromFormat("navigate node mismatch child=%s", test.child);
+        SimpleString msg{StringFromFormat("navigate node mismatch child=%s", test.child)};
         STRCMP_EQUAL_TEXT(test.child, node->name, msg.asCharString());
     }
 }

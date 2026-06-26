@@ -26,10 +26,10 @@ extern "C"
 /*============================================================================*/
 void feedCharacters(char const *str)
 {
-    size_t len = strlen(str);
-    bool terminated = false;
+    size_t len{strlen(str)};
+    bool terminated{false};
 
-    for (size_t i = 0u; i < len; i++) {
+    for (size_t i{0u}; i < len; i++) {
         mock().expectOneCall("is_cli_buffer_empty").andReturnValue(false);
         mock().expectOneCall("pop_cli_buffer").andReturnValue(str[i]);
 

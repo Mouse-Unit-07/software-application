@@ -84,7 +84,7 @@ TEST_GROUP(SolveTests)
 /*============================================================================*/
 TEST(SolveTests, GetSolveNodeReturnsValidNode)
 {
-    const struct command_node *node = get_solve_node();
+    const struct command_node *node{get_solve_node()};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("solve", node->name);
@@ -101,14 +101,14 @@ TEST(SolveTests, GetSolveCommandsCountReturnsExpectedValue)
 
 TEST(SolveTests, SolveCommandsAreInExpectedOrder)
 {
-    const struct command_node *commands = get_solve_commands();
+    const struct command_node *commands{get_solve_commands()};
 
     STRCMP_EQUAL("wallfollower", commands[0].name);
 }
 
 TEST(SolveTests, GetSolveCommandsContainsWallFollowerNode)
 {
-    const struct command_node *commands = get_solve_commands();
+    const struct command_node *commands{get_solve_commands()};
 
     STRCMP_EQUAL("wallfollower", commands[0].name);
 
@@ -121,11 +121,11 @@ TEST(SolveTests, GetSolveCommandsContainsWallFollowerNode)
 TEST(SolveTests, SolveCommandContainsTwoSubcommands)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "solve";
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     LONGS_EQUAL(1u, node->child_count);
@@ -134,11 +134,11 @@ TEST(SolveTests, SolveCommandContainsTwoSubcommands)
 TEST(SolveTests, FindCommandNodeReturnsSolveNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 1;
+    cmd.token_count = 1u;
     cmd.tokens[0] = "solve";
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("solve", node->name);
@@ -154,7 +154,7 @@ TEST(SolveTests, ValidateSolveReturnsSuccess)
 TEST(SolveTests, ValidateSolveReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_solve(&cmd));
 }
@@ -171,13 +171,13 @@ TEST(SolveTests, ExecuteSolveRunsWithoutCrash)
 TEST(SolveTests, FindCommandNodeReturnsWallFollowerNode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     cmd.tokens[0] = "solve";
     cmd.tokens[1] = "wallfollower";
 
-    struct command_node const *node =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node;
+    struct command_node const *node{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT).node};
 
     CHECK(node != nullptr);
     STRCMP_EQUAL("wallfollower", node->name);
@@ -186,13 +186,13 @@ TEST(SolveTests, FindCommandNodeReturnsWallFollowerNode)
 TEST(SolveTests, WallFollowerCommandMatchDepthIsTwo)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     cmd.tokens[0] = "solve";
     cmd.tokens[1] = "wallfollower";
 
-    struct command_match match =
-            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT);
+    struct command_match match{
+            find_command_node(&cmd, fake_root_commands, FAKE_ROOT_COMMANDS_COUNT)};
 
     LONGS_EQUAL(2u, match.depth);
 }
@@ -201,7 +201,7 @@ TEST(SolveTests, ValidateSolveWallFollowerLeftReturnsSuccess)
 {
     struct command cmd{{0}};
 
-    cmd.token_count = 3;
+    cmd.token_count = 3u;
 
     cmd.tokens[0] = "solve";
     cmd.tokens[1] = "wallfollower";
@@ -213,7 +213,7 @@ TEST(SolveTests, ValidateSolveWallFollowerLeftReturnsSuccess)
 TEST(SolveTests, ValidateSolveWallFollowerRightEnableReturnsSuccess)
 {
     struct command cmd{{0}};
-    cmd.token_count = 4;
+    cmd.token_count = 4u;
     cmd.tokens[0] = "solve";
     cmd.tokens[1] = "wallfollower";
     cmd.tokens[2] = "right";
@@ -225,7 +225,7 @@ TEST(SolveTests, ValidateSolveWallFollowerRightEnableReturnsSuccess)
 TEST(SolveTests, ValidateSolveWallFollowerReturnsTooFewParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 2;
+    cmd.token_count = 2u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_FEW_PARAMETERS, validate_solve_wallfollower(&cmd));
 }
@@ -233,7 +233,7 @@ TEST(SolveTests, ValidateSolveWallFollowerReturnsTooFewParameters)
 TEST(SolveTests, ValidateSolveWallFollowerReturnsTooManyParameters)
 {
     struct command cmd{{0}};
-    cmd.token_count = 5;
+    cmd.token_count = 5u;
 
     LONGS_EQUAL(COMMAND_VALIDATION_TOO_MANY_PARAMETERS, validate_solve_wallfollower(&cmd));
 }
@@ -241,30 +241,28 @@ TEST(SolveTests, ValidateSolveWallFollowerReturnsTooManyParameters)
 TEST(SolveTests, ValidateSolveWallFollowerRejectsBadMode)
 {
     struct command cmd{{0}};
-    cmd.token_count = 3;
+    cmd.token_count = 3u;
     cmd.tokens[2] = "bad";
 
     LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_solve_wallfollower(&cmd));
-
     LONGS_EQUAL(2u, cmd.bad_parameter_index);
 }
 
 TEST(SolveTests, ValidateSolveWallFollowerRejectsBadPrintOption)
 {
     struct command cmd{{0}};
-    cmd.token_count = 4;
+    cmd.token_count = 4u;
     cmd.tokens[2] = "left";
     cmd.tokens[3] = "bad";
 
     LONGS_EQUAL(COMMAND_VALIDATION_BAD_PARAMETER, validate_solve_wallfollower(&cmd));
-
     LONGS_EQUAL(3u, cmd.bad_parameter_index);
 }
 
 TEST(SolveTests, ExecuteSolveWallFollowerLeft)
 {
     struct command cmd{{0}};
-    cmd.token_count = 3;
+    cmd.token_count = 3u;
     cmd.tokens[2] = "left";
 
     mock().expectOneCall("run_wall_follower")
@@ -277,7 +275,7 @@ TEST(SolveTests, ExecuteSolveWallFollowerLeft)
 TEST(SolveTests, ExecuteSolveWallFollowerRightEnable)
 {
     struct command cmd{{0}};
-    cmd.token_count = 4;
+    cmd.token_count = 4u;
     cmd.tokens[2] = "right";
     cmd.tokens[3] = "enable";
 
