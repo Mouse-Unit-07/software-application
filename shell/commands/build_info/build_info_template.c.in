@@ -1,0 +1,28 @@
+/*-------------------------------- FILE INFO ---------------------------------*/
+/* Filename           : build_info_template.c.in                              */
+/*                                                                            */
+/* Template for micromouse build_info library to use                          */
+/*                                                                            */
+/*----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
+/*                               Include Files                                */
+/*----------------------------------------------------------------------------*/
+#include <stdint.h>
+#include "command.h"
+#include "build_info.h"
+
+/*----------------------------------------------------------------------------*/
+/*                               Public Globals                               */
+/*----------------------------------------------------------------------------*/
+char const *const build_date = "@BUILD_DATE@";
+char const *const build_time = "@BUILD_TIME@";
+char const *const build_configuration = "@BUILD_CONFIGURATION@";
+char const *const build_mouse_target = "@BUILD_MOUSE_TARGET@";
+
+const struct build_repository build_repositories[] = {
+@BUILD_REPOSITORIES@
+};
+
+const uint32_t build_repository_count =
+    sizeof(build_repositories) / sizeof(build_repositories[0]);

@@ -16,6 +16,7 @@
 #include "fault_detector.h"
 #include "global_time.h"
 #include "command.h"
+#include "build_info.h"
 #include "get.h"
 #include "set.h"
 #include "solve.h"
@@ -65,8 +66,12 @@ static struct command_node root_commands[MAX_ROOT_NODES] = {
         .execute = execute_time
     }};
 
-static const uint32_t ROOT_COMMANDS_DEFAULT_COUNT = 4u;
-static uint32_t root_commands_count = 4u;
+enum
+{
+    ROOT_COMMANDS_DEFAULT_COUNT = 4
+};
+
+static uint32_t root_commands_count = ROOT_COMMANDS_DEFAULT_COUNT;
 
 /*----------------------------------------------------------------------------*/
 /*                         Public Function Definitions                        */
@@ -75,7 +80,7 @@ void init_root(void)
 {
     enum
     {
-        EXTERNAL_COMMAND_NODE_COUNT = 4
+        EXTERNAL_COMMAND_NODE_COUNT = 5
     };
 
     struct command_node nodes[EXTERNAL_COMMAND_NODE_COUNT];
@@ -83,6 +88,7 @@ void init_root(void)
     nodes[1] = *get_set_node();
     nodes[2] = *get_solve_node();
     nodes[3] = *get_test_node();
+    nodes[4] = *get_build_info_node();
 
     uint32_t total_nodes = ROOT_COMMANDS_DEFAULT_COUNT + EXTERNAL_COMMAND_NODE_COUNT;
     total_nodes = total_nodes > MAX_ROOT_NODES ? MAX_ROOT_NODES : total_nodes;
@@ -123,7 +129,7 @@ enum validation_result validate_help(struct command *cmd)
 
 void execute_help(struct command const *cmd)
 {
-    (void)cmd; /* unused due to no parameters */
+    (void)cmd;
 
     printf("root commands:\r\n");
     print_command_help(root_commands, root_commands_count);
@@ -138,7 +144,7 @@ enum validation_result validate_clear(struct command *cmd)
 
 void execute_clear(struct command const *cmd)
 {
-    (void)cmd; /* unused due to no parameters */
+    (void)cmd;
 
     printf("\e[1;1H\e[2J");
 }
@@ -152,7 +158,7 @@ enum validation_result validate_hardware_faults(struct command *cmd)
 
 void execute_hardware_faults(struct command const *cmd)
 {
-    (void)cmd; /* unused due to no parameters */
+    (void)cmd;
 
     print_hardware_state();
 }
@@ -166,7 +172,7 @@ enum validation_result validate_time(struct command *cmd)
 
 void execute_time(struct command const *cmd)
 {
-    (void)cmd; /* unused due to no parameters */
+    (void)cmd;
 
     uint32_t time_sec = get_current_global_time_sec();
     printf("time passed since init: %" PRIu32 " min, %" PRIu32 " sec\r\n", time_sec / 60,
