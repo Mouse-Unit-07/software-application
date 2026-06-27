@@ -11,6 +11,7 @@ add_library(root_lib STATIC
 target_include_directories(root_lib PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
     $<TARGET_PROPERTY:mouse_driver_lib,INTERFACE_INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:build_info_lib,INTERFACE_INCLUDE_DIRECTORIES>
     $<TARGET_PROPERTY:get_lib,INTERFACE_INCLUDE_DIRECTORIES>
     $<TARGET_PROPERTY:set_lib,INTERFACE_INCLUDE_DIRECTORIES>
     $<TARGET_PROPERTY:solve_lib,INTERFACE_INCLUDE_DIRECTORIES>
@@ -20,6 +21,7 @@ target_include_directories(root_lib PUBLIC
 
 target_link_libraries(root_lib PRIVATE
     mouse_driver_lib
+    build_info_lib
     get_lib
     set_lib
     solve_lib

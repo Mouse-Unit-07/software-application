@@ -113,7 +113,7 @@ TEST(RootTests, InitRootAddsCommandModules)
 {
     init_root();
 
-    LONGS_EQUAL(8u, get_root_commands_count());
+    LONGS_EQUAL(9u, get_root_commands_count());
 }
 
 TEST(RootTests, InitRootCanBeCalledMultipleTimes)
@@ -122,7 +122,7 @@ TEST(RootTests, InitRootCanBeCalledMultipleTimes)
     init_root();
     init_root();
 
-    LONGS_EQUAL(8u, get_root_commands_count());
+    LONGS_EQUAL(9u, get_root_commands_count());
 }
 
 TEST(RootTests, DeinitRootRestoresDefaultCount)
@@ -148,7 +148,7 @@ TEST(RootTests, GetRootCommandsReturnsValidPointer)
 
 TEST(RootTests, GetRootCommandsCountReturnsExpectedValue)
 {
-    LONGS_EQUAL(8u, get_root_commands_count());
+    LONGS_EQUAL(9u, get_root_commands_count());
 }
 
 TEST(RootTests, GetCommandTreeRootContainsHelpNode)
@@ -219,6 +219,7 @@ TEST(RootTests, RootCommandsAreAddedInExpectedOrder)
     STRCMP_EQUAL("set", root[5].name);
     STRCMP_EQUAL("solve", root[6].name);
     STRCMP_EQUAL("test", root[7].name);
+    STRCMP_EQUAL("build-info", root[8].name);
 }
 
 /*----------------------------------------------------------------------------*/
